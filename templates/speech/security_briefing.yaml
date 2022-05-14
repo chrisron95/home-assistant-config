@@ -1,0 +1,74 @@
+>
+  {# Security Report #}
+  {%- macro getReport() -%}
+    <p>
+      {%- if states('input_boolean.sentry_mode') == 'on' %}
+        {{ [
+          'Sentry Mode is enabled. ',
+          'Sentry mode is currently active. ',
+          'Barn Door Protocol is currently in effect. ',
+          'My security system is currently armed. ',
+          'Header House is in lockdown mode. '
+          ] | random}} 
+      {% else %}
+        {{ [
+          'Sentry Mode is disabled. ',
+          'Sentry mode is currently inactive. ',
+          'My security system is currently disarmed. ',
+          'Header House is currently in standby. '
+          ] | random}} 
+      {% endif %}
+      {%- if states('group.doors') == 'off' and states('group.windows') == 'off' %}
+        All doors and windows are currently closed and secured.
+      {% else %}
+        {%- if states('group.doors') == 'off' %}
+          All external doors are currently secured.
+        {% else %}
+          {% set open_doors = expand('group.doors')| selectattr('state', 'eq', 'on') | map(attribute='name')|join(' and ') %}
+          {% set open_door_count = expand('group.doors') | selectattr('state', 'eq', 'on') | list | count %}
+          {% if open_door_count == 1 %}
+            {% set is_are = ' is ' %}
+          {% else %}
+            {% set is_are = ' are ' %}
+          {% endif %}
+          {%- macro announcement(open_doors, is_are) -%}
+            {{ [
+              "the " + open_doors ~ is_are + " standing open. ",
+              "the " + open_doors ~ is_are + " not secured. ",
+              "the " + open_doors ~ is_are + " open. "
+              ] | random }}
+            {%- endmacro -%}
+          {{announcement(open_doors, is_are)}}
+        {% endif %}
+        {%- if states('group.windows') == 'off' %}
+          All windows are currently secured.
+        {% else %}
+          {% set open_windows = expand('group.windows')| selectattr('state', 'eq', 'on') | map(attribute='name')|join(' and ') %}
+          {% set open_window_count = expand('group.windows') | selectattr('state', 'eq', 'on') | list | count %}
+          {%- macro announcement(open_windows, is_are) -%}
+            {{ [
+              "the " + open_windows ~ is_are + " standing open. ",
+              "the " + open_windows ~ is_are + " not secured. ",
+              "the " + open_windows ~ is_are + " open. "
+              ] | random }}
+            {%- endmacro -%}
+          {{announcement(open_windows, " are ")}}
+        {% endif %}
+      {% endif %}
+    </p>
+  {%- endmacro -%}
+
+
+  {# a macro that removes all newline characters, empty spaces, and returns formatted text  #}
+    {%- macro cleanup(data) -%}
+      {%- for item in data.split("\n")  if item | trim != "" -%}
+        {{ item | trim }} {% endfor -%}
+  {%- endmacro -%}
+
+  {# a macro to call all macros :)  #}
+    {%- macro mother_of_all_macros() -%}
+      {{ getReport() }}
+    {%- endmacro -%}
+    
+    {# Call the macro  #}
+    {{- cleanup(mother_of_all_macros()) -}}

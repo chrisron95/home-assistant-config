@@ -1,0 +1,426 @@
+alexa_play_siriusxm:
+  alias: Alexa Play SiriusXM
+  sequence:
+  - service: media_player.play_media
+    data:
+      media_content_id: Play {{ states.input_select.siriusxm_stations.state }} from
+        SiriusXM {{ states.input_select.alexa_devices.state }}
+      media_content_type: custom
+    target:
+      entity_id: media_player.chris_s_echo_show
+  mode: single
+  icon: mdi:amazon-alexa
+alexa_stop:
+  alias: Alexa Stop
+  sequence:
+  - service: media_player.play_media
+    data:
+      media_content_id: stop {{ states.input_select.alexa_devices.state }}
+      media_content_type: custom
+    target:
+      entity_id: media_player.chris_s_echo_show
+  mode: single
+  icon: mdi:amazon-alexa
+turn_off_bedroom_apple_tv:
+  alias: Turn Off Bedroom Apple TV
+  sequence:
+  - service: remote.send_command
+    data:
+      delay_secs: 1
+      command:
+      - home_hold
+      - select
+    target:
+      entity_id: remote.chriss_room
+  - type: turn_off
+    device_id: 6d0692c3ae0d749aa7037ca10f66291d
+    entity_id: remote.chriss_room
+    domain: remote
+  mode: single
+  icon: mdi:apple
+wake_bedroom_apple_tv:
+  alias: Wake Bedroom Apple TV
+  sequence:
+  - service: remote.send_command
+    target:
+      entity_id: remote.chriss_room
+    data:
+      command: wakeup
+  - type: turn_on
+    device_id: 6d0692c3ae0d749aa7037ca10f66291d
+    entity_id: remote.chriss_room
+    domain: remote
+  mode: single
+  icon: mdi:apple
+alexa_all_done_chime:
+  alias: Alexa Chime Everywhere
+  sequence:
+  - condition: state
+    entity_id: input_boolean.do_not_disturb
+    state: 'off'
+  - service: media_player.play_media
+    data:
+      media_content_type: sound
+      media_content_id: amzn_sfx_trumpet_bugle_04
+    target:
+      entity_id:
+      - media_player.lab_echo_dot
+      - media_player.chris_s_echo_show
+      - media_player.living_room_echo
+      - media_player.kitchen_echo_dot
+      - media_player.chris_s_echo_flex
+      - media_player.chris_s_echo_auto
+  mode: single
+  icon: mdi:amazon-alexa
+alexa_chime_in_lab:
+  alias: Alexa Chime In Lab
+  sequence:
+  - service: media_player.play_media
+    data:
+      media_content_type: sound
+      media_content_id: amzn_sfx_trumpet_bugle_04
+    target:
+      entity_id:
+      - media_player.lab_echo_dot
+  mode: single
+  icon: mdi:amazon-alexa
+iphone_wake_up_alarm_activated:
+  sequence:
+  - service: input_boolean.turn_on
+    target:
+      entity_id: input_boolean.iphone_wake_up_alarm_activated
+  mode: single
+  alias: Iphone Wake Up Alarm Activated
+wake_up:
+  alias: Wake Up
+  sequence:
+  - service: media_player.play_media
+    entity_id: media_player.chris_s_echo_show
+    data:
+      media_content_id: Wake Up
+      media_content_type: routine
+  mode: single
+downstairs_chill:
+  alias: Downstairs Chill
+  sequence:
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: input_select.front_yard_light_mode
+        state: Normal
+      sequence:
+      - scene: scene.downstairs_chill_halloween
+    - conditions:
+      - condition: state
+        entity_id: input_select.front_yard_light_mode
+        state: Halloween
+      sequence:
+      - scene: scene.downstairs_chill_halloween
+    - conditions:
+      - condition: state
+        entity_id: input_select.front_yard_light_mode
+        state: Christmas
+      sequence:
+      - scene: scene.downstairs_chill_christmas
+    default: []
+  - service: input_boolean.turn_on
+    data: {}
+    target:
+      entity_id: input_boolean.downstairs_chill
+  mode: single
+goodnight:
+  alias: Goodnight
+  sequence:
+  - service: script.status_annc
+    data:
+      who: bedroom
+      call_goodnight: 1
+  - choose:
+    - alias: No Guests
+      conditions:
+      - condition: state
+        entity_id: input_boolean.guest_in_living_room
+        state: 'off'
+      - condition: state
+        entity_id: input_boolean.guest_in_lab
+        state: 'off'
+      sequence:
+      - scene: scene.nightime
+    - alias: Guest In Living Room
+      conditions:
+      - condition: state
+        entity_id: input_boolean.guest_in_living_room
+        state: 'on'
+      - condition: state
+        entity_id: input_boolean.guest_in_lab
+        state: 'off'
+      sequence:
+      - scene: scene.bedroom_lights_off
+      - service: fan.turn_on
+        data:
+          percentage: 66
+        target:
+          entity_id: fan.bedroom_fan
+      - service: light.turn_off
+        data: {}
+        target:
+          entity_id:
+          - light.lab_fan_light
+          - light.front_hall_light
+          - light.hallway_light
+      - service: media_player.turn_off
+        data: {}
+        target:
+          entity_id: media_player.lab_tv
+      - service: switch.turn_on
+        data: {}
+        target:
+          entity_id:
+          - switch.living_room_echo_do_not_disturb_switch
+          - switch.kitchen_echo_dot_do_not_disturb_switch
+          - switch.chris_s_fire_do_not_disturb_switch
+    - alias: Guest In Lab
+      conditions:
+      - condition: state
+        entity_id: input_boolean.guest_in_living_room
+        state: 'off'
+      - condition: state
+        entity_id: input_boolean.guest_in_lab
+        state: 'on'
+      sequence:
+      - scene: scene.downstairs_all_off
+      - scene: scene.bedroom_lights_off
+      - service: fan.turn_on
+        data:
+          percentage: 66
+        target:
+          entity_id: fan.bedroom_fan
+      - service: switch.turn_on
+        data: {}
+        target:
+          entity_id:
+          - switch.lab_echo_dot_do_not_disturb_switch
+          - switch.chris_s_sonos_roam_do_not_disturb_switch
+          - switch.chriss_sonos_roam_do_not_disturb_switch
+    - alias: Guest In Both
+      conditions:
+      - condition: state
+        entity_id: input_boolean.guest_in_living_room
+        state: 'on'
+      - condition: state
+        entity_id: input_boolean.guest_in_lab
+        state: 'on'
+      sequence:
+      - scene: scene.bedroom_lights_off
+      - service: fan.turn_on
+        data:
+          percentage: 66
+        target:
+          entity_id: fan.bedroom_fan
+      - service: switch.turn_on
+        data: {}
+        target:
+          entity_id:
+          - switch.kitchen_echo_dot_do_not_disturb_switch
+          - switch.chris_s_fire_do_not_disturb_switch
+          - switch.living_room_echo_do_not_disturb_switch
+          - switch.lab_echo_dot_do_not_disturb_switch
+          - switch.chris_s_sonos_roam_do_not_disturb_switch
+          - switch.chriss_sonos_roam_do_not_disturb_switch
+    default: []
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: input_boolean.windows_open
+        state: 'off'
+      sequence:
+      - service: input_select.select_option
+        target:
+          entity_id: input_select.thermostat_preset
+        data:
+          option: Sleep
+    default: []
+  - service: input_boolean.turn_on
+    data: {}
+    target:
+      entity_id:
+      - input_boolean.do_not_disturb
+      - input_boolean.sentry_mode
+  - service: input_boolean.turn_off
+    entity_id: input_boolean.audible_notifications
+  - service: automation.trigger
+    data: {}
+    target:
+      entity_id: automation.front_lights_off_at_midnight
+  mode: single
+  icon: mdi:weather-night
+thermostat_preset_handler:
+  sequence:
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: input_boolean.windows_open
+        state: 'on'
+      sequence:
+      - service: input_select.select_option
+        target:
+          entity_id: input_select.thermostat_preset
+        data:
+          option: 'Off'
+      - service: climate.set_temperature
+        target:
+          entity_id: climate.my_ecobee
+        data:
+          temperature: 80
+    default:
+    - choose:
+      - conditions:
+        - condition: state
+          entity_id: input_select.thermostat_preset
+          state: Daytime - Chris
+        sequence:
+        - service: climate.set_temperature
+          data:
+            temperature: 74
+          target:
+            entity_id: climate.my_ecobee
+      - conditions:
+        - condition: state
+          entity_id: input_select.thermostat_preset
+          state: Daytime - Steven
+        sequence:
+        - service: climate.set_temperature
+          target:
+            entity_id: climate.my_ecobee
+          data:
+            temperature: 72
+      - conditions:
+        - condition: state
+          entity_id: input_select.thermostat_preset
+          state: Sleep
+        sequence:
+        - service: climate.set_temperature
+          target:
+            entity_id: climate.my_ecobee
+          data:
+            temperature: 68
+      - conditions:
+        - condition: state
+          entity_id: input_select.thermostat_preset
+          state: Away
+        sequence:
+        - service: climate.set_temperature
+          target:
+            entity_id: climate.my_ecobee
+          data:
+            temperature: 78
+      - conditions:
+        - condition: state
+          entity_id: input_select.thermostat_preset
+          state: 'Off'
+        sequence:
+        - service: climate.set_temperature
+          target:
+            entity_id: climate.my_ecobee
+          data:
+            temperature: 80
+      default: []
+  mode: single
+  alias: Thermostat Preset Handler
+  icon: mdi:home-thermometer
+renew_ssl_certificate:
+  alias: Renew SSL Certificate
+  sequence:
+  - service: hassio.addon_stop
+    data:
+      addon: core_nginx_proxy
+  - service: hassio.addon_start
+    data:
+      addon: core_letsencrypt
+  - delay:
+      hours: 0
+      minutes: 2
+      seconds: 0
+      milliseconds: 0
+  - service: hassio.addon_start
+    data:
+      addon: core_nginx_proxy
+  - service: homeassistant.reload_config_entry
+    data:
+      entry_id: 682aa34ef9ed11ea921443c564903634
+  mode: single
+  icon: mdi:certificate
+play_alert_sound:
+  alias: Alexa Play Alert Sound
+  sequence:
+  - service: notify.alexa_media
+    data:
+      message: <audio src='https://heder-homeassistant.s3.amazonaws.com/{{ states('input_select.alexa_alert_sound')
+        }}.mp3'/> {{ states('input_text.alexa_alert_message') }}
+      target: "{%- if states('input_select.alexa_devices') == \"Living Room Echo\"\
+        \ -%}\n  media_player.living_room_echo\n{%- elif states('input_select.alexa_devices')\
+        \ == \"Kitchen Echo Dot\" -%}\n  media_player.kitchen_echo_dot\n{%- elif states('input_select.alexa_devices')\
+        \ == \"Bedroom Echo Show\" -%}\n  media_player.chris_s_echo_show\n{%- elif\
+        \ states('input_select.alexa_devices') == \"Lab Echo Dot\" -%}\n  media_player.lab_echo_dot\n\
+        {%- elif states('input_select.alexa_devices') == \"Garage Echo Flex\" -%}\n\
+        \  media_player.chris_s_echo_flex\n{%- elif states('input_select.alexa_devices')\
+        \ == \"Everywhere\" -%}\n  [\"media_player.living_room_echo\", \"media_player.kitchen_echo_dot\"\
+        , \"media_player.chris_s_echo_show\", \"media_player.lab_echo_dot\"]\n{%-\
+        \ elif states('input_select.alexa_devices') == \"Downstairs\" -%}\n  [\"media_player.living_room_echo\"\
+        , \"media_player.kitchen_echo_dot\"\n{%- elif states('input_select.alexa_devices')\
+        \ == \"Upstairs\" -%}\n  [\"media_player.chris_s_echo_show\", \"media_player.lab_echo_dot\"\
+        \n{% endif %}\n"
+      data:
+        type: tts
+  mode: single
+  icon: mdi:message-alert
+3d_printer_announce_status:
+  alias: 3D Printer Announce Status
+  sequence:
+  - service: notify.alexa_media
+    data:
+      message: '{%- set time_left = state_attr(''sensor.octoprint_print_progress'',''printTimeLeftFormatted'').split('':'')
+        %} <audio src=''https://heder-homeassistant.s3.amazonaws.com/good-place-boop.mp3''/>
+        your 3D print is {{ states(''sensor.octoprint_print_progress'') }} percent
+        complete. Theres {% if int(time_left[0]) != 0 %} {{ int(time_left[0]) }} hour{{
+        ''s'' if int(time_left[0]) != 1 }},  {% endif %} {{ int(time_left[1]) }} minute{{
+        ''s'' if int(time_left[1]) != 1 }}, and {{ int(time_left[2]) }} second{{ ''s''
+        if float(time_left[2]) != 1 }} left'
+      target: "{%- if state_attr('media_player.living_room_echo', 'last_called') ==\
+        \ true -%}\n  media_player.living_room_echo\n{%- elif state_attr('media_player.kitchen_echo_dot',\
+        \ 'last_called') == true -%}\n  media_player.kitchen_echo_dot\n{%- elif state_attr('media_player.chris_s_echo_show',\
+        \ 'last_called') == true -%}\n  media_player.chris_s_echo_show\n{%- elif state_attr('media_player.lab_echo_dot',\
+        \ 'last_called') == true -%}\n  media_player.lab_echo_dot\n{%- elif state_attr('media_player.chris_s_echo_flex',\
+        \ 'last_called') == true -%}\n  media_player.chris_s_echo_flex\n{%- else -%}\n\
+        \  [\"media_player.living_room_echo\", \"media_player.kitchen_echo_dot\",\
+        \ \"media_player.chris_s_echo_show\", \"media_player.lab_echo_dot\"]\n{% endif\
+        \ %}\n"
+      data:
+        type: tts
+  mode: single
+time_for_bed:
+  alias: Time For Bed
+  sequence:
+  - service: scene.turn_on
+    target:
+      entity_id: scene.time_for_bed
+    metadata: {}
+  - service: script.status_annc
+    data:
+      who: living_room
+      call_goodnight: 1
+  mode: single
+  icon: mdi:bed-empty
+goodbye:
+  alias: Goodbye
+  sequence:
+  - service: scene.turn_on
+    target:
+      entity_id: scene.all_off
+    metadata: {}
+  - service: script.status_annc
+    data:
+      who: kitchen
+      call_goodbye: 1
+  mode: single
+  icon: mdi:exit-run

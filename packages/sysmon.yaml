@@ -1,0 +1,60 @@
+###############################################################################
+#   @author         :   Jeffrey Stone
+#   @date           :   02/19/2019
+#   @package        :   Sysmon
+#   @description    :   A collection of Home Assistant and Pi Sensors
+#
+#   @modified by    :   Chris Heder (@chrisron95)
+#   @date           :   05/12/2022
+###############################################################################
+
+sensor:
+  - platform: systemmonitor
+    resources:
+      - type: disk_use_percent
+        arg: /
+      - type: memory_use_percent
+      - type: memory_free
+      - type: network_in
+        arg: eth0
+      - type: network_out
+        arg: eth0
+      - type: ipv4_address
+        arg: eth0
+      - type: load_15m
+      - type: processor_use
+      - type: processor_temperature
+      - type: last_boot
+  - platform: time_date
+    display_options:
+      - "time"
+      - "date"
+      - "date_time"
+      - "time_date"
+      - "time_utc"
+      - "beat"
+  - platform: command_line
+    name: Lines of Code
+    command: "find /config -name '*.yaml' | xargs cat | wc -l"
+    scan_interval: 20000
+
+  # For tracking number of times motion is detected
+  # at front door in last 7 days
+  - platform: history_stats
+    name: Front Door Motion
+    entity_id: binary_sensor.front_door_ring_motion
+    state: "on"
+    type: count
+    end: "{{ now() }}"
+    duration:
+      days: 7
+
+utility_meter:
+  # Use the 7 day history of motion at front door
+  # to get daily motion.
+  hourly_frontdoor_motion:
+    source: sensor.front_door_motion
+    cycle: hourly
+  daily_frontdoor_motion:
+    source: sensor.front_door_motion
+    cycle: daily

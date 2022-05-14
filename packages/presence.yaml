@@ -1,0 +1,403 @@
+###############################################################################
+#   @author         :   Jeffrey Stone
+#   @date           :   02/19/2019
+#   @package        :   Presence
+#   @description    :   A Collection of Presence Related Trackers and Sensors
+#
+#   @modified by    :   Chris Heder (@chrisron95)
+#   @date           :   05/12/2022
+###############################################################################
+
+input_datetime:
+  last_time_home_chris:
+    name: Chris Last Seen
+    has_date: true
+    has_time: true
+  last_time_home_steven:
+    name: Steven Last Seen
+    has_date: true
+    has_time: true
+  last_time_home_kaitlyn:
+    name: Kaitlyn Last Seen
+    has_date: true
+    has_time: true
+
+input_text:
+  room_presence:
+    name: Room Presence
+
+group:
+  family:
+    name: Family
+    entities:
+      - person.chris
+      - person.steven
+
+  friends:
+    name: Friends
+    entities:
+      - person.kaitlyn
+      - person.ronald
+      - person.rheena
+      - person.danielle
+      - person.brian
+      - person.rathnam
+      - person.nico
+
+  people:
+    name: People
+    entities:
+      - person.chris
+      - person.steven
+      - person.kaitlyn
+      - person.ronald
+      - person.rheena
+      - person.danielle
+      - person.brian
+      - person.rathnam
+      - person.nico
+
+  chris:
+    name: Chris
+    entities:
+      - device_tracker.chriss_iphone_4 # iCloud integration
+      - device_tracker.christophers_apple_watch # iCloud integration
+      - device_tracker.chriss_ipad_2 # iCloud integration
+      - device_tracker.chriss_iphone_3 # HA Mobile App
+      - device_tracker.chriss_ipad # HA Mobile App
+
+  steven:
+    name: Steven
+    entities:
+      - device_tracker.stevens_iphone_3 # HA Mobile App
+
+  occupancy:
+    name: Occupancy
+    entities:
+      - binary_sensor.espresense_bedroom_motion
+      - binary_sensor.espresense_lab_motion
+      - binary_sensor.espresense_kitchen_motion
+      - binary_sensor.espresense_dining_room_motion
+      - binary_sensor.espresense_living_room_motion
+
+  arriving:
+    name: Arriving
+    entities: []
+
+sensor:
+  - platform: template
+    sensors:
+      chris_location:
+        friendly_name: "Chris"
+        unit_of_measurement: ""
+        value_template: >-
+          {% set person = states('person.chris') %}
+          {%- if person in ['Publix - Pine Island','Publix - Coral Ridge'] %}
+            Publix
+          {% elif person in ['HomeDepot'] %}
+            Home Depot
+          {% elif person in ['Walmart','Target'] %}
+            Super Store
+          {% elif person in ['Sawgrass Mills','Coral Square Mall'] %}
+            The Mall
+          {% else %}
+            {% if person in ['not_home','away'] %}
+              {{ states('sensor.chriss_iphone_geocoded_location') }} 
+            {% else %}
+              {{ states('person.chris') }}
+            {%- endif %}
+          {%- endif %}
+  - platform: template
+    sensors:
+      steven_location:
+        friendly_name: "Steven"
+        unit_of_measurement: ""
+        value_template: >-
+          {% set person = states('person.steven') %}
+          {%- if person in ['Publix - Pine Island','Publix - Coral Ridge'] %}
+            Publix
+          {% elif person in ['HomeDepot'] %}
+            Home Depot
+          {% elif person in ['Walmart','Target'] %}
+            Super Store
+          {% elif person in ['Sawgrass Mills','Coral Square Mall'] %}
+            The Mall
+          {% else %}
+            {% if person in ['not_home','away'] %}
+              {{ states('sensor.stevens_iphone_geocoded_location') }} 
+            {% else %}
+              {{ states('person.steven') }}
+            {%- endif %}
+          {%- endif %}
+  - platform: mqtt
+    name: "Family Status"
+    state_topic: "house/family/status"
+    payload_available: "online"
+    payload_not_available: "offline"
+  - platform: mqtt
+    name: "Family Arrived"
+    state_topic: "house/family/arrived"
+    payload_available: "online"
+    payload_not_available: "offline"
+  - platform: template
+    sensors:
+      chris_home:
+        value_template: >-
+          {{ is_state('person.chris', 'home') }}
+  - platform: template
+    sensors:
+      steven_home:
+        value_template: >-
+          {{ is_state('person.steven', 'home') }}
+
+automation:
+  - id: family_has_arrived
+    alias: Family Has arrived
+    trigger:
+      - platform: zone
+        entity_id: person.chris
+        zone: zone.home
+        event: enter
+        id: chris
+      - entity_id: device_tracker.steven
+        from: not_home
+        platform: state
+        to: home
+        id: steven
+      - entity_id: group.family
+        platform: state
+        to: home
+        id: family
+        from: not_home
+    condition: []
+    action:
+      - service: script.family_is_home
+      - choose:
+          - conditions:
+              - condition: trigger
+                id: chris
+            sequence:
+              - service: input_boolean.turn_off
+                data: {}
+                entity_id: input_boolean.chris_travel_monitor
+          - conditions:
+              - condition: trigger
+                id: steven
+            sequence:
+              - service: input_boolean.turn_off
+                data: {}
+                entity_id: input_boolean.steven_travel_monitor
+        default: []
+    mode: single
+    initial_state: true
+
+  - id: family_has_left
+    alias: Family Has Left
+    initial_state: true
+    trigger:
+      - entity_id: group.family
+        from: home
+        platform: state
+        to: not_home
+    mode: single
+    condition:
+      - condition: state
+        entity_id: input_boolean.guest_mode
+        state: "off"
+    action:
+      - service: script.family_is_away
+
+  - id: chris_arrives_work
+    alias: Chris Arrives At Work
+    trigger:
+      - entity_id: person.chris
+        event: enter
+        platform: zone
+        zone: zone.work_chris
+    condition:
+      - condition: state
+        entity_id: binary_sensor.morning
+        state: "on"
+    action:
+      - service: script.text_notify
+        data:
+          who: "steven"
+          message: "Chris has arrived at work"
+      - service: script.chris_destination_na
+    initial_state: true
+
+  - id: e1cb15b0-0423-11eb-adc1-0242ac120002
+    alias: Zone Debugger
+    trigger:
+      - platform: state
+        entity_id: person.chris
+    condition:
+      - condition: state
+        entity_id: input_boolean.chris_location_debug
+        state: "on"
+    action:
+      - service: script.chris_location_debug
+
+  - id: chris_leaves_work
+    alias: Chris Leaves work
+    initial_state: true
+    trigger:
+      - entity_id: person.chris
+        event: leave
+        platform: zone
+        zone: zone.work_chris
+    condition:
+      - condition: or
+        conditions:
+          - condition: state
+            entity_id: binary_sensor.afternoon
+            state: "on"
+          - condition: state
+            entity_id: binary_sensor.evening
+            state: "on"
+    action:
+      - service: script.text_notify
+        data:
+          who: "steven"
+          message: "Chris just left"
+      - service: input_boolean.turn_off
+        entity_id: input_boolean.chris_traffic_alert_home
+
+  - id: welcome_home
+    alias: Welcome Home
+    mode: restart
+    trigger:
+      - platform: state
+        entity_id:
+          - person.chris
+          - person.steven
+          - person.kaitlyn
+          - person.ronald
+          - person.rheena
+          - person.danielle
+          - person.brian
+          - person.rathnam
+          - person.nico
+        from: "not_home"
+        to: "home"
+    action:
+      - choose:
+          - conditions:
+              - condition: state
+                entity_id: input_boolean.welcome_home
+                state: "on"
+            sequence:
+              - service: script.turn_on
+                entity_id: script.welcome_briefing
+        default:
+          - service: group.set
+            data:
+              object_id: "arriving"
+              add_entities: >-
+                {{ trigger.to_state.entity_id }}
+          - wait_for_trigger:
+              - platform: state
+                entity_id: binary_sensor.front_door
+                from: "off"
+                to: "on"
+          - delay:
+              hours: 0
+              minutes: 0
+              seconds: 10
+              milliseconds: 0
+          - service: script.status_annc
+            data:
+              who: "{{ states('sensor.room_presence') }}"
+              call_interuption: 1
+              speech_message: >
+                {% set person = expand('group.arriving')|map(attribute='name')|join(' and ') %}
+                {% set peoplecount = expand('group.arriving') | count %}
+                {% if peoplecount == 1 %}
+                  {% set is_are = ' is ' %}
+                  {% set has_have = ' has ' %}
+                {% else %}
+                  {% set is_are = ' are ' %}
+                  {% set has_have = ' have ' %}
+                {% endif %}
+                {%- macro greeting_sentence(person, is_are, has_have) -%}
+                  {{ [
+                  person ~ has_have + " arrived.",
+                  "My sensors are picking up the presence of additional humans. " ~ person ~ has_have + " been identified as home.",
+                  "Guess who is in the hub?" ~ person ~ is_are,
+                  "I am sensing a disturbance in the force. "  ~ person +" must be back!",
+                  person ~ is_are + "now in the house.",
+                  person  ~ is_are + " now here.  Welcome Home.",
+                  person  ~ is_are + " now here.",
+                  "Just a quick announcement. " ~ person ~ has_have + "  arrived!",
+                  person ~ has_have + " finally made it home."
+                  ] | random }}
+                {%- endmacro -%}
+                {{greeting_sentence(person, is_are, has_have)}}
+          - delay: 00:02:00
+          - service: group.set
+            data:
+              object_id: "arriving"
+              entities: []
+
+  - id: guests_have_arrived
+    alias: Guests have arrived
+    trigger:
+      - platform: state
+        entity_id:
+          - person.kaitlyn
+          - person.ronald
+          - person.rheena
+          - person.danielle
+          - person.brian
+          - person.rathnam
+          - person.nico
+        from: "not_home"
+        to: "home"
+    action:
+      - service: script.standby
+      - service: script.family_is_home
+      - service: script.visitors_here
+    initial_state: true
+
+  - id: guests_have_left
+    alias: Guests have left
+    trigger:
+      - entity_id: group.friends
+        from: home
+        to: not_home
+        platform: state
+    action:
+      - service: script.visitors_gone
+      - condition: not
+        conditions:
+          - condition: state
+            entity_id: group.family
+            state: home
+      - service: script.family_is_away
+        data: {}
+    initial_state: true
+
+script:
+  family_is_home:
+    sequence:
+      - condition: state
+        entity_id: group.family
+        state: "home"
+      - service: script.standby
+
+  family_is_away:
+    sequence:
+      - condition: state
+        entity_id: group.family
+        state: "not_home"
+      # - service: script.appliances_off
+      - service: scene.turn_on
+        entity_id: scene.all_off
+      - service: input_boolean.turn_on
+        entity_id: input_boolean.sentry_mode
+      - service: input_boolean.turn_off
+        entity_id: input_boolean.motion_lights_master
+      # - service: scene.turn_on
+      #   entity_id: scene.all_fans_off
+      - service: input_boolean.turn_on
+        entity_id: input_boolean.welcome_home

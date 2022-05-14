@@ -1,0 +1,30 @@
+###############################################################################
+#   @author         :   Jeffrey Stone
+#   @date           :   07/09/2019
+#   @package        :   Jarvis
+#   @description    :   Bringing some Jarvis to Home Assistant
+#
+#   @modified by    :   Chris Heder (@chrisron95)
+#   @date           :   05/12/2022
+###############################################################################
+
+input_boolean:
+  house_party_protocol_switch:
+    name: House Party Switch
+
+script:
+  house_party_protocol_on:
+    sequence:
+      - delay: 00:00:05
+      - service: script.status_annc
+        data:
+          who: "{{ states('sensor.room_presence') }}"
+          call_house_party_protocol_enabled: 1
+
+  house_party_protocol_off:
+    sequence:
+      - delay: 00:00:05
+      - service: script.status_annc
+        data:
+          who: "{{ states('sensor.room_presence') }}"
+          call_house_party_protocol_disabled: 1

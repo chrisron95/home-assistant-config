@@ -1,0 +1,89 @@
+esphome:
+  name: dining-room-sensors
+
+esp32:
+  board: esp32dev
+  framework:
+    type: arduino
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+
+ota:
+  password: "bd93132209194b9f9a32f0c06d11d7e1"
+
+wifi:
+  ssid: !secret wifi_downstairs_ssid
+  password: !secret wifi_password
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Dining-Room-Sensors"
+    password: "3VawVsMR6PlJ"
+
+captive_portal:
+    
+i2c:
+  sda: 21
+  scl: 22
+  scan: true
+  id: bus_a
+  
+sensor:
+  - platform: bh1750
+    name: "Dining Room Ambient Light"
+    address: 0x23
+    update_interval: 60s
+  
+  - platform: dht
+    pin: 18
+    temperature:
+      name: "Dining Room Temperature"
+    humidity:
+      name: "Dining Room Humidity"
+    model: DHT22
+    update_interval: 60s
+    
+  - platform: wifi_signal
+    name: "Dining Room Sensors WiFi Signal"
+    update_interval: 60s
+    
+  - platform: uptime
+    name: "Dining Room Sensors Uptime"
+    id: dining_room_sensors_uptime
+    update_interval: 60s
+    on_raw_value:
+      then:
+        - text_sensor.template.publish:
+            id: dining_room_sensors_uptime_human
+            state: !lambda |-
+              int seconds = round(id(dining_room_sensors_uptime).raw_state);
+              int days = seconds / (24 * 3600);
+              seconds = seconds % (24 * 3600);
+              int hours = seconds / 3600;
+              seconds = seconds % 3600;
+              int minutes = seconds /  60;
+              seconds = seconds % 60;
+              return (
+                (days ? to_string(days) + "d " : "") +
+                (hours ? to_string(hours) + "h " : "") +
+                (minutes ? to_string(minutes) + "m " : "") +
+                (to_string(seconds) + "s")
+              ).c_str();
+
+text_sensor:
+  - platform: template
+    name: Dining Room Sensors Uptime Human Readable
+    id: dining_room_sensors_uptime_human
+    icon: mdi:clock-start
+    entity_category: diagnostic
+    
+binary_sensor:
+  - platform: gpio
+    pin: 19
+    name: "Dining Room Motion"
+    device_class: motion
+    

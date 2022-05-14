@@ -1,0 +1,153 @@
+clean_up_snapshots_service:
+  host: !secret base_url
+  token: !secret clean_up_token
+  number_of_snapshots_to_keep: 3
+
+automation:
+  # Using the HACS Daily Snapshot Clean Up Plugin
+  - id: daily_snapshot_clean_up
+    alias: Daily snapshot clean up
+    trigger:
+      - platform: time
+        at: "03:00:00"
+    action:
+      - service: clean_up_snapshots_service.clean_up
+
+  - id: startup_automations
+    alias: Home Assistant Startup
+    description: ""
+    trigger:
+      - platform: homeassistant
+        event: start
+    condition: []
+    action:
+      - delay: 30
+      - service: notify.chris
+        data:
+          message: Home Assistant has started!
+          title: We're back!
+      - service: script.status_annc
+        data:
+          who: "{{ states('sensor.room_presence') }}"
+          call_inform_chime: 1
+          call_ha_started: 1
+      - service: button.press
+        data: {}
+        target:
+          entity_id: button.fire_tablet_load_start_url
+      # Sync Tasmota States
+      - service: mqtt.publish
+        data:
+          topic: cmnd/tasmotas/state
+          payload: ""
+      - service: homeassistant.update_entity
+        entity_id: sensor.chris_location
+      - service: homeassistant.update_entity
+        entity_id: sensor.steven_location
+      - service: frontend.set_theme
+        data:
+          name: ios-dark-mode-light-blue
+    mode: single
+
+  - alias: Update USPS Mail Camera Path on Hass Restart
+    trigger:
+      - platform: state
+        entity_id: sensor.mail_updated
+      - platform: homeassistant
+        event: start
+    action:
+      - service: local_file.update_file_path
+        data:
+          entity_id: camera.mail_usps
+          file_path: "{{ states('sensor.mail_image_system_path') }}"
+    id: f8a0798d6ebb4821845ed48dbf91cf83
+
+  - alias: Power Outage Alert
+    id: "1600452870216"
+    description: ""
+    trigger:
+      - platform: state
+        entity_id: sensor.cyberpower_status
+        from: Online
+        to: On Battery Battery Discharging
+    condition: []
+    action:
+      - service: notify.all_devices
+        data:
+          message: Power is out at home!
+          data:
+            push:
+              sound:
+                name: default
+                critical: 1
+    mode: single
+
+  - alias: Power Restored Alert
+    id: "1600453304153"
+    description: ""
+    trigger:
+      - platform: state
+        entity_id: sensor.cyberpower_status
+        from: On Battery Battery Discharging
+        to: Online
+    condition: []
+    action:
+      - service: notify.all_devices
+        data:
+          message: Power at home is restored.
+          data:
+            push:
+              sound:
+                name: default
+                critical: 1
+    mode: single
+
+  - alias: Battery Backup Unavailable Restart
+    id: "1617220336703"
+    description: ""
+    trigger:
+      - platform: state
+        entity_id: sensor.cyberpower_status
+        to: unavailable
+        from: Online
+    condition: []
+    action:
+      - service: hassio.addon_restart
+        data:
+          addon: a0d7b954_nut
+    mode: single
+
+  - alias: NUT Auto Restart
+    id: "1617758977383"
+    description: ""
+    trigger:
+      - platform: state
+        entity_id: sensor.cyberpower_status
+        attribute: state
+        to: Unavailable
+    condition:
+      - condition: state
+        entity_id: input_boolean.nut_restarted
+        state: "off"
+    action:
+      - service: hassio.addon_restart
+        data:
+          addon: a0d7b954_nut
+      - service: input_boolean.turn_on
+        target:
+          entity_id: input_boolean.nut_restarted
+      - wait_template: 00:05:00
+      - service: input_boolean.turn_off
+        target:
+          entity_id: input_boolean.nut_restarted
+    mode: single
+
+  - alias: Certificate Expiration Alert
+    id: "1615916791727"
+    description: ""
+    use_blueprint:
+      path: bkbilly/certificate-expiration.yaml
+      input:
+        time_input: "15:00:00"
+        certificate_input: sensor.cert_expiry_timestamp_home_chrisheder_com
+        notify_device: 8a29ce795dc898ced035043888d04070

@@ -1,0 +1,64 @@
+homeassistant:
+  # Name of the location where Home Assistant is running
+  name: Home
+  # URLs for Home Assistant
+  internal_url: !secret internal_url
+  external_url: !secret external_url
+  # Location required to calculate the time the sun rises and sets
+  latitude: 26.224038
+  longitude: -80.295240
+  # Impacts weather/sunrise data (altitude above sea level in meters)
+  elevation: 0
+  # metric for Metric, imperial for Imperial
+  unit_system: imperial
+  # Pick yours from here: http://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+  time_zone: America/New_York
+  # Customization file
+  customize: !include customize.yaml
+  # Include packages
+  packages: !include_dir_named packages
+
+# Configure a default setup of Home Assistant (frontend, api, etc)
+default_config:
+
+ios:
+
+# Include external files
+automation: !include automations.yaml
+group: !include groups.yaml
+light: !include lights.yaml
+scene: !include scenes.yaml
+script: !include scripts.yaml
+sensor: !include sensors.yaml
+switch: !include switches.yaml
+cloud: !include cloud.yaml
+media_player: !include media_players.yaml
+
+frontend:
+  themes: !include_dir_merge_named themes
+  extra_module_url:
+    - /hacsfiles/lovelace-card-mod/card-mod.js
+
+wake_on_lan:
+
+panel_iframe:
+  tasmoadmin:
+    title: TasmoAdmin
+    icon: mdi:lightbulb-on
+    url: https://192.168.1.70:9541
+  tautulli:
+    title: Tautulli
+    icon: mdi:filmstrip
+    url: http://192.168.1.70:8181
+
+shell_command:
+  mac_desktop_restart: "ssh -i /config/ssh/id_rsa -o StrictHostKeyChecking=no chris@192.168.1.34 sudo shutdown -r now"
+  mac_desktop_turn_off_display: "ssh -i /config/ssh/id_rsa -o StrictHostKeyChecking=no chris@192.168.1.34 pmset displaysleepnow"
+  mac_desktop_start_screensaver: "ssh -i /config/ssh/id_rsa -o StrictHostKeyChecking=no chris@192.168.1.34 /System/Library/CoreServices/ScreenSaverEngine.app/Contents/MacOS/ScreenSaverEngine"
+
+http:
+  ip_ban_enabled: true
+  login_attempts_threshold: 5
+  use_x_forwarded_for: true
+  trusted_proxies:
+    - 172.30.33.0/24

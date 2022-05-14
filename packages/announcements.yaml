@@ -1,0 +1,153 @@
+###############################################################################
+#   @author         :   Jeffrey Stone
+#   @date           :   02/19/2019
+#   @package        :   Announcements
+#   @description    :   Daily Announcements.
+#
+#   @modified by    :   Chris Heder (@chrisron95)
+#   @date           :   05/12/2022
+###############################################################################
+
+###############################
+# input_datetime - So the time report automation fires can be set in the UI
+###############################
+input_datetime:
+  wakeup:
+    name: Wakeup Time
+    has_date: false
+    has_time: true
+  morning_report:
+    name: Morning Report
+    has_date: false
+    has_time: true
+  nightly_report:
+    name: Nightly Report
+    has_date: false
+    has_time: true
+  daily_report:
+    name: Daily Report
+    has_date: false
+    has_time: true
+  audible_notification_on:
+    name: Audible Notifications On
+    has_date: false
+    has_time: true
+  audible_notification_off:
+    name: Audible Notifications Off
+    has_date: false
+    has_time: true
+
+################################
+# Announcment Automation - fires at the time of the above input_datetimes
+################################
+automation:
+  - id: 81bee5ee-6820-4626-aebf-3deb8de69e4d
+    alias: Turn On Audible Notifications
+    initial_state: true
+    trigger:
+      platform: template
+      value_template: "{{ states('sensor.time') == (state_attr('input_datetime.audible_notification_on', 'timestamp') | int | timestamp_custom('%H:%M', False)) }}"
+    action:
+      - service: input_boolean.turn_on
+        entity_id: input_boolean.audible_notifications
+
+  # Turn off audible notifications if they have't been turned off yet.
+  - id: e0e9c774-6abe-42aa-bdab-32108bebb0e9
+    alias: Turn Off Audible Notifications
+    initial_state: true
+    trigger:
+      - platform: template
+        value_template: "{{ states('sensor.time') == (state_attr('input_datetime.audible_notification_off', 'timestamp') | int | timestamp_custom('%H:%M', False)) }}"
+    condition:
+      - condition: state
+        entity_id: input_boolean.audible_notifications
+        state: "on"
+    action:
+      - service: input_boolean.turn_off
+        entity_id: input_boolean.audible_notifications
+
+  - id: time_for_bed_annc
+    alias: Time For Bed Announcement
+    mode: single
+    trigger:
+      - platform: time
+        at: "22:30:00"
+    condition: []
+    action:
+      - service: script.status_annc
+        data:
+          who: everywhere
+          call_time_for_bed: 1
+      - service: script.status_annc
+        data:
+          who: "{{ states('sensor.room_presence') }}"
+          speech_message: <p> {{ states('sensor.current_conditions')}} </p>
+
+script:
+  welcome_briefing:
+    sequence:
+      - condition: state
+        entity_id: input_boolean.welcome_home
+        state: "on"
+      - wait_for_trigger:
+          - platform: state
+            entity_id: binary_sensor.front_door
+            from: "off"
+            to: "on"
+      - delay:
+          hours: 0
+          minutes: 0
+          seconds: 10
+          milliseconds: 0
+      - service: script.speech_engine
+        data:
+          who: main
+          message: !include ../templates/speech/welcome_briefing.yaml
+      - delay: 00:02:00
+      - service: input_boolean.turn_off
+        entity_id: input_boolean.welcome_home
+
+  sundown_briefing:
+    sequence:
+      - service: script.speech_engine
+        data:
+          who: "{{ states('sensor.room_presence') }}"
+          message: !include ../templates/speech/sundown_briefing.yaml
+      - service: script.text_notify
+        data:
+          who: "all_ios"
+          message: "Sun is almost down. Time to call it a day."
+
+  morning_briefing:
+    sequence:
+      - service: script.speech_engine
+        data:
+          who: kitchen
+          message: !include ../templates/speech/daily_briefing.yaml
+
+  daily_briefing:
+    sequence:
+      - service: script.speech_engine
+        data:
+          who: "{{ states('sensor.room_presence') }}"
+          message: !include ../templates/speech/daily_briefing.yaml
+
+  morning_wakeup_report:
+    sequence:
+      - service: media_player.play_media
+        target:
+          entity_id: media_player.chris_s_echo_show
+        data:
+          media_content_type: sound
+          media_content_id: amzn_sfx_rooster_crow_01
+      - service: script.speech_engine
+        data:
+          who: bedroom
+          message: !include ../templates/speech/morning_wakeup_report.yaml
+
+  test_template_messages:
+    sequence:
+      - service: script.speech_engine
+        data:
+          who: "{{ who }}"
+          message: !include ../templates/speech/sundown_briefing.yaml

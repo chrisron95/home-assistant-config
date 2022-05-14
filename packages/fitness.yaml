@@ -1,0 +1,25 @@
+utility_meter:
+  chris_daily_steps:
+    name: Chris Daily Steps
+    source: sensor.chriss_iphone_steps
+    cycle: daily
+  steven_daily_steps:
+    name: Steven Daily Steps
+    source: sensor.stevens_iphone_steps
+    cycle: daily
+  chris_weekly_steps:
+    name: Chris Weekly Steps
+    source: sensor.chriss_iphone_steps
+    cycle: weekly
+  steven_weekly_steps:
+    name: Steven Weekly Steps
+    source: sensor.stevens_iphone_steps
+    cycle: weekly
+  chris_monthly_steps:
+    name: Chris Monthly Steps
+    source: sensor.chriss_iphone_steps
+    cycle: monthly
+  steven_monthly_steps:
+    name: Steven Monthly Steps
+    source: sensor.stevens_iphone_steps
+    cycle: monthly

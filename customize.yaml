@@ -1,0 +1,14 @@
+light.bedroom_fan_lights:
+  icon: mdi:ceiling-fan-light
+
+light.front_hall_light:
+  icon: mdi:ceiling-light
+
+media_player.living_room_pioneer:
+  icon: mdi:speaker-multiple
+
+media_player.lab_tv:
+  device_class: tv
+
+binary_sensor.lab_bathroom_motion:
+  device_class: motion

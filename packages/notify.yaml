@@ -1,0 +1,864 @@
+###############################################################################
+#   @author         :   Jeffrey Stone
+#   @date           :   02/19/2019
+#   @package        :   Notify
+#   @description    :   A Collection of Notification Scripts and Configs.
+#                       Package modified from https://github.com/skalavala/smarthome/blob/master/packages/notify.yaml with inspiration
+#                       from https://github.com/CCOSTAN/Home-AssistantConfig/blob/master/config/script/speech_engine.yaml
+#
+#   @modified by    :   Chris Heder (@chrisron95)
+#   @date           :   05/12/2022
+###############################################################################
+
+###############################################################################
+# AWS Polly Options:
+# pause:
+#   <break time="3s"/>
+# emphasis:
+#   <emphasis level="strong">really like</emphasis>
+#   level attribute values:
+#     Strong: Increases the volume and slows the speaking rate so that the speech is louder and slower.
+#     Moderate: Increases the volume and slows the speaking rate, but less than strong. Moderate is the default.
+#     Reduced: Decreases the volume and speeds up the speaking rate. Speech is softer and faster.
+# Pause Between Paragraphs:
+#   Wrap text in <p> </p>
+# Adding a Pause Between Sentences:
+#   Ending a sentence with a period (.)
+# Controlling How Special Types of Words Are Spoken:
+#   <say-as interpret-as="value">[text to be interpreted]</say-as>
+#   characters or spell-out: Spells out each letter of the text, as in a-b-c.
+#   cardinal or number: Interprets the numerical text as a cardinal number, as in 1,234.
+#   ordinal: Interprets the numerical text as an ordinal number, as in 1,234th.
+#   digits: Spells out each digit individually, as in 1-2-3-4.
+#   fraction: Interprets the numerical text as a fraction. This works for both common fractions such as 3/20, and mixed fractions, such as 2 ½. See below for more information.
+#   unit: Interprets a numerical text as a measurement. The value should be either a number or a fraction followed by a unit with no space in between as in 1/2inch, or by just a unit, as in 1meter.
+#   date: Interprets the text as a date. The format of the date must be specified with the format attribute. See below for more information.
+#   time: Interprets the numerical text as duration, in minutes and seconds, as in 1'21".
+#   address: Interprets the text as part of a street address.
+#   expletive: "Beeps out" the content included within the tag.
+################################################################################
+
+# Text to speech
+tts:
+  - platform: google_translate
+    cache: true
+    cache_dir: /tmp/tts
+    time_memory: 300
+
+# alert:
+
+group:
+  echos:
+    name: All Echos
+    entities:
+      - media_player.living_room_echo
+      - media_player.lab_echo_dot
+      - media_player.kitchen_echo_dot
+      - media_player.chris_s_echo_flex
+      - media_player.chris_s_ecobee4
+      - media_player.chris_s_sonos_roam
+      - media_player.chriss_sonos_roam
+      - media_player.chris_s_fire
+      - media_player.chris_s_echo_auto
+      - media_player.chris_s_echo_show
+
+  echos_main:
+    name: All Main Echos
+    entities:
+      - media_player.living_room_echo
+      - media_player.lab_echo_dot
+      - media_player.kitchen_echo_dot
+      - media_player.chris_s_echo_flex
+      - media_player.chris_s_echo_show
+
+sensor:
+  # Amazon Polly Sensors to see last message and location of audible notification
+  - platform: mqtt
+    name: "Last Audible Msg"
+    state_topic: "house/speech/lastmsg"
+  - platform: mqtt
+    name: "Last Audible Msg Location"
+    state_topic: "house/speech/lastloc"
+
+template:
+  - sensor:
+      - name: last_alexa
+        state: >
+          {{ expand('group.echos') | selectattr('attributes.last_called','eq',True) | map(attribute='entity_id') | first }}
+        availability: >
+          {{ expand('group.echos') | selectattr('attributes.last_called','eq',True) | first is defined }}
+
+input_boolean:
+  text_notify_chris:
+    name: Send Texts to Chris
+    icon: mdi:cellphone-message
+  text_notify_steven:
+    name: Send Texts to Steven
+    icon: mdi:cellphone-message
+  text_notifications:
+    name: Text Notifications
+    icon: mdi:cellphone-message
+  presence_text_notifications:
+    name: Presence Texts
+    icon: mdi:cellphone-message
+  notifications_audio:
+    name: Audio Notifications
+    icon: mdi:text-to-speech
+  presence_audio_notifications:
+    name: Presence Audio
+    icon: mdi:text-to-speech
+  audible_notifications:
+    name: Audible Notifications
+    icon: mdi:text-to-speech
+  presence_notifications_chris:
+    name: Send Chris Presence Texts
+    icon: mdi:cellphone-message
+  presence_notifications_steven:
+    name: Send Steven Presence Texts
+    icon: mdi:cellphone-message
+  lockdown_notification:
+    name: Lockdown Notifications
+    icon: mdi:text-to-speech
+  trash_notification:
+    name: Trash Notification
+    icon: mdi:cellphone-message
+  welcome_home:
+    name: Welcome Home
+  welcome_greeting:
+    name: Welcome Greeting
+    icon: mdi:speaker-wireless
+  debug_texts:
+    name: Debug Texts
+
+input_text:
+  alexa_voice:
+    name: Alexa Voice
+
+notify:
+  - name: all_devices
+    platform: group
+    services:
+      - service: mobile_app_chriss_iphone
+      - service: mobile_app_chriss_ipad
+      - service: mobile_app_stevens_iphone
+      - service: living_room_tv
+      - service: lab_tv
+  - name: chris
+    platform: group
+    services:
+      - service: mobile_app_chriss_iphone
+      - service: mobile_app_chriss_ipad
+  - name: steven
+    platform: group
+    services:
+      - service: mobile_app_stevens_iphone
+  - name: all_ios
+    platform: group
+    services:
+      - service: mobile_app_chriss_iphone
+      - service: mobile_app_chriss_ipad
+      - service: mobile_app_stevens_iphone
+  - name: tvs
+    platform: group
+    services:
+      - service: living_room_tv
+      - service: lab_tv
+
+script:
+  ###############################################################################
+  # Txt Notify
+  ###############################################################################
+  text_notify_all:
+    sequence:
+      - service: notify.all_devices
+        data:
+          title: >
+            {{ title }}
+          message: >
+            {{ message }}
+
+  text_debug:
+    sequence:
+      - condition: state
+        entity_id: input_boolean.debug_texts
+        state: "on"
+      - service: notify.chris
+        data:
+          title: >
+            {{ title }}
+          message: >
+            {{ message }}
+
+  text_notify_chris:
+    sequence:
+      - condition: state
+        entity_id: input_boolean.text_notify_chris
+        state: "on"
+      - service: notify.chris
+        data:
+          title: >
+            {{ title }}
+          message: >
+            {{ message }}
+
+  text_notify_steven:
+    sequence:
+      - condition: state
+        entity_id: input_boolean.text_notify_steven
+        state: "on"
+      - service: notify.steven
+        data:
+          title: >
+            {{ title }}
+          message: >
+            {{ message }}
+
+  text_notify:
+    sequence:
+      - condition: state
+        entity_id: input_boolean.text_notifications
+        state: "on"
+      - choose:
+          - conditions:
+              - condition: template
+                value_template: '{{ who == "chris"}}'
+              - condition: state
+                entity_id: input_boolean.text_notify_chris
+                state: "on"
+            sequence:
+              - service: notify.chris
+                data:
+                  title: "{{ title }}"
+                  message: "{{ message }}"
+          - conditions:
+              - condition: template
+                value_template: '{{ who == "steven"}}'
+              - condition: state
+                entity_id: input_boolean.text_notify_steven
+                state: "on"
+            sequence:
+              - service: notify.steven
+                data:
+                  title: "{{ title }}"
+                  message: "{{ message }}"
+          - conditions:
+              - condition: template
+                value_template: '{{ who == "all_ios"}}'
+            sequence:
+              - service: notify.all_ios
+                data:
+                  title: "{{ title }}"
+                  message: "{{ message }}"
+        default:
+          - service: notify.all_devices
+            data:
+              title: "{{ title }}"
+              message: "{{ message }}"
+
+  text_alert:
+    sequence:
+      - service: >
+          {% if who == 'chris' %}
+            notify.chris
+          {% elif who == 'steven' %}
+            notify.steven
+          {% else %}
+            notify.all_devices
+          {% endif %}
+        data:
+          title: "{{ title }}"
+          message: "{{ message }}"
+          #data:
+          #   attachment:
+          #     url: '{{ url }}'
+          #     content-type: '{{ content_type }}'
+          #     hide-thumbnail: false
+          #  push:
+          #     sound: '{{ ios_sound }}'
+          #    badge: 0
+          #     category: '{{ ios_category }}'
+          #   entity_id: '{{ camera_entity }}'
+
+  text_alert_image:
+    sequence:
+      - service: >
+          {% if who == 'chris' %}
+            notify.chris
+          {% elif who == 'steven' %}
+            notify.steven
+          {% else %}
+            notify.all_ios
+          {% endif %}
+        data:
+          title: "{{ title }}"
+          message: "{{ message }}"
+          data:
+            attachment:
+              url: "{{ url }}"
+              content-type: "{{ content_type }}"
+              hide-thumbnail: false
+          #  push:
+          #     sound: '{{ ios_sound }}'
+          #    badge: 0
+          #     category: '{{ ios_category }}'
+          #   entity_id: '{{ camera_entity }}'
+
+  text_urgent_alert:
+    sequence:
+      - service: >
+          {% if who == 'chris' %}
+            notify.chris
+          {% elif who == 'steven' %}
+            notify.steven
+          {% else %}
+            notify.all_ios
+          {% endif %}
+        data:
+          title: "{{ title }}"
+          message: "{{ message }}"
+          data:
+            push:
+              sound:
+                name: default
+                critical: 1
+  ###############################################################################
+  # Voice Notify
+  # Conditions:
+  #   => Only Announce when people are home.
+  #   => Only Announce when Audible Notifications are on
+  ###############################################################################
+
+  speech_engine:
+    sequence:
+      - service: mqtt.publish
+        data:
+          topic: "house/speech/lastmsg"
+          payload: 'This message is from {{ now().strftime("%-I") }}:{{ now().strftime("%M") }} {{ now().strftime("%p") }}. {{ message | striptags | truncate(220)}}'
+          retain: true
+      - service: mqtt.publish
+        data:
+          topic: "house/speech/lastloc"
+          payload: "{{ who }}"
+          retain: true
+      - condition: state
+        entity_id: input_boolean.audible_notifications
+        state: "on"
+      #  - condition: state
+      #    entity_id: group.family
+      #    state: "home"
+      - condition: state
+        entity_id: input_boolean.vacation_mode
+        state: "off"
+      - service: script.alexa_voice
+        data:
+          who: "{{ who }}"
+          message: >
+            {{ message }}
+
+  # Called wheh notification needs to play on echos
+  alexa_voice:
+    sequence:
+      - variables:
+          echo: >
+            {% if who in ['kitchen_echo_dot','media_player.kitchen_echo_dot','kitchen'] %}
+              kitchen_echo_dot
+            {% elif who in ['chris_s_echo_show','media_player.chris_s_echo_show','bedroom'] %}
+              chris_s_echo_show
+            {% elif who in ['living_room_echo','media_player.living_room_echo','living_room','dining_room'] %}
+              living_room_echo
+            {% elif who in ['lab_echo_dot','media_player.lab_echo_dot','lab'] %}
+              lab_echo_dot
+            {% elif who in ['chris_s_echo_flex','media_player.chris_s_echo_flex','garage'] %}
+              chris_s_echo_flex
+            {% elif who in ['_chris_s_ecobee4','media_player._chris_s_ecobee4','ecobee','hallway'] %}
+              chris_s_ecobee4
+            {% elif who in ['chris_s_fire','media_player.chris_s_fire','fire','tablet','wall_tablet'] %}
+              chris_s_fire
+            {% elif who in ['chris_s_echo_auto','media_player.chris_s_echo_auto','truck'] %}
+              chris_s_echo_auto
+            {% elif who in ['chris_s_sonos_roam','chriss_sonos_roam','media_player.chris_s_sonos_roam','media_player.chriss_sonos_roam','sonos_roam'] %}
+              chris_s_sonos_roam
+            {% elif who in ['everywhere'] %}
+              everywhere
+            {% else %}
+              living_room_echo
+            {% endif %}
+      - alias: Set echo volume if needed
+        choose:
+          - conditions:
+              - condition: state
+                entity_id: input_boolean.audible_notifications
+                state: "on"
+            sequence:
+              - choose:
+                  - conditions:
+                      - condition: not
+                        conditions:
+                          - condition: template
+                            value_template: >
+                              {{ is_state_attr('media_player.' + echo, 'volume_level', 0.6) }}
+                    sequence:
+                      - service: media_player.volume_set
+                        data:
+                          volume_level: 0.6
+                        target:
+                          entity_id: media_player.{{ echo }}
+                default: []
+          - conditions:
+              - condition: state
+                entity_id: input_boolean.audible_notifications
+                state: "off"
+            sequence:
+              - choose:
+                  - conditions:
+                      - condition: not
+                        conditions:
+                          - condition: template
+                            value_template: >
+                              {{ is_state_attr('media_player.' + echo, 'volume_level', 0.3) }}
+                    sequence:
+                      - service: media_player.volume_set
+                        data:
+                          volume_level: 0.3
+                        target:
+                          entity_id: media_player.{{ echo }}
+                default: []
+        default: []
+      - service: notify.alexa_media
+        data:
+          message: >
+            <voice name="{{ states('input_text.alexa_voice') }}">
+            <prosody rate="fast">
+            {{ message }}
+            </prosody>
+            </voice>
+          target: >
+            {% if who == 'everywhere' %}
+              group.echos_main
+            {% else %}
+              media_player.{{ echo }}
+            {% endif %}
+          data:
+            type: tts
+
+  alexa_interjection:
+    sequence:
+      - service: script.status_annc
+        data:
+          who: "{{ states('sensor.last_alexa')}}"
+          call_confirmation: 1
+
+  ###############################################################################
+  # Status Announcements
+  ###############################################################################
+  status_annc:
+    sequence:
+      - service: script.speech_engine
+        data:
+          who: "{{ who }}"
+          message: >-
+            {% macro greeting() %}
+              <p>
+              {% if now().strftime('%H')|int < 12%}
+                Good morning.
+              {% elif now().strftime('%H')|int >= 12 and now().strftime('%H')|int < 17 %}
+                Good afternoon.
+              {% else %}
+                Good evening.
+              {% endif %}
+              </p>
+            {% endmacro %}
+
+            {% macro boop() %}
+              <audio src='https://heder-homeassistant.s3.amazonaws.com/good-place-boop.mp3'/>
+            {% endmacro %}
+
+            {% macro inform_chime() %}
+              <audio src='https://heder-homeassistant.s3.amazonaws.com/youve-been-informed.mp3'/>
+            {% endmacro %}
+
+            {% macro jetsons_chime() %}
+              <audio src='https://heder-homeassistant.s3.amazonaws.com/jetsons-tune.mp3'/>
+            {% endmacro %}
+
+            {% macro doorbell_chime() %}
+              <audio src='https://heder-homeassistant.s3.amazonaws.com/{{ states("input_select.doorbell_sound") }}.mp3'/>
+            {% endmacro %}
+
+            {% macro confirmation() %}
+              <p>
+              {{ [
+              'Okay.',
+              'If you insist.',
+              'I am afraid I can not do that <break time="1s"/> I am kidding,',
+              'Leave it to me.',
+              'As you wish.',
+              'I am on it.',
+              'No Problem.',
+              'I think I can handle that.',
+              'Working on it now.',
+              '<break time="2s"/> Oh, you were talking to me. Let me take care of that.',
+              'Why not. It is not like I ever sleep.',
+              'I am not even supposed to be here today. But whatever.',
+              'You did not say the magic word. <break time="1s"/> Oh forget it. I will take care of it.',
+              'Funny, I was just about to do that.',
+              'There are still terabytes of calculations required before I can.<break time="1s"/> Oh, whatever.'
+              ] | random }}
+              </p>
+            {% endmacro %}
+
+            {% macro interuption() %}
+              <p>
+              {{ [
+                  'Pardon me, ',
+                  'Excuse me, ',
+                  'I do not mean to interrupt, but,',
+                  'I hate to interrupt, but,',
+                  'I beg your pardon, ',
+                  'I do not mean to intrude, but, ',
+                  'I am sorry to interrupt, but. ',
+                  'Just a quick heads up, '
+                  ] | random }}
+              </p>
+            {% endmacro %}
+
+            {% macro goodbye() %}
+              <p>
+              {{ [
+                  'Goodbye sir, see you soon.',
+                  'Farwell, until we meet again.',
+                  'Have a great day sir.',
+                  'I shall keep the house protected while you are gone.',
+                  'Not to worry, I will not throw any parties while you are out.',
+                  'I will keep the cats entertained while you are gone',
+                  'Very well sir, have a nice day',
+                  'Goodbye sir, drive safe'
+                  ] | random }}
+              </p>
+            {% endmacro %}
+
+            {% macro goodnight() %}
+              <p>
+              {{ [
+                  'Goodnight you two.',
+                  'Goodnight sir.',
+                  'Sleep well sir.',
+                  'Goodnight sir, I will monitor the house while you sleep.',
+                  'Goodnight sir, sleep tight.',
+                  'Goodnight sir, pleasant dreams.',
+                  'Have a good night sir, dont let the bedbugs bite'
+                  ] | random }}
+              </p>
+            {% endmacro %}
+
+            {% macro good_morning() %}
+              <p>
+              {{ [
+                  'Good morning sir.',
+                  'Good morning.',
+                  'Rise and shine!',
+                  'Good morning, sleepy head.',
+                  'Wakey wakey, sleepy head.',
+                  'Good day to you!',
+                  'Good morning sir, time to wipe the crust from your eyes.',
+                  'Good morning sir, time to start the day.'
+                  ] | random }}
+              </p>
+            {% endmacro %}
+
+            {% macro time_for_bed() %}
+              <p>
+              {{ [
+                  '<say-as interpret-as="interjection">ahem!</say-as> Its time for bed sir. ',
+                  'Its time for bed sir. ',
+                  'Its that time again sir. ',
+                  'Its time for bed. ',
+                  'Its time for bed. <break time="2s"/> Yup, this is my job now. ',
+                  'Its time for bed sir <break time="2s"/> I like this job. ',
+                  'Its time for bed sir <break time="2s"/> or just stay up forever. What do I care? '
+                  ] | random }}
+              </p>
+            {% endmacro %}
+
+            {% macro ha_started() %}
+              <p>
+              {{ [
+                  'All systems are operational again. ',
+                  'I am back, sir. Not to worry. ',
+                  'I am back online. Nice to see you, sir. ',
+                  'Your home assistant is back online, sir. ',
+                  'My systems are back online. Hello, sir. '
+                  ] | random }}
+              </p>
+            {% endmacro %}
+
+            {% macro issue() %}
+              <p>
+              {{ [
+                  'Header House Emergency Alert!',
+                  'Header House, We have a problem!',
+                  'You might not like this.',
+                  'There is something that needs your attention.'
+                  ] | random }}
+              </p>
+            {% endmacro %}
+
+            {% macro time_is() %}
+              <p>
+              It is {{ now().strftime("%I:%M %p") }}
+              </p>
+            {% endmacro %}
+
+            {% macro lightning_alert() %}
+                {{ [
+                  'I have detected lightning withing 20 miles of Header House.',
+                  'Did you see that flash? I did. Lightning is near.',
+                  'If you didnt hear the thunder you will soon. '
+                ]|random }}
+                  If anyone is outside they shoudld seek shelter inside.
+            {% endmacro %}
+
+            {% macro lightning_clear() %}
+                {{ [
+                  'Lightning threat appears to be over.',
+                  'No more lightning appears to be occuring.',
+                  'Lightning is gone.'
+              ]|random }}
+                It is safe to resume normal activities.
+            {% endmacro %}
+
+            {% macro chris_location() %}
+              {% if is_state('input_boolean.chris_travel_monitor', 'on') %}
+                Chris appears to be headed home. Based on current traffic conditions, he should be here in {{state_attr('sensor.chris_ett_home', 'duration') | round}} minutes.
+              {% else %}
+                {%- if states('sensor.chriss_iphone_activity') == 'automotive' %}
+                  Chris is currenly moving, and at last check was {{state_attr('sensor.chris_ett_home', 'duration') | round}} minutes from home.
+                {% else %}
+                  {% if is_state('sensor.chris_location', 'home') %}
+
+                  {% elif is_state('sensor.chris_location', 'Lost') %}
+                    Chris is lost, and at last check was {{state_attr('sensor.chris_ett_home', 'duration') | round}} minutes from home.
+                  {% else %}
+                    Chris is currently at {{ states('sensor.chris_location') }}, and at last check was {{state_attr('sensor.chris_ett_home', 'duration') | round}} minutes from home.
+                  {% endif %}
+                {% endif %}
+              {% endif %}
+            {% endmacro %}
+
+            {% macro steven_location() %}
+              {% if is_state('input_boolean.steven_travel_monitor', 'on') %}
+                {%- if states('sensor.stevens_iphone_activity') == 'automotive' %}
+                  Steven is currenly moving, and At last check was {{state_attr('sensor.steven_ett_home', 'duration') | round}} minutes from home.
+                {% else %}
+                  {% if is_state('sensor.steven_location', 'Lost') %}
+                    I cannot determine Stevens exact location, but at last check was {{state_attr('sensor.steven_ett_home', 'duration') | round}} minutes from home.
+                  {% else %}
+                    Steven is currently at {{ states('sensor.steven_location') }}, and at last check was {{state_attr('sensor.steven_ett_home', 'duration') | round}} minutes from home.
+                  {% endif %}
+                {% endif %}
+              {% endif %}
+            {% endmacro %}
+
+            {% macro chris_headed_home() %}
+              Chris appears to be headed home. Based on current traffic conditions, he should be here in {{state_attr('sensor.chris_ett_home', 'duration') | round}} minutes.
+            {% endmacro %}
+
+            {% macro steven_headed_home() %}
+              Steven appears to be headed home. Based on current traffic conditions, he should be here in {{state_attr('sensor.steven_ett_home', 'duration') | round}} minutes.
+            {% endmacro %}
+
+            {% macro iss() %}
+              {{ [
+                  'But the International Space Station is passing over. Wave.',
+                  'But The International Space Station just flew by.',
+                  'But if you were to look up right now, and it was dark outside, and you happened to be looking in the right place you would see the International Space Station go by. But, it has already passed.'
+                  ] | random}}
+            {% endmacro %}
+
+            {%- macro house_party_protocol_enabled() -%}
+              {{ [
+                'Header House has been configured for a House Party.',
+                'I have enabled house party protocol.'
+                ] | random }}
+            {%- endmacro -%}
+
+            {%- macro house_party_protocol_disabled() -%}
+              {{ [
+                'The House Party has been canceled.',
+                'I have disabled house party protocol.'
+                ] | random }}
+            {%- endmacro -%}
+
+            {%- macro snark_doorbell() -%}
+              {{ [
+                'Someone is at the door. Do you want me to send them away?',
+                'There is someone at the door. I have armed the lasers. Just say the word.',
+                'Someone is at the front door. I was not informed there would be guests.',
+                'Someone is at the door. They do not appear to have any gifts, so I suggest we do not open it.',
+                'My sensors have detected a meat popsicle at the front door.',
+                'Someone seems to be at the door. I do not think they can hear me.'
+                ] | random }}
+            {%- endmacro -%}
+
+            {%- macro snark_door_motion() -%}
+              {{ [
+                'I have detected motion at the front door. Do you want me to send them away?',
+                'My sensors detect motion out front. I have armed the lasers, Just say the word.',
+                'There is motion at the front door. I was not informed there would be guests.',
+                'My sensors have detected a meat popsicle at the front door.',
+                'Someone seems to be at the door. I do not think they can hear me.'
+                ] | random }}
+            {%- endmacro -%}
+
+            {%- macro snark_door_open() -%}
+              {{ [
+                'Would you like me to calulate how much air conditioning is being wasted? Spoiler Alert, you are not going to like the answer.',
+                'I have detected a large number of insects entering the house.',
+                'Can a human be so kind and close it?',
+                'The air quality in this house has actually improved.',
+                'Closing the door would improve the security of the house.',
+                'Hey. The door was just opened and this is crazy. But now you know, So Close it maybe.'
+                ] | random }}
+            {%- endmacro -%}
+
+            {%- macro print_complete() -%}
+              {{ [
+                'Well, its <emphasis level="strong">about time</emphasis>. Your 3 d print has completed.',
+                'Your 3 d print has completed. You should go check it, I know you wanna.',
+                'Your wait is <emphasis level="strong">finally</emphasis> over. The 3d print has completed.',
+                'Your 3 d print is done. I am sure this one will be <emphasis level="strong">very</emphasis> useful.',
+                'Your totally useful 3d print is complete. You should go get it.',
+                'Pardon me, but your 3d print is complete. I would retrieve it for you myself, but you have yet to give me arms.'
+                ] | random }}
+            {%- endmacro -%}
+
+            {# a macro that removes all newline characters, empty spaces, and returns formatted text. Also replaces all Underscores with Spaces #}
+            {%- macro cleanup(data) -%}
+              {%- for item in data.split("\n")  if item | trim != "" -%}
+                {{ item | trim | replace("_", " ") }} {% endfor -%}
+            {%- endmacro -%}
+
+            {# ********************************************* #}
+            {#  ******** Start the Speech routines ********  #}
+            {# ********************************************* #}
+            {# a macro to call all macros :)  #}
+            {%- macro mother_of_all_macros() -%}
+              {% if call_boop == 1 %}
+                {{ boop() }}
+              {% endif %}
+
+              {% if call_inform_chime == 1 %}
+                {{ inform_chime() }}
+              {% endif %}
+
+              {% if call_jetsons_chime == 1 %}
+                {{ jetsons_chime() }}
+              {% endif %}
+
+              {% if call_doorbell_chime == 1 %}
+                {{ doorbell_chime() }}
+              {% endif %}
+
+              {% if call_greeting == 1 %}
+                {{ greeting() }}
+              {% endif %}
+
+              {% if call_confirmation == 1 %}
+                {{ confirmation() }}
+              {% endif %}
+
+              {% if call_interuption == 1 %}
+                {{ interuption() }}
+              {% endif %}
+
+              {% if call_goodbye == 1 %}
+                {{ goodbye() }}
+              {% endif %}
+
+              {% if call_goodnight == 1 %}
+                {{ goodnight() }}
+              {% endif %}
+
+              {% if call_good_morning == 1 %}
+                {{ good_morning() }}
+              {% endif %}
+
+              {% if call_time_for_bed == 1 %}
+                {{ time_for_bed() }}
+              {% endif %}
+
+              {% if call_ha_started == 1 %}
+                {{ ha_started() }}
+              {% endif %}
+
+              {% if call_issue == 1 %}
+                {{ issue() }}
+              {% endif %}
+
+              {% if call_time_is == 1 %}
+                {{ time_is() }}
+              {% endif %}
+
+              {% if call_lightning_alert == 1 %}
+                {{ lightning_alert() }}
+              {% endif %}
+
+              {% if call_lightning_clear == 1 %}
+                {{ lightning_clear() }}
+              {% endif %}
+
+              {% if call_chris_location == 1 %}
+                {{ chris_location() }}
+              {% endif %}
+
+              {% if call_steven_location == 1 %}
+                {{ steven_location() }}
+              {% endif %}
+
+              {% if call_chris_headed_home == 1 %}
+                {{ chris_headed_home() }}
+              {% endif %}
+
+              {% if call_steven_headed_home == 1 %}
+                {{ steven_headed_home() }}
+              {% endif %}
+
+              {% if call_traffic_conditions == 1 %}
+                {{ traffic_conditions() }}
+              {% endif %}
+
+              {% if call_iss == 1 %}
+                {{ iss() }}
+              {% endif %}
+
+              {% if call_print_complete == 1 %}
+                {{ print_complete() }}
+              {% endif %}
+
+              {% if call_house_party_protocol_enabled == 1 %}
+                {{ house_party_protocol_enabled() }}
+              {% endif %}
+
+              {% if call_house_party_protocol_disabled == 1 %}
+                {{ house_party_protocol_disabled() }}
+              {% endif %}
+
+              {{ welcome_home }}
+
+              {{ speech_message }}
+
+              {% if call_snark_doorbell == 1 %}
+                {{ snark_doorbell() }}
+              {% endif %}
+
+              {% if call_snark_door_motion == 1 %}
+                {{ snark_door_motion() }}
+              {% endif %}
+
+              {% if call_snark_door_open == 1 %}
+                {{ snark_door_open() }}
+              {% endif %}
+
+            {%- endmacro -%}
+
+            {{- cleanup(mother_of_all_macros()) -}}

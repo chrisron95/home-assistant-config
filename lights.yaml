@@ -1,0 +1,19 @@
+- platform: group
+  name: Bedroom Fan Lights
+  entities:
+    - light.ceiling_fan_north
+    - light.ceiling_fan_south
+    - light.ceiling_fan_east
+    - light.ceiling_fan_west
+- platform: mqtt
+  name: "Hallway Light"
+  state_topic: "stat/hall_light/POWER1"
+  command_topic: "cmnd/hall_light/EVENT"
+  availability_topic: "tele/hall_light/LWT"
+  qos: 0
+  payload_on: "ON"
+  payload_off: "OFF"
+  payload_available: "Online"
+  payload_not_available: "Offline"
+  retain: false
+

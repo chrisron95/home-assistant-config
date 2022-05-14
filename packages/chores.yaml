@@ -1,0 +1,96 @@
+input_boolean:
+  # Daily
+  clean_kitchen_counters:
+    name: Clean The Kitchen Counters
+    icon: mdi:countertop
+  clean_tables:
+    name: Clean The Tables
+    icon: mdi:table-furniture
+  feed_fish:
+    name: Feed Fish
+    icon: mdi:shaker
+
+  # Bi-daily
+  scoop_litter:
+    name: Scoop The Litter Box
+    icon: mdi:cat
+
+  # Weekly
+  wash_laundry:
+    name: Wash Laundry
+    icon: mdi:washing-machine
+  wash_sheets:
+    name: Wash Sheets
+    icon: mdi:bed-king
+  empty_fridge:
+    name: Empty The Fridge
+    icon: mdi:fridge
+  replace_cat_bowls:
+    name: Replace Cat Food and Water Bowls
+    icon: mdi:cat
+  plan_menu:
+    name: Plan Menu For Week
+    icon: mdi:food
+  tidy_room:
+    name: Tidy Up The Bedroom
+    icon: mdi:broom
+  tidy_lab:
+    name: Tidy Up The Lab
+    icon: mdi:broom
+  tidy_downstairs:
+    name: Tidy Up Downstairs
+    icon: mdi:broom
+  vacuum:
+    name: Vacuum Floors
+    icon: mdi:vacuum
+  mop:
+    name: Mop Floors
+    icon: mdi:water-circle
+
+  # Bi-weekly
+  wash_towels:
+    name: Wash Towels
+    icon: mdi:paper-roll
+  clean_master_bath:
+    name: Clean The Master Bathroom
+    icon: mdi:toilet
+  clean_lab_bath:
+    name: Clean The Lab Bathroom
+    icon: mdi:toilet
+  clean_downstairs_bath:
+    name: Clean The Downstairs Bathroom
+    icon: mdi:toilet
+  dust_surfaces:
+    name: Dust Surfaces
+    icon: mdi:spray-bottle
+
+  # Monthly
+  clean_litter_boxes:
+    name: Clean Both Litter Boxes
+    icon: mdi:cat
+  replace_fish_tank_filter:
+    name: Replace Fish Tank Filter
+    icon: mdi:fish
+  replace_cat_water_filter:
+    name: Replace Cat Water Filter
+    icon: mdi:fish
+  clean_toaster:
+    name: Clean The Toaster Oven
+    icon: mdi:toaster-oven
+
+  # Quarterly
+  wash_rugs:
+    name: Wash Rugs
+    icon: mdi:rug
+  wash_blankets:
+    name: Wash Blankets
+    icon: mdi:rug
+  wash_windows:
+    name: Wash Windows
+    icon: mdi:window-closed-variant
+  clean_fridge:
+    name: Clean The Inside of The Fridge
+    icon: mdi:fridge
+  descale_nespresso:
+    name: Descale Nespresso
+    icon: mdi:coffee-maker

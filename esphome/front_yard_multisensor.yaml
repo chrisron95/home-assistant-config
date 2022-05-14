@@ -1,0 +1,83 @@
+esphome:
+  name: front_yard_multisensor
+  platform: ESP8266
+  board: nodemcuv2
+
+wifi:
+  ssid: "FlooNetworkDownstairs"
+  password: "L0ckTh1$F0rM3"
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Front Yard Multisensor"
+    password: "lSR4no6wiiNM"
+
+captive_portal:
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+
+ota:
+
+binary_sensor:
+  - platform: gpio
+    pin: D5
+    name: "Front Yard Motion"
+    device_class: motion
+
+sensor:
+  - platform: adc
+    pin: A0
+    name: "Front Yard Ambient Light"
+    unit_of_measurement: lux
+    filters:
+      - lambda: |-
+          return (x / 10000.0) * 2000000.0;
+    update_interval: 20s
+  - platform: dht
+    pin: D6
+    model: DHT22
+    temperature:
+      name: "Front Yard Temperature"
+      filters:
+        - lambda: return x * (9.0/5.0) + 32.0;
+      unit_of_measurement: "°F"
+    humidity:
+      name: "Front Yard Humidity"
+    update_interval: 60s
+  - platform: wifi_signal
+    name: "Front Garden Sensors WiFi Signal"
+    update_interval: 60s
+    
+  - platform: uptime
+    name: "Front Yard Sensors Uptime"
+    id: front_yard_sensors_uptime
+    update_interval: 60s
+    on_raw_value:
+      then:
+        - text_sensor.template.publish:
+            id: front_yard_sensors_uptime_human
+            state: !lambda |-
+              int seconds = round(id(front_yard_sensors_uptime).raw_state);
+              int days = seconds / (24 * 3600);
+              seconds = seconds % (24 * 3600);
+              int hours = seconds / 3600;
+              seconds = seconds % 3600;
+              int minutes = seconds /  60;
+              seconds = seconds % 60;
+              return (
+                (days ? to_string(days) + "d " : "") +
+                (hours ? to_string(hours) + "h " : "") +
+                (minutes ? to_string(minutes) + "m " : "") +
+                (to_string(seconds) + "s")
+              ).c_str();
+
+text_sensor:
+  - platform: template
+    name: Front Yard Sensors Uptime Human Readable
+    id: front_yard_sensors_uptime_human
+    icon: mdi:clock-start
+    entity_category: diagnostic

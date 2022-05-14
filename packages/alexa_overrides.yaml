@@ -1,0 +1,91 @@
+# These buttons get pressed by the alexa routine, thereby triggering an automation in HA
+input_button:
+  # Weather
+  alexa_weather_check:
+    name: Alexa Weather Check
+    icon: mdi:sun-wireless
+    # what's the weather
+    # check the weather
+    # what's the weather like
+    # what's the weather right now
+    # how's it look outside
+    # what's the weather currently
+    # what's the current weather
+
+  alexa_weather_forecast:
+    name: Alexa Weather Forecast
+    icon: mdi:weather-cloudy-clock
+    # what's the forecast
+    # what's the weather going to be like tomorrow
+    # what's the weather going to be today
+    # what's the weather going to be like today
+    # what's the forecast for tomorrow
+    # what's the forecast for this weekend
+    # what's the weather going to be like later
+
+  alexa_weather_rain_check:
+    name: Alexa Weather Rain Check
+    icon: mdi:weather-pouring
+    # is it going to rain
+    # is it going to rain today
+    # should i bring an umbrella
+    # should i bring an umbrella today
+    # is it gonna rain
+    # is it gonna rain today
+
+  alexa_weather_temperature_check:
+    name: Alexa Weather Temperature Check
+    icon: mdi:weather-pouring
+    # what's the temperature
+    # what's the current temperature
+    # what's the temperature right now
+    # what's the temperature outside
+    # what's the temp outside
+    # what's the temp
+
+  # Locations
+  alexa_location_of_chris:
+    name: Alexa Location Of Chris
+    icon: mdi:map-marker-account
+    # where's chris
+    # where is chris
+    # what's chris's location
+    # where's chris at
+    # what's chris up to
+
+  alexa_location_of_steven:
+    name: Alexa Location Of Steven
+    icon: mdi:map-marker-account
+    # where's steven
+    # where is steven
+    # what's steven's location
+    # where's steven at
+    # what's steven up to
+
+  # Miscellaneous
+  alexa_set_the_mood:
+    name: Alexa Set The Mood
+    icon: mdi:robot-love
+    # set the mood
+
+  alexa_what_to_eat:
+    name: Alexa What To Eat
+    icon: mdi:food
+    # what should we eat
+    # i'm hungry
+    # where should we eat
+    # what should we order
+    # where should we order
+    # where should we order from
+    # recommend a restaurant
+
+  alexa_introduce_yourself:
+    name: Alexa Introduce Yourself
+    icon: mdi:human-greeting-variant
+    # present yourself
+    # introduce yourself
+    # say hi
+    # show yourself off
+    # show off
+    # show them what you do
+    # show them what you can do

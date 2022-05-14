@@ -1,0 +1,142 @@
+binary_sensor:
+  - name: Workday Home Day
+    platform: workday
+    country: US
+    province: FL
+    workdays: [mon, thu, fri]
+    excludes: [tue, wed, sat, sun]
+  - name: Workday Office Day
+    platform: workday
+    country: US
+    province: FL
+    workdays: [tue, wed]
+    excludes: [mon, thu, fri, sat, sun]
+  - platform: template
+    sensors:
+      holiday:
+        friendly_name: "Holiday"
+        value_template: >
+          {% set holidays = [
+            '01-01',
+            '01-02',
+            '05-30',
+            '07-04',
+            '09-05',
+            '11-24',
+            '12-26'] %}
+          {{ now().isoweekday() in [6, 7] or (now().date()|string)[-5:] in holidays }}
+
+input_boolean:
+  wakeup_alarm:
+    name: Wakeup Alarm
+    icon: mdi:alarm-note
+
+automation:
+  - id: set_wakeup_time
+    alias: Set Wakeup Time
+    trigger:
+      - platform: time
+        at: 01:00:00
+    action:
+      - choose:
+          - alias: Home Day
+            conditions:
+              - condition: state
+                entity_id: binary_sensor.workday_home_day
+                state: "on"
+              - condition: state
+                entity_id: binary_sensor.holiday
+                state: "off"
+            sequence:
+              - service: input_datetime.set_datetime
+                data:
+                  time: "08:45:00"
+                target:
+                  entity_id: input_datetime.wakeup
+              - service: input_boolean.turn_on
+                data: {}
+                target:
+                  entity_id: input_boolean.wakeup_alarm
+          - alias: Office Day
+            conditions:
+              - condition: state
+                entity_id: binary_sensor.workday_office_day
+                state: "on"
+              - condition: state
+                entity_id: binary_sensor.holiday
+                state: "off"
+            sequence:
+              - service: input_datetime.set_datetime
+                data:
+                  time: "08:45:00"
+                target:
+                  entity_id: input_datetime.wakeup
+              - service: input_boolean.turn_on
+                data: {}
+                target:
+                  entity_id: input_boolean.wakeup_alarm
+        default:
+          - service: input_datetime.set_datetime
+            data:
+              time: "09:00:00"
+            target:
+              entity_id: input_datetime.wakeup
+          - service: input_boolean.turn_off
+            data: {}
+            target:
+              entity_id: input_boolean.wakeup_alarm
+
+  - id: morning_routine
+    alias: Morning Routine
+    trigger:
+      - at: input_datetime.wakeup
+        platform: time
+    action:
+      - service: input_boolean.turn_off
+        target:
+          entity_id: input_boolean.do_not_disturb
+        data: {}
+      - service: input_boolean.turn_on
+        target:
+          entity_id: input_boolean.audible_notifications
+        data: {}
+      - choose:
+          - conditions:
+              - condition: state
+                entity_id: input_boolean.windows_open
+                state: "off"
+            sequence:
+              - service: fan.turn_off
+                target:
+                  entity_id: fan.bedroom_fan
+                data: {}
+        default: []
+      - service: input_select.select_option
+        target:
+          entity_id: input_select.thermostat_preset
+        data:
+          option: >
+            {% if is_state("person.steven", "home") %}
+              Daytime - Steven
+            {% else %}
+              Daytime - Chris
+            {% endif %}
+      - service: switch.turn_off
+        data: {}
+        target:
+          entity_id:
+            - switch.chris_s_echo_show_do_not_disturb_switch
+            - switch.lab_echo_dot_do_not_disturb_switch
+            - switch.living_room_echo_do_not_disturb_switch
+            - switch.kitchen_echo_dot_do_not_disturb_switch
+            - switch.chris_s_fire_do_not_disturb_switch
+      - choose:
+          - conditions:
+              - condition: state
+                entity_id: input_boolean.wakeup_alarm
+                state: "on"
+            sequence:
+              - service: script.morning_wakeup_report
+                data: {}
+        default: []
+    mode: single

@@ -1,0 +1,33 @@
+esphome:
+  name: bathroom_sensors
+  platform: ESP8266
+  board: d1_mini
+
+wifi:
+  ssid: "OrderOfThePhoenixHQ"
+  password: "L0ckTh1$F0rM3"
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Bathroom Sensors"
+    password: "WgleFPKnkWeN"
+
+captive_portal:
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+
+ota:
+
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: D3
+      inverted: True
+    name: "Bathroom Fan Button"
+    
+web_server:
+  port: 80

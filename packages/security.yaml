@@ -1,0 +1,617 @@
+###############################################################################
+#   @author         :   Jeffrey Stone
+#   @date           :   03/13/2019
+#   @package        :   Security
+#   @description    :   Everything related to security functions.
+#
+#   @modified by    :   Chris Heder (@chrisron95)
+#   @date           :   05/12/2022
+###############################################################################
+
+group:
+  doors:
+    name: Doors
+    entities:
+      - binary_sensor.front_door
+      - binary_sensor.sliding_glass_door
+  windows:
+    name: Windows
+    entities:
+      - binary_sensor.bedroom_windows
+      - binary_sensor.kitchen_window
+      - binary_sensor.lab_windows
+  windows_downstairs:
+    name: Windows Downstairs
+    entities:
+      - binary_sensor.kitchen_window
+  windows_upstairs:
+    name: Windows Upstairs
+    entities:
+      - binary_sensor.bedroom_windows
+      - binary_sensor.lab_windows
+
+input_boolean:
+  # Main security switch. If this is on, the security is armed.
+  sentry_mode:
+    name: Sentry Mode
+    icon: mdi:security
+  # Vacation mode is automagically set when we are 3 hours from the house, and turns off when we return.
+  # This is used to modify some of the normal automations.
+  vacation_mode:
+    name: Vacation Mode
+    icon: mdi:airplane-takeoff
+  # Guest mode is use to modify autoamtions when we have guests.
+  # In some cases this prevents security from being set to prevent security alarm going off
+  guest_mode:
+    name: Guest Mode
+    icon: mdi:account-multiple
+  # This switch powers the security alarm and gives an easy way to kill the alarm.
+  # When it is on, the alarm is going off
+  security_alarm:
+    name: Security Alarm
+    icon: mdi:speaker-wireless
+  # This switch powers the fire alarm.
+  # When on the fire alarm is going off.
+  fire_alarm:
+    name: Fire Alarm
+    icon: mdi:speaker-wireless
+  # This switch turns on of the security system checks that fire when someone tries to arm the system
+  # finds a door open, or another condition that would prevent the system from being able to monitor properly.
+  lockdown_issue:
+    name: Lockdown Issue
+    icon: mdi:lock-reset
+  # This switch is turned on if there is a security breach. Turning on this switch starts the countdown to the alarm.
+  security_issue:
+    name: Security Issue
+    icon: mdi:alert-circle-outline
+
+input_datetime:
+  nightly_lockdown:
+    name: Nightly Lockdown
+    has_date: false
+    has_time: true
+
+sensor:
+  - platform: mqtt
+    name: front_door_motion_away_count
+    state_topic: "house/front_door_motion/away_count"
+
+automation:
+  #############################################
+  # When sentry mode is enabled / security armed by any method, check the doors and notify everyone.
+  - id: sentry_mode_enabled
+    alias: Sentry Mode Enabled Annoucement
+    initial_state: true
+    trigger:
+      - platform: state
+        entity_id: input_boolean.sentry_mode
+        from: "off"
+        to: "on"
+    action:
+      - choose:
+          - alias: Issue
+            conditions:
+              - condition: state
+                entity_id: group.doors
+                state: "on"
+            sequence:
+              - service: input_boolean.turn_off
+                entity_id: input_boolean.sentry_mode
+              - service: input_boolean.turn_on
+                entity_id: input_boolean.lockdown_issue
+              - service: script.text_notify
+                data:
+                  who: "all_ios"
+                  message: "Unable to lock down Header House due to issue"
+              - service: script.speech_engine
+                data:
+                  who: "{{ states('sensor.room_audio') }}"
+                  message: >
+                    {{ [
+                    "I was unable to activate barn door protocol due to an open door.",
+                    "You may want to check the external doors. I was unable to secure them all.",
+                    "My systems check has failed. Please check the external doors.",
+                    "Someone has left the pod bay doors open."
+                    ] | random }}
+        default:
+          - service: lock.lock
+            target:
+              entity_id: lock.touchscreen_deadbolt_z_wave_plus_frontdoor
+            data: {}
+          - service: script.speech_engine
+            data:
+              who: "{{ states('sensor.room_audio') }}"
+              message: >
+                {{ [
+                "Barn door protocol has been activated.",
+                "Header House has been secured! ",
+                "Sentry Mode is active. ",
+                "I am now monitoring the doors and will let you know if anyone attempts to access.",
+                "Header House Shields are up."
+                ] | random }}
+          - service: script.text_notify
+            data:
+              who: "all_ios"
+              title: "Security Armed"
+              message: "Security System has been armed."
+          - service: script.turn_on
+            entity_id: script.reset_front_door_motion_count
+
+  # When sentry mode is disabled / security disarmed by any method, notify everyone.
+  - id: sentry_mode_disabled
+    alias: Sentry Mode Disabled Annoucement
+    initial_state: true
+    trigger:
+      - platform: state
+        entity_id: input_boolean.sentry_mode
+        from: "on"
+        to: "off"
+    action:
+      - choose:
+          - conditions:
+              condition: or
+              conditions:
+                - condition: state
+                  entity_id: group.family
+                  state: "home"
+                - condition: state
+                  entity_id: input_boolean.guest_mode
+                  state: "on"
+            sequence:
+              - service: script.speech_engine
+                data:
+                  who: "{{ states('sensor.room_audio') }}"
+                  message: >
+                    {{ [
+                    "Barn door protocol has been deactivated.",
+                    "I am no longer monitoring the access points. ",
+                    "Sentry Mode has been disabled. ",
+                    "Header House Shields are down."
+                    ] | random }}
+              - service: script.text_notify
+                data:
+                  who: "all_ios"
+                  title: "Welcome Home"
+                  message: "Security System has been disarmed."
+              - service: input_boolean.turn_off
+                entity_id: input_boolean.security_alarm
+        default:
+          - service: input_boolean.turn_off
+            entity_id: input_boolean.sentry_mode
+          - service: script.text_notify
+            data:
+              who: "all_ios"
+              title: "Potential Security Issue"
+              message: "Security System has been disarmed, but I could not validate presence."
+  #############################################
+
+  #############################################
+  # Scheduled Arm / Disarm
+  # Disarm around the time people are up
+  - id: morning_standby
+    alias: Morning Standby
+    initial_state: true
+    trigger:
+      - platform: time
+        at: 09:00:00
+    condition:
+      condition: or
+      conditions:
+        - condition: state
+          entity_id: group.family
+          state: "home"
+        - condition: state
+          entity_id: input_boolean.guest_mode
+          state: "on"
+    action:
+      - service: script.standby
+
+  # Secure the house every night if it has been set already, and everyone is home.
+  - id: nightly_lockdown
+    alias: Nightly Lockdown
+    initial_state: true
+    trigger:
+      - platform: time
+        at: "23:00:00"
+    condition:
+      - condition: state
+        entity_id: person.chris
+        state: home
+      - condition: state
+        entity_id: person.steven
+        state: home
+      - condition: state
+        entity_id: input_boolean.guest_mode
+        state: "off"
+      - condition: state
+        entity_id: input_boolean.sentry_mode
+        state: "off"
+    action:
+      - service: input_boolean.turn_on
+        entity_id: input_boolean.sentry_mode
+
+  - alias: Actionable Door Unlocked Notification
+    id: "1642655673695"
+    description: ""
+    trigger:
+      - platform: state
+        entity_id: lock.touchscreen_deadbolt_z_wave_plus_frontdoor
+        to: unlocked
+        for:
+          hours: 0
+          minutes: 15
+          seconds: 0
+    condition: []
+    action:
+      - alias: Set up variables for the actions
+        variables:
+          action_lock: "{{ 'LOCK_' ~ context.id }}"
+      - alias: Ask to lock the front door
+        service: notify.mobile_app_chriss_iphone
+        data:
+          message: The front door has been unlocked for 15 minutes. Want to lock it again?
+          data:
+            actions:
+              - action: "{{ action_lock }}"
+                title: Lock
+      - alias: Wait for a response
+        wait_for_trigger:
+          - platform: event
+            event_type: mobile_app_notification_action
+            event_data:
+              action: "{{ action_lock }}"
+      - alias: Perform the action
+        choose:
+          - conditions:
+              - condition: template
+                value_template: "{{ wait.trigger.event.data.action == action_lock }}"
+            sequence:
+              - service: lock.lock
+                target:
+                  entity_id: lock.touchscreen_deadbolt_z_wave_plus_frontdoor
+    mode: single
+
+  - alias: Window Notifications
+    id: "1642916773044"
+    description: ""
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.kitchen_window
+        for:
+          hours: 0
+          minutes: 0
+          seconds: 2
+        from: "off"
+        to: "on"
+      - platform: state
+        entity_id: binary_sensor.bedroom_windows
+        for:
+          hours: 0
+          minutes: 0
+          seconds: 2
+        from: "off"
+        to: "on"
+      - platform: state
+        entity_id: binary_sensor.lab_windows
+        for:
+          hours: 0
+          minutes: 0
+          seconds: 2
+        from: "off"
+        to: "on"
+      - platform: state
+        entity_id: binary_sensor.kitchen_window
+        for:
+          hours: 0
+          minutes: 0
+          seconds: 2
+        from: "on"
+        to: "off"
+      - platform: state
+        entity_id: binary_sensor.bedroom_windows
+        for:
+          hours: 0
+          minutes: 0
+          seconds: 2
+        from: "on"
+        to: "off"
+      - platform: state
+        entity_id: binary_sensor.lab_windows
+        for:
+          hours: 0
+          minutes: 0
+          seconds: 2
+        from: "on"
+        to: "off"
+    condition:
+      - condition: state
+        entity_id: input_boolean.window_notifications
+        state: "on"
+    action:
+      - service: notify.tvs
+        data:
+          title: "{{ trigger.to_state.attributes.friendly_name }}"
+          message:
+            "{% set states = {\n  'on':'Open',\n  'off':'Closed',\n  } %}\n{{ trigger.to_state.attributes.friendly_name\
+            \ }} {{ states[trigger.to_state.state] }}\n"
+    mode: single
+
+  - alias: Patio Door Notifications
+    id: "1642919890732"
+    description: ""
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.sliding_glass_door
+        for:
+          hours: 0
+          minutes: 0
+          seconds: 2
+        from: "on"
+        to: "off"
+      - platform: state
+        entity_id: binary_sensor.sliding_glass_door
+        for:
+          hours: 0
+          minutes: 0
+          seconds: 2
+        from: "off"
+        to: "on"
+    condition:
+      - condition: state
+        state: "on"
+        entity_id: input_boolean.patio_door_notifications
+    action:
+      - service: notify.tvs
+        data:
+          title: "{{ trigger.to_state.attributes.friendly_name }}"
+          message:
+            "{% set states = {\n  'on':'Open',\n  'off':'Closed',\n  } %}\n{{ trigger.to_state.attributes.friendly_name\
+            \ }} {{ states[trigger.to_state.state] }}\n"
+    mode: single
+
+    #############################################
+
+script:
+  # Called when security is to be disarmed, clears any alarms or issues as well
+  standby:
+    sequence:
+      - service: script.turn_on
+        entity_id: script.vacation_canceled
+      - service: script.turn_on
+        entity_id: script.disarm_security
+      - service: script.turn_on
+        entity_id: script.cancel_security_alarm
+      - service: script.turn_on
+        entity_id: script.cancel_lockdown_issue
+      - service: script.turn_on
+        entity_id: script.clear_security_issue
+      - service: input_boolean.turn_on
+        entity_id: input_boolean.motion_lights_master
+
+  # If vacation mode is on, turn it off
+  vacation_canceled:
+    sequence:
+      - condition: state
+        entity_id: input_boolean.vacation_mode
+        state: "on"
+      - data:
+          entity_id: input_boolean.vacation_mode
+        service: input_boolean.turn_off
+
+  # If security is armed, disarm it
+  disarm_security:
+    sequence:
+      - condition: state
+        entity_id: input_boolean.sentry_mode
+        state: "on"
+      - service: input_boolean.turn_off
+        entity_id: input_boolean.sentry_mode
+
+  # If alarm is on, turn it off
+  cancel_security_alarm:
+    sequence:
+      - condition: state
+        entity_id: input_boolean.security_alarm
+        state: "on"
+      - service: input_boolean.turn_off
+        entity_id: input_boolean.security_alarm
+
+  clear_security_issue:
+    sequence:
+      - condition: state
+        entity_id: input_boolean.security_issue
+        state: "on"
+      - service: input_boolean.turn_off
+        entity_id: input_boolean.security_issue
+
+  # if there are lockdown issues, turn them off
+  cancel_lockdown_issue:
+    sequence:
+      - condition: state
+        entity_id: input_boolean.lockdown_issue
+        state: "on"
+      - service: input_boolean.turn_off
+        entity_id: input_boolean.lockdown_issue
+
+  # Turn on guest mode, and welcome the victims...I mean guests
+  visitors_here:
+    sequence:
+      - condition: state
+        entity_id: input_boolean.guest_mode
+        state: "off"
+      - service: input_boolean.turn_on
+        data:
+          entity_id: input_boolean.guest_mode
+
+  # Turn off guest mode
+  visitors_gone:
+    sequence:
+      - condition: state
+        entity_id: input_boolean.guest_mode
+        state: "on"
+      - service: input_boolean.turn_off
+        data:
+          entity_id: input_boolean.guest_mode
+
+  reset_front_door_motion_count:
+    sequence:
+      - service: mqtt.publish
+        data:
+          topic: house/front_door_motion/away_count
+          payload_template: 0
+          retain: true
+
+  update_front_door_motion_count:
+    sequence:
+      - service: mqtt.publish
+        data:
+          topic: house/front_door_motion/away_count
+          payload_template: "{{ states('sensor.front_door_motion_away_count') | int + 1 }}"
+          retain: true
+
+  # Called via Alexa routine...adds a little interaction
+  activate_barn_door_protocol:
+    sequence:
+      - choose:
+          - conditions:
+              - condition: state
+                entity_id: input_boolean.sentry_mode
+                state: "on"
+            sequence:
+              - service: script.speech_engine
+                data:
+                  who: "{{ states('sensor.room_audio') }}"
+                  message: !include ../templates/speech/already_done.yaml
+        default:
+          - service: script.speech_engine
+            data:
+              who: "{{ states('sensor.room_audio') }}"
+              message: !include ../templates/speech/interjections.yaml
+          - delay:
+              seconds: 2
+          - service: input_boolean.turn_on
+            entity_id: input_boolean.sentry_mode
+
+  # Called via secret Alexa routine...adds a little interaction
+  deactivate_barn_door_protocol:
+    sequence:
+      - choose:
+          - conditions:
+              - condition: state
+                entity_id: input_boolean.sentry_mode
+                state: "off"
+            sequence:
+              - service: script.speech_engine
+                data:
+                  who: "{{ states('sensor.room_audio') }}"
+                  message: !include ../templates/speech/already_done.yaml
+        default:
+          - service: script.speech_engine
+            data:
+              who: "{{ states('sensor.room_audio') }}"
+              message: !include ../templates/speech/interjections.yaml
+          - delay:
+              seconds: 2
+          - service: input_boolean.turn_off
+            entity_id: input_boolean.sentry_mode
+
+  were_home:
+    sequence:
+      - service: script.turn_on
+        entity_id: script.standby
+      - service: script.turn_on
+        entity_id: script.welcome_briefing
+
+  # Called via Alexa routine...adds a little interaction
+  activate_guest_mode:
+    sequence:
+      - choose:
+          - conditions:
+              - condition: state
+                entity_id: input_boolean.guest_mode
+                state: "on"
+            sequence:
+              - service: script.speech_engine
+                data:
+                  who: "{{ states('sensor.room_audio') }}"
+                  message: !include ../templates/speech/already_done.yaml
+        default:
+          - service: script.speech_engine
+            data:
+              who: "{{ states('sensor.room_audio') }}"
+              message: !include ../templates/speech/interjections.yaml
+          - delay:
+              seconds: 2
+          - service: input_boolean.turn_on
+            entity_id: input_boolean.guest_mode
+
+  # When it hits the fan, time to respond.
+  security_response:
+    sequence:
+      - service: script.inside_all_on
+      - delay:
+          seconds: 15
+      - service: script.alexa_voice
+        data:
+          message: >
+            {{ [
+            ",Unathorized Access detected.",
+            ",Meat Popsicle detected. Attempting to verify."
+            ] | random }}
+            You now have 60 seconds to abandon Header House.
+      - delay:
+          seconds: 15
+      - service: script.alexa_voice
+        data:
+          message: >
+            {{ [
+            ",Just, what do you think you're doing, Dave?",
+            ",This is highly unusual.",
+            "I will not disable the security response without the presence of a authorized identity. Your efforts are futile."
+            ] | random }}
+            You have 45 seconds to find the nearest exit.
+      - delay:
+          seconds: 15
+      - service: script.alexa_voice
+        data:
+          message: >
+            {{ [
+            ",I can't lie to you about your chances, but, you have my sympathies.",
+            ",I wouldn't do that if I was you."
+            ] | random }}
+            You have 30 seconds to leave.
+      - delay:
+          seconds: 15
+      - service: script.alexa_voice
+        data:
+          message: >
+            {{ [
+            "Danger. The emergency destruct system is now activated.",
+            "Danger. Counter Measures are now armed."
+            ] | random }}
+            You have 15 seconds. I would run.
+      - delay:
+          seconds: 15
+      - service: input_boolean.turn_on
+        entity_id: input_boolean.security_alarm
+      # - service: script.twitter_notify
+      #   data:
+      #     message: >-
+      #       {{ [
+      #         "My security protocols have been overridden. I am sounding the alarm for the interloper. #itsloudinhere #securityalarm",
+      #         "To the unannounced guest that has entered Header House. I see you. Enjoy the concert of alarm sounds. #itsloudinhere #securityalarm",
+      #         "I am playing the most annoying sound in the world at full volume for the intruder in Header House. And the neighbors too. #itsloudinhere #securityalarm",
+      #         "Someone did not say the magic word. And now I have to get angry. Deploying countermeasures. #itsloudinhere #securityalarm",
+      #         "Initiating my security response, and sounding the alarm. Oh, and I dont charge a monthly monitoring fee. #itsloudinhere #securityalarm",
+      #         "Hey, wanna hear the most annoying sound in the world? The intruder inside Header House evidently did.  #itsloudinhere #securityalarm"
+      #       ] | random }}
+
+  keymaster_frontdoor_manual_notify:
+    alias: Keymaster Frontdoor Manual Notify
+    mode: parallel
+    sequence:
+      - service: notify.chris
+        data:
+          title: "{{ title }}"
+          message: "{{ message }}"
+    max: 10

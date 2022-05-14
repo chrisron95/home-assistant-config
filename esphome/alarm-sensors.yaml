@@ -1,0 +1,102 @@
+esphome:
+  name: alarm-sensors
+
+esp8266:
+  board: nodemcuv2
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+
+ota:
+  password: "c4780914e90ec05f18e53664acb1a2fa"
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Alarm-Sensors Fallback Hotspot"
+    password: "4GijRJnu3AaJ"
+
+captive_portal:
+
+sensor:
+  - platform: wifi_signal
+    name: "Alarm Sensors WiFi Signal"
+    update_interval: 60s
+    
+  - platform: uptime
+    name: "Alarm Sensors Uptime"
+    id: alarm_sensors_uptime
+    update_interval: 60s
+    on_raw_value:
+      then:
+        - text_sensor.template.publish:
+            id: alarm_sensors_uptime_human
+            state: !lambda |-
+              int seconds = round(id(alarm_sensors_uptime).raw_state);
+              int days = seconds / (24 * 3600);
+              seconds = seconds % (24 * 3600);
+              int hours = seconds / 3600;
+              seconds = seconds % 3600;
+              int minutes = seconds /  60;
+              seconds = seconds % 60;
+              return (
+                (days ? to_string(days) + "d " : "") +
+                (hours ? to_string(hours) + "h " : "") +
+                (minutes ? to_string(minutes) + "m " : "") +
+                (to_string(seconds) + "s")
+              ).c_str();
+
+text_sensor:
+  - platform: template
+    name: Alarm Sensors Uptime Human Readable
+    id: alarm_sensors_uptime_human
+    icon: mdi:clock-start
+    entity_category: diagnostic
+
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: D1
+      mode:
+        input: true
+        pullup: true
+    name: Front Door
+    device_class: door
+  - platform: gpio
+    pin:
+      number: D2
+      mode:
+        input: true
+        pullup: true
+    name: Kitchen Window
+    device_class: window
+  - platform: gpio
+    pin:
+      number: D5
+      mode:
+        input: true
+        pullup: true
+    name: Sliding Glass Door
+    device_class: door
+  - platform: gpio
+    pin:
+      number: D6
+      mode:
+        input: true
+        pullup: true
+    name: Bedroom Windows
+    device_class: window
+  - platform: gpio
+    pin:
+      number: D7
+      mode:
+        input: true
+        pullup: true
+    name: Lab Windows
+    device_class: window

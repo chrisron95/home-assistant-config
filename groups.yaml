@@ -1,0 +1,15 @@
+all_fans:
+  name: All Fans
+  icon: mdi:fan
+  entities:
+    - fan.living_room_fan
+    - fan.bedroom_fan
+    - fan.lab_fan
+
+christmas_decorations_inside:
+  name: X-mas Decor
+  icon: mdi:pine-tree
+  entities:
+    - light.christmas_tree
+    - light.fiber_optic_decoration
+    - light.village

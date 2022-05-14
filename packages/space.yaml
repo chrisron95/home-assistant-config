@@ -1,0 +1,25 @@
+###############################################################################
+#   @author         :   Jeffrey Stone
+#   @date           :   02/19/2019
+#   @package        :   Space
+#   @description    :   Tracking space. Inspiration and code taking from https://github.com/CCOSTAN/Home-AssistantConfig#logo
+#   @original       :   https://github.com/CCOSTAN/Home-AssistantConfig/blob/master/config/packages/space.yaml
+#
+#   @modified by    :   Chris Heder (@chrisron95)
+#   @date           :   05/12/2022
+###############################################################################
+
+homeassistant:
+  customize:
+    binary_sensor.iss:
+      icon: mdi:satellite-variant
+      friendly_name: ISS Visibility
+      hidden: False
+      homebridge_hidden: true
+    sensor.launch_window:
+      hidden: False
+      icon: mdi:rocket
+      friendly_name: Rocket Launch Window
+
+sensor:
+  - platform: moon

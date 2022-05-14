@@ -1,0 +1,152 @@
+###############################################################################
+#   @author         :   Jeffrey Stone
+#   @date           :   04/11/2020
+#   @package        :   Audio
+#   @description    :   Audio related configuration.
+#   @notes          :   This package assumes you are running version .115.0 or greater.
+#
+#   @modified by    :   Chris Heder (@chrisron95)
+#   @date           :   05/12/2022
+###############################################################################
+
+############################
+# input_datetime (https://www.home-assistant.io/integrations/input_datetime/)
+#
+# This is simply so we can track last called alexa.
+input_datetime:
+  last_time_alexa_called:
+    name: Last Time Alexa Called
+    has_date: true
+    has_time: true
+  announcement_delay:
+    name: Announcement Delay
+    has_date: false
+    has_time: true
+  good_morning:
+    name: Good Morning
+    has_date: false
+    has_time: true
+  good_night_routine:
+    name: Good Night Routine
+    has_date: false
+    has_time: true
+  morning_standby:
+    name: Morning Standby
+    has_date: false
+    has_time: true
+
+automation:
+  - id: a3739bb0-632d-4526-bf82-ee4e27b80882
+    alias: Set Room Presence
+    mode: restart
+    trigger:
+      - platform: state
+        entity_id: sensor.room_audio
+    action:
+      - service: input_text.set_value
+        data:
+          entity_id: input_text.room_presence
+          value: "{{ states('sensor.room_audio') }}"
+      - service: mqtt.publish
+        data:
+          topic: house/presence/current_room
+          payload: "{{ states('sensor.room_audio') }}"
+          retain: true
+
+  - id: 8a2711f5-a034-4df0-ba67-4b8f85ceaaee
+    alias: Notification Volume Dim
+    initial_state: true
+    trigger:
+      - platform: state
+        entity_id: input_boolean.audible_notifications
+        to: "off"
+    action:
+      - service: media_player.volume_set
+        data:
+          entity_id:
+            - media_player.kitchen_echo_dot
+            - media_player.living_room_echo
+            - media_player.chris_s_echo_flex
+            - media_player.chris_s_echo_show
+            - media_player.lab_echo_dot
+          volume_level: .3
+
+  - id: d5fe0a64-9012-4446-b946-cbcafb2c0728
+    alias: Notification Volume Normal
+    initial_state: true
+    trigger:
+      - platform: state
+        entity_id: input_boolean.audible_notifications
+        to: "on"
+    action:
+      - service: media_player.volume_set
+        data:
+          entity_id:
+            - media_player.kitchen_echo_dot
+            - media_player.living_room_echo
+            - media_player.chris_s_echo_flex
+            - media_player.chris_s_echo_show
+            - media_player.lab_echo_dot
+          volume_level: .5
+
+  - id: 28c0e7a6-4024-48c9-a422-8b8ffc3a86d1
+    alias: Set Last Alexa Called Time
+    initial_state: true
+    trigger:
+      - platform: state
+        entity_id:
+          - media_player.kitchen_echo_dot
+          - media_player.living_room_echo
+          - media_player.chris_s_echo_flex
+          - media_player.chris_s_echo_show
+          - media_player.lab_echo_dot
+    condition:
+      - condition: template
+        value_template: "{{ trigger.to_state.attributes.last_called_timestamp | float > trigger.from_state.attributes.last_called_timestamp | float }}" # Alexa has been triggered
+    action:
+      - service: input_datetime.set_datetime
+        target:
+          entity_id: input_datetime.last_time_alexa_called
+        data:
+          datetime: "{{ now().strftime('%Y-%m-%d %H:%M:%S') }}"
+
+sensor:
+  - platform: mqtt
+    name: "Room Presence"
+    state_topic: "house/presence/current_room"
+  - platform: template
+    sensors:
+      room_audio:
+        friendly_name: "Room Audio"
+        value_template: >-
+          {%- set last_alexa_called_seconds = (now() - as_local(states.media_player | selectattr('attributes.last_called','eq',True) | map(attribute='last_updated') | first)).seconds -%}
+          {%- if last_alexa_called_seconds <= 60 %}  
+            {{ states.media_player | selectattr('attributes.last_called','eq',True) | map(attribute='entity_id') | first }}
+          {% elif expand('group.occupancy') | selectattr('state', 'eq', 'on') | list | count >= 1 %}
+            {% set sensor = expand('group.occupancy') | selectattr('state', 'eq', 'on') | sort(attribute='last_changed') | last %}
+              {% if is_state('input_boolean.audible_notifications', 'off') %}
+                {% if sensor.name == 'Bedroom Motion occupancy' %}
+                  bedroom
+                {% else %}
+                  kitchen
+                {%- endif %}
+              {% else %} 
+                {% if sensor.name == 'Bedroom Motion' %}
+                  bedroom
+                {% elif sensor.name == 'Kitchen Motion' %}
+                  kitchen
+                {% elif sensor.name in ('Living Room Motion' ) %}
+                  living_room
+                {% elif sensor.name in ('Dining Room Motion' ) %}
+                  dining_room
+                {% elif sensor.name in ('Lab Motion' ) %}
+                  lab
+                {% else %}
+                  main
+                {%- endif %}
+            {%- endif %}
+          {% elif is_state('media_player.living_room_tv', 'on') %}
+            living_room
+          {% else %}
+            {{ states('sensor.room_presence') }}
+          {% endif %}

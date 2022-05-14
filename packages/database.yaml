@@ -1,0 +1,70 @@
+###############################################################################
+#   @author         :   Jeffrey Stone
+#   @date           :   06/10/2020
+#   @package        :   Database
+#   @description    :   Recorder and Logger Configurations
+#
+#   @modified by    :   Chris Heder (@chrisron95)
+#   @date           :   05/12/2022
+###############################################################################
+
+recorder:
+  db_url: !secret database
+  purge_keep_days: 30
+  exclude:
+    domains:
+      - automation
+      - weblink
+      - updater
+      - script
+    entities:
+      - sun.sun # Don't record sun data
+      - sensor.last_boot # Comes from 'systemmonitor' sensor platform
+      - sensor.date
+      - sensor.time
+      - sensor.today_is
+      - sensor.time_utc
+      - sensor.time_date
+      - sensor.time_online
+      - sensor.moon
+      - sensor.month_is
+
+logbook:
+  include:
+    domains:
+      - media_player
+      - automation
+      - script
+      - scene
+      - light
+      - switch
+      - device_tracker
+      - input_boolean
+      - person
+
+# Lets try to make the logs less chatty and more fine tuned.
+logger:
+  default: error
+  logs:
+    homeassistant.core: warning
+    homeassistant.loader: error
+    homeassistant.components.recorder: error # to spot db issues
+    homeassistant.config_entries: error
+    homeassistant.setup: error
+    homeassistant.helpers.entity: critical
+    homeassistant.components.automation: error
+    homeassistant.components.statistics.sensor: critical
+    homeassistant.components.nws: error
+    homeassistant.helpers.event: critical
+    bellows: error
+    homeassistant.components.zha.core: error
+
+history:
+  include:
+    domains:
+      - sensor
+      - switch
+      - media_player
+      - light
+      - scene
+      - automation

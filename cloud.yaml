@@ -1,0 +1,94 @@
+alexa:
+  filter:
+    include_domains:
+      - fan
+      - lock
+    include_entities:
+      # Lights
+      - light.bathroom_light
+      - light.bedroom_fan_lights
+      # - light.christmas_tree
+      - light.dining_room_light
+      # - light.fiber_optic_decoration
+      - light.fish_tank_leds
+      - light.francis_s_light
+      - light.front_hall_light
+      - light.garage_light
+      - light.hallway_light
+      - light.kitchen_leds
+      - light.kitchen_light
+      - light.lab_fan_light
+      - light.living_room_fan_light
+      - light.living_room_leds
+      - light.patio_light
+      - light.patio_string_lights
+      # - light.village
+      # Switches
+      - switch.3d_printer
+      - switch.bathroom_fan
+      - switch.lab_bathroom_fan
+      - switch.patio_fan
+      - switch.western_electric_rectifier
+      # Media Players
+      - media_player.living_room_tv
+      - media_player.lab_tv
+      # Input Booleans
+      - input_boolean.iphone_wake_up_alarm_activated
+      - input_boolean.enabled_frontdoor_3
+      - input_boolean.enabled_frontdoor_4
+      - input_boolean.alohomora
+      - input_boolean.lumos
+      - input_boolean.lumos_maxima
+      - input_boolean.knox
+      - input_boolean.garage_motion
+      # Scenes
+      - scene.all_off
+      - scene.arrival
+      - scene.downstairs_all_on
+      - scene.downstairs_all_off
+      # - scene.downstairs_chill
+      - scene.downstairs_ambient
+      - scene.downstairs_night_light
+      # - scene.time_for_bed
+      - scene.nightime
+      - scene.windows_open
+      - scene.windows_closed
+      # Sensors
+      - sensor.front_yard_temperature
+      - sensor.lab_temperature
+      # Scripts
+      - script.downstairs_chill
+      - script.goodbye
+      - script.goodnight
+      - script.time_for_bed
+      # Buttons
+      - input_button.3d_print_check_status
+      - input_button.alexa_weather_check
+      - input_button.alexa_weather_forecast
+      - input_button.alexa_weather_rain_check
+      - input_button.alexa_weather_temperature_check
+      - input_button.alexa_location_of_chris
+      - input_button.alexa_location_of_steven
+      - input_button.alexa_set_the_mood
+      - input_button.alexa_what_to_eat
+      - input_button.alexa_introduce_yourself
+  entity_config:
+    input_boolean.iphone_wake_up_alarm_activated:
+      name: "iPhone Wake Up Alarm Activated"
+      display_categories: SWITCH
+    input_boolean.enabled_frontdoor_3:
+      name: "Kaitlyn's Access"
+      display_categories: SWITCH
+    input_boolean.enabled_frontdoor_4:
+      name: "Ronald's Access"
+      display_categories: SWITCH
+    input_boolean.alohomora:
+      display_categories: SWITCH
+    input_boolean.lumos:
+      display_categories: SWITCH
+    input_boolean.lumos_maxima:
+      display_categories: SWITCH
+    input_boolean.knox:
+      display_categories: SWITCH
+    input_boolean.garage_motion:
+      display_categories: SWITCH

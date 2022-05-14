@@ -1,0 +1,34 @@
+irrigation_unlimited:
+  controllers:
+    zones:
+      entity_id: "switch.irrigation"
+      name: Front Garden
+      maximum: "00:30"
+      schedules:
+        - time: "06:00"
+          duration: "00:20"
+          weekday: [mon, fri]
+
+automation:
+  - alias: Irrigation Timer Start
+    id: IrrigationTimerStart
+    trigger:
+      - platform: state
+        entity_id: switch.irrigation
+        to: "on"
+    action:
+      - service: timer.start
+        entity_id: timer.irrigation
+  - alias: Irrigation Timer Stop
+    id: IrrigationTimerStop
+    trigger:
+      - platform: event
+        event_type: timer.finished
+        event_data:
+          entity_id: timer.irrigation
+    action:
+      - service: notify.all_devices
+        data:
+          message: Irrigation complete
+      - service: switch.turn_off
+        entity_id: switch.irrigation

@@ -1,0 +1,704 @@
+###############################################################################
+#   @original author  :   thejefreystone
+#   @date             :   10/05/2020
+#   @package          :   Lighting
+#   @description      :   All the Lightning specific configs.
+#
+#   @modified by      :   Chris Heder (@chrisron95)
+#   @date             :   05/12/2022
+###############################################################################
+
+input_number:
+  motion_lights_delay:
+    name: Motion Lights Delay
+    min: 1
+    max: 60
+    step: 1.0
+
+input_boolean:
+  motion_lights_master:
+    name: Motion Lights Master Control
+  kitchen_motion_lights:
+    name: Kitchen Motion Lights
+  dining_room_motion_lights:
+    name: Dining Room Motion Lights
+  living_room_motion_lights:
+    name: Living Room Motion Lights
+  bedroom_motion_lights:
+    name: Bedroom Motion Lights
+  lab_motion_lights:
+    name: Lab Motion Lights
+  patio_motion_lights:
+    name: Patio Motion Lights
+  front_yard_motion_lights:
+    name: Front Yard Motion Lights
+  garage_motion_lights:
+    name: Garage Motion Lights
+  garage_motion:
+    name: Garage Motion
+
+sensor:
+  - name: Kitchen Motion Count
+    platform: history_stats
+    entity_id: binary_sensor.espresense_kitchen_motion
+    state: "on"
+    type: count
+    end: "{{ now() }}"
+    duration:
+      minutes: 5
+  - name: Dining Room Motion Count
+    platform: history_stats
+    entity_id: binary_sensor.espresense_dining_room_motion
+    state: "on"
+    type: count
+    end: "{{ now() }}"
+    duration:
+      minutes: 5
+  - name: Living Room Motion Count
+    platform: history_stats
+    entity_id: binary_sensor.espresense_living_room_motion
+    state: "on"
+    type: count
+    end: "{{ now() }}"
+    duration:
+      minutes: 5
+  - name: Bedroom Motion Count
+    platform: history_stats
+    entity_id: binary_sensor.espresense_bedroom_motion
+    state: "on"
+    type: count
+    end: "{{ now() }}"
+    duration:
+      minutes: 5
+  - name: Lab Motion Count
+    platform: history_stats
+    entity_id: binary_sensor.espresense_lab_motion
+    state: "on"
+    type: count
+    end: "{{ now() }}"
+    duration:
+      minutes: 5
+  - name: Patio Motion Count
+    platform: history_stats
+    entity_id: binary_sensor.patio_motion
+    state: "on"
+    type: count
+    end: "{{ now() }}"
+    duration:
+      minutes: 5
+  - name: Front Yard Motion Count
+    platform: history_stats
+    entity_id: binary_sensor.front_yard_motion
+    state: "on"
+    type: count
+    end: "{{ now() }}"
+    duration:
+      minutes: 5
+
+group:
+  bedroom:
+    name: Bedroom Lights
+    entities:
+      - light.bedroom_fan_lights
+      - light.hue_color_lamp_1
+
+  lab:
+    name: Lab Lights
+    entities:
+      - light.lab_fan_light
+
+  living_room:
+    name: Living Room Lights
+    entities:
+      - light.living_room_fan_light
+      - light.living_room_leds
+      - light.francis_s_light
+      - light.fish_tank_leds
+
+  living_room_peripherals:
+    name: Living Room Peripheral Lights
+    entities:
+      - light.living_room_leds
+      - light.francis_s_light
+      - light.fish_tank_leds
+
+  dining_room:
+    name: Dining Room Lights
+    entities:
+      - light.dining_room_light
+
+  kitchen:
+    name: Kitchen Lights
+    entities:
+      - light.kitchen_light
+      - light.litchen_leds
+
+  patio:
+    name: Patio Lights
+    entities:
+      - light.patio_light
+      - light.patio_string_lights
+
+automation:
+  - id: "dining_room_motion_light_handler"
+    alias: Dining Room Motion Light Handler
+    description: ""
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.espresense_dining_room_motion
+        from: "off"
+        to: "on"
+        for:
+          seconds: 1
+    condition:
+      - condition: state
+        entity_id: input_boolean.do_not_disturb
+        state: "off"
+      - condition: state
+        entity_id: input_boolean.motion_lights_master
+        state: "on"
+      - condition: state
+        entity_id: input_boolean.dining_room_motion_lights
+        state: "on"
+    action:
+      - service: light.turn_on
+        data: {}
+        target:
+          entity_id: light.dining_room_light
+      - wait_for_trigger:
+          - platform: state
+            entity_id: binary_sensor.espresense_dining_room_motion
+            from: "on"
+            to: "off"
+            for:
+              minutes: "{{ states('input_number.motion_lights_delay')|int }}"
+      - service: light.turn_off
+        data: {}
+        target:
+          entity_id: light.dining_room_light
+    mode: restart
+
+  - id: "kitchen_motion_light_handler"
+    alias: Kitchen Motion Light Handler
+    description: ""
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.espresense_kitchen_motion
+        from: "off"
+        to: "on"
+        for:
+          seconds: 1
+    condition:
+      - condition: state
+        entity_id: input_boolean.motion_lights_master
+        state: "on"
+      - condition: state
+        entity_id: input_boolean.kitchen_motion_lights
+        state: "on"
+    action:
+      - choose:
+          - alias: Night
+            conditions:
+              - condition: state
+                entity_id: binary_sensor.do_not_disturb
+                state: "on"
+            sequence:
+              - service: light.turn_on
+                data:
+                  brightness_pct: 85
+                target:
+                  entity_id: light.kitchen_leds
+              - wait_for_trigger:
+                  - platform: state
+                    entity_id: binary_sensor.espresense_kitchen_motion
+                    from: "on"
+                    to: "off"
+                    for:
+                      minutes: "{{ states('input_number.motion_lights_delay')|int }}"
+              - service: light.turn_off
+                target:
+                  entity_id:
+                    - light.kitchen_light
+                    - light.kitchen_leds
+          - alias: Evening and Night While Awake
+            conditions:
+              - condition: or
+                conditions:
+                  - condition: state
+                    entity_id: binary_sensor.evening
+                    state: "on"
+                  - condition: state
+                    entity_id: binary_sensor.night
+                    state: "on"
+            sequence:
+              - service: light.turn_on
+                data:
+                  brightness_pct: 100
+                target:
+                  entity_id: light.kitchen_leds
+              - wait_for_trigger:
+                  - platform: state
+                    entity_id: binary_sensor.espresense_kitchen_motion
+                    from: "on"
+                    to: "off"
+                    for:
+                      minutes: "{{ states('input_number.motion_lights_delay')|int }}"
+              - service: scene.turn_on
+                target:
+                  entity_id: scene.kitchen_dim
+        default:
+          - service: light.turn_on
+            data: {}
+            target:
+              entity_id: light.kitchen_light
+          - wait_for_trigger:
+              - platform: state
+                entity_id: binary_sensor.espresense_kitchen_motion
+                from: "on"
+                to: "off"
+                for:
+                  minutes: "{{ states('input_number.motion_lights_delay')|int }}"
+          - service: light.turn_off
+            data: {}
+            target:
+              entity_id:
+                - light.kitchen_light
+                - light.kitchen_leds
+    mode: restart
+
+  - id: "bedroom_motion_light_handler"
+    alias: Bedroom Motion Light Handler
+    description: ""
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.espresense_bedroom_motion
+        from: "off"
+        to: "on"
+    condition:
+      - condition: state
+        entity_id: input_boolean.do_not_disturb
+        state: "off"
+      - condition: state
+        entity_id: input_boolean.motion_lights_master
+        state: "on"
+      - condition: state
+        entity_id: input_boolean.bedroom_motion_lights
+        state: "on"
+    action:
+      - choose:
+          - alias: Morning
+            conditions:
+              - condition: state
+                entity_id: binary_sensor.morning
+                state: "on"
+              - below: 200
+                condition: numeric_state
+                entity_id: sensor.bedroom_ambient_light
+            sequence:
+              - service: light.turn_on
+                target:
+                  entity_id: light.bathroom_light
+                data:
+                  brightness_pct: 35
+          - alias: Daytime
+            conditions:
+              - condition: or
+                conditions:
+                  - condition: state
+                    entity_id: binary_sensor.noon
+                    state: "on"
+                  - condition: state
+                    entity_id: binary_sensor.afternoon
+                    state: "on"
+              - below: 200
+                condition: numeric_state
+                entity_id: sensor.bedroom_ambient_light
+            sequence:
+              - service: script.master_bedroom_lights_w_level
+                data:
+                  level: 170
+              - wait_for_trigger:
+                  - platform: state
+                    entity_id: binary_sensor.espresense_bedroom_motion
+                    from: "on"
+                    to: "off"
+                    for:
+                      minutes: '{{ states("input_number.motion_lights_delay")|int }}'
+              - service: light.turn_off
+                data: {}
+                target:
+                  entity_id:
+                    - light.hue_color_lamp_1
+                    - light.bedroom_fan_lights
+          - alias: Evening
+            conditions:
+              - condition: state
+                entity_id: binary_sensor.evening
+                state: "on"
+            sequence:
+              - choose:
+                  - conditions:
+                      - below: 200
+                        condition: numeric_state
+                        entity_id: sensor.bedroom_ambient_light
+                    sequence:
+                      - service: light.turn_on
+                        data:
+                          brightness_pct: 75
+                        target:
+                          entity_id: light.hue_color_lamp_1
+                      - wait_for_trigger:
+                          - platform: state
+                            entity_id: binary_sensor.espresense_bedroom_motion
+                            from: "on"
+                            to: "off"
+                            for:
+                              minutes: '{{ states("input_number.motion_lights_delay")|int }}'
+                      - service: light.turn_off
+                        data: {}
+                        target:
+                          entity_id:
+                            - light.hue_color_lamp_1
+                            - light.bedroom_fan_lights
+                default: []
+          - alias: Night
+            conditions:
+              - condition: state
+                entity_id: binary_sensor.night
+                state: "on"
+              - condition: state
+                entity_id: input_boolean.do_not_disturb
+                state: "off"
+            sequence:
+              - service: light.turn_on
+                data:
+                  brightness_pct: 75
+                target:
+                  entity_id: light.hue_color_lamp_1
+              - wait_for_trigger:
+                  - platform: state
+                    entity_id: binary_sensor.espresense_bedroom_motion
+                    from: "on"
+                    to: "off"
+                    for:
+                      minutes: '{{ states("input_number.motion_lights_delay")|int }}'
+              - service: light.turn_off
+                data: {}
+                target:
+                  entity_id:
+                    - light.hue_color_lamp_1
+                    - light.bedroom_fan_lights
+        default: []
+    mode: restart
+
+  - id: "lab_motion_light_handler"
+    alias: Lab Motion Light Handler
+    description: ""
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.espresense_lab_motion
+        from: "off"
+        to: "on"
+    condition:
+      - condition: state
+        entity_id: input_boolean.do_not_disturb
+        state: "off"
+      - condition: state
+        entity_id: input_boolean.motion_lights_master
+        state: "on"
+      - condition: state
+        entity_id: input_boolean.lab_motion_lights
+        state: "on"
+      - below: 100
+        condition: numeric_state
+        entity_id: sensor.lab_ambient_light
+    action:
+      - service: light.turn_on
+        entity_id: light.lab_fan_light
+      - wait_for_trigger:
+          - platform: state
+            entity_id: binary_sensor.espresense_bedroom_motion
+            from: "on"
+            to: "off"
+            for:
+              minutes: "{{ states('input_number.motion_lights_delay')|int }}"
+      - service: light.turn_off
+        data: {}
+        target:
+          entity_id:
+            - light.lab_fan_light
+    mode: restart
+
+  - id: "patio_motion_light_handler"
+    alias: Patio Motion Light Handler
+    description: ""
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.patio_ring_motion
+        from: "off"
+        to: "on"
+    condition:
+      - condition: state
+        entity_id: input_boolean.motion_lights_master
+        state: "on"
+      - condition: state
+        entity_id: input_boolean.patio_motion_lights
+        state: "on"
+      - below: 60
+        condition: numeric_state
+        entity_id: sensor.patio_ambient_light
+    action:
+      - service: light.turn_on
+        entity_id: light.patio_string_lights
+      - wait_for_trigger:
+          - platform: state
+            entity_id: binary_sensor.patio_motion
+            from: "on"
+            to: "off"
+            for:
+              minutes: "{{ states('input_number.motion_lights_delay')|int }}"
+      - service: light.turn_off
+        data: {}
+        target:
+          entity_id:
+            - light.patio_string_lights
+    mode: restart
+
+  - id: "garage_motion_light_handler"
+    alias: Garage Motion Light Handler
+    description: ""
+    trigger:
+      - platform: state
+        entity_id: input_boolean.garage_motion
+        from: "off"
+        to: "on"
+    condition:
+      - condition: state
+        entity_id: input_boolean.motion_lights_master
+        state: "on"
+      - condition: state
+        entity_id: input_boolean.garage_motion_lights
+        state: "on"
+    action:
+      - service: light.turn_on
+        entity_id: light.garage_light
+      - wait_for_trigger:
+          - platform: state
+            entity_id: input_boolean.garage_motion
+            from: "on"
+            to: "off"
+            for:
+              minutes: "{{ states('input_number.motion_lights_delay')|int }}"
+      - service: light.turn_off
+        data: {}
+        target:
+          entity_id:
+            - light.garage_light
+    mode: restart
+
+  - id: "living_room_motion_light_handler"
+    alias: Living Room Motion Light Handler
+    description: ""
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.espresense_living_room_motion
+        from: "off"
+        to: "on"
+    condition:
+      - condition: state
+        entity_id: input_boolean.do_not_disturb
+        state: "off"
+      - condition: state
+        entity_id: input_boolean.motion_lights_master
+        state: "on"
+      - condition: state
+        entity_id: input_boolean.living_room_motion_lights
+        state: "on"
+    action:
+      - choose:
+          - alias: Daytime
+            conditions:
+              - condition: or
+                conditions:
+                  - condition: state
+                    entity_id: binary_sensor.morning
+                    state: "on"
+                  - condition: state
+                    entity_id: binary_sensor.noon
+                    state: "on"
+                  - condition: state
+                    entity_id: binary_sensor.afternoon
+                    state: "on"
+            sequence:
+              - service: scene.turn_on
+                data:
+                  entity_id: scene.living_room_lights_on
+              - wait_for_trigger:
+                  - platform: state
+                    entity_id: binary_sensor.espresense_living_room_motion
+                    from: "on"
+                    to: "off"
+                    for:
+                      minutes: '{{ states("input_number.motion_lights_delay")|int }}'
+              - service: scene.turn_on
+                data:
+                  entity_id: scene.living_room_lights_off
+          - alias: Evening
+            conditions:
+              - condition: state
+                entity_id: binary_sensor.evening
+                state: "on"
+            sequence:
+              - service: scene.turn_on
+                data:
+                  entity_id: scene.living_room_ambient
+              - wait_for_trigger:
+                  - platform: state
+                    entity_id: binary_sensor.espresense_living_room_motion
+                    from: "on"
+                    to: "off"
+                    for:
+                      minutes: '{{ states("input_number.motion_lights_delay")|int }}'
+              - service: scene.turn_on
+                data:
+                  entity_id: scene.living_room_lights_off
+          - alias: Night
+            conditions:
+              - condition: state
+                entity_id: binary_sensor.night
+                state: "on"
+              - condition: state
+                entity_id: input_boolean.do_not_disturb
+                state: "off"
+            sequence:
+              - service: scene.turn_on
+                data:
+                  entity_id: scene.living_room_ambient
+              - wait_for_trigger:
+                  - platform: state
+                    entity_id: binary_sensor.espresense_living_room_motion
+                    from: "on"
+                    to: "off"
+                    for:
+                      minutes: '{{ states("input_number.motion_lights_delay")|int }}'
+              - service: scene.turn_on
+                data:
+                  entity_id: scene.living_room_lights_off
+        default: []
+    mode: restart
+
+  - id: "front_yard_motion_light_handler"
+    alias: Front Yard Motion Light Handler
+    description: ""
+    trigger:
+      - type: motion
+        platform: device
+        device_id: 4d21f46ec9c7a89a6442dd4e631e96c1
+        entity_id: binary_sensor.front_yard_motion
+        domain: binary_sensor
+        for:
+          hours: 0
+          minutes: 0
+          seconds: 2
+          milliseconds: 0
+    condition:
+      - condition: state
+        entity_id: input_boolean.front_yard_motion_lights
+        state: "on"
+      - below: 60
+        condition: numeric_state
+        entity_id: sensor.patio_ambient_light
+    action:
+      - type: turn_on
+        device_id: ea967cfc7f04c23b62f5b9f437966b3e
+        entity_id: light.porch_light
+        domain: light
+      - wait_for_trigger:
+          - platform: state
+            entity_id: binary_sensor.front_yard_motion
+            from: "on"
+            to: "off"
+            for:
+              minutes: "{{ states('input_number.motion_lights_delay')|int }}"
+      - service: light.turn_off
+        target:
+          entity_id: light.porch_light
+        data: {}
+    mode: restart
+
+  - alias: Turn on Kitchen LEDs with Kitchen Light
+    id: "1628872984181"
+    description: ""
+    trigger:
+      - platform: device
+        type: turned_on
+        device_id: 7e8b95744c7040bbbee460145db11d97
+        entity_id: light.kitchen_light
+        domain: light
+    condition: []
+    action:
+      - service: light.turn_on
+        target:
+          entity_id: light.kitchen_leds
+        data:
+          brightness_pct: 100
+    mode: single
+
+script:
+  # Turn on Living Room Lights if sun is down or cloud coverage is above 70%
+  livingroom_lamps_on:
+    sequence:
+      - condition: or
+        conditions:
+          - condition: state
+            entity_id: sun.sun
+            state: "below_horizon"
+      - service: scene.turn_on
+        entity_id: scene.normal_livingroom_lighting
+
+  # Turn off Living Room Lights if sun is up and it is sunny or partly cloudy
+  livingroom_lights_off:
+    sequence:
+      - condition: and
+        conditions:
+          - condition: state
+            entity_id: sun.sun
+            state: "above_horizon"
+          - condition: state
+            entity_id: binary_sensor.living_room_occupancy
+            state: "off"
+          - condition: template
+            value_template: >
+              {%- if states('weather.home_2') == "sunny" or states('weather.home_2') == "partlycloudy" -%}
+                true
+              {%- endif -%}
+      - service: group.turn_off
+        entity_id: group.livingroom
+
+  # Turn off Kitchen Lights if sun is up and it is sunny or partly cloudy
+  kitchen_light_off:
+    sequence:
+      - condition: and
+        conditions:
+          - condition: state
+            entity_id: sun.sun
+            state: "above_horizon"
+          - condition: state
+            entity_id: binary_sensor.kitchen_occupancy
+            state: "off"
+          - condition: template
+            value_template: >
+              {%- if states('weather.home_2') == "sunny" or states('weather.home_2') == "partlycloudy" -%}
+                true
+              {%- endif -%}
+      - service: light.turn_off
+        entity_id: light.kitchen_light
+
+  master_bedroom_lights_w_level:
+    sequence:
+      - service: light.turn_on
+        entity_id: light.hue_color_lamp_1, light.bedroom_fan_lights
+        data:
+          brightness: >
+            {{ level | int }}
+          color_temp: 369

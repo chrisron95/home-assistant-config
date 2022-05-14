@@ -1,0 +1,64 @@
+>
+  {# Morning Wakeup Report #}
+  {%- macro getReport() -%}
+    
+    <p>
+      Good morning pootas.
+    </p>
+
+    <p>
+      <s>It is <say-as interpret-as="time">{{ now().strftime("%I:%M %p") }}</say-as></s>
+    </p>
+
+    <p>
+
+      {# Tempate sensor in packages/weather.yaml #}
+      {{ states('sensor.current_conditions')}}
+
+    </p>
+
+    <p>
+      
+      {# Tempate sensor in packages/weather.yaml #}
+      {{ states('sensor.current_forecast_detail') }}
+
+
+      {% if states('sensor.weatheralerts_1_active_alerts') | int > 1 %}
+        There are currently {{ states('sensor.weatheralerts_1_active_alerts') }} active weather alerts for our area.
+      {% elif states('sensor.weatheralerts_1_active_alerts') | int > 0 %}
+        There is currently {{ states('sensor.weatheralerts_1_active_alerts') }} active weather alert for our area.
+      {% endif %}
+
+      {# Tempate sensor in packages/weather.yaml #}
+      {{ states('sensor.clothing_forecast_detail') }}
+
+    </p>
+
+    <p>
+      {% if is_state('print_completed_overnight', 'on') %}
+        Also, your 3D print completed while you slept.
+      {% endif %}
+    </p>
+
+    <p>
+
+      Have a nice day pootas.
+
+    </p>
+
+  {%- endmacro -%}
+
+
+  {# a macro that removes all newline characters, empty spaces, and returns formatted text  #}
+  {%- macro cleanup(data) -%}
+    {%- for item in data.split("\n")  if item | trim != "" -%}
+      {{ item | trim }} {% endfor -%}
+  {%- endmacro -%}
+
+  {# a macro to call all macros :)  #}
+  {%- macro mother_of_all_macros() -%}
+    {{ getReport() }}
+  {%- endmacro -%}
+
+  {# Call the macro  #}
+  {{- cleanup(mother_of_all_macros()) -}}

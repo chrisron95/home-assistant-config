@@ -1,0 +1,1394 @@
+sensor:
+  # Falcon Player MQTT Status Updates
+  - platform: mqtt
+    name: "FPP Status"
+    state_topic: "hassio/falcon/player/FPP/status"
+  - platform: mqtt
+    name: "FPP Version"
+    state_topic: "hassio/falcon/player/FPP/version"
+  - platform: mqtt
+    name: "FPP Playlist Details"
+    state_topic: "hassio/falcon/player/FPP/playlist_details"
+  - platform: mqtt
+    name: "FPP Current Playlist"
+    state_topic: "hassio/falcon/player/FPP/playlist/name/status"
+  - platform: mqtt
+    name: "FPP Repeat Status"
+    state_topic: "hassio/falcon/player/FPP/playlist/repeat/status"
+  - platform: mqtt
+    name: "FPP Current Playlist Section"
+    state_topic: "hassio/falcon/player/FPP/playlist/section/status"
+  - platform: mqtt
+    name: "FPP Current Playlist Section Position"
+    state_topic: "hassio/falcon/player/FPP/playlist/sectionPosition/status"
+  - platform: mqtt
+    name: "FPP Playlist Position"
+    state_topic: "hassio/falcon/player/FPP/playlist/position/status"
+  - platform: mqtt
+    name: "FPP Media Name"
+    state_topic: "hassio/falcon/player/FPP/playlist/media/status"
+  - platform: mqtt
+    name: "FPP Current Song"
+    state_topic: "hassio/falcon/player/FPP/playlist/media/title"
+  - platform: mqtt
+    name: "FPP Sequence"
+    state_topic: "hassio/falcon/player/FPP/playlist/sequence/status"
+  - platform: mqtt
+    name: "FPP Sequence Total Seconds"
+    state_topic: "hassio/falcon/player/FPP/playlist/sequence/secondsTotal"
+  # - platform: mqtt
+  #   name: "FPP Start Time"
+  #   state_topic: "hassio/falcon/player/FPP/startTime"
+  # - platform: mqtt
+  #   name: "FPP Next Playlist"
+  #   state_topic: "hassio/falcon/player/FPP/scheduler/nextPlaylist/name"
+  # - platform: mqtt
+  #   name: "FPP Next Playlist Start Time"
+  #   state_topic: "hassio/falcon/player/FPP/scheduler/nextPlaylist/time/start"
+  # - platform: mqtt
+  #   name: "FPP Next Playlist End Time"
+  #   state_topic: "hassio/falcon/player/FPP/scheduler/nextPlaylist/time/end"
+  # - platform: mqtt
+  #   name: "FPP Sequence Position"
+  #   state_topic: "hassio/falcon/player/FPP/playlist/sequence/position"
+
+input_datetime:
+  front_lights_off:
+    name: Front Lights Off
+    has_date: false
+    has_time: true
+
+group:
+  floods:
+    name: Floods
+    icon: mdi:home-lightbulb
+    entities:
+      - light.left_flood
+      - light.right_flood
+
+  house_lights:
+    name: House Lights
+    icon: mdi:home-lightbulb
+    entities:
+      - light.house_light_1
+      - light.house_light_2
+      - light.house_light_3
+      - light.house_light_4
+      - light.house_light_5
+      - light.house_light_6
+      - light.house_light_7
+      - light.house_light_8
+      - light.house_light_9
+      - light.house_light_10
+      - light.house_light_11
+      - light.house_light_12
+      - light.house_light_13
+      - light.house_light_14
+      - light.house_light_15
+      - light.house_light_16
+
+  jack:
+    name: Jack
+    icon: mdi:halloween
+    entities:
+      - light.jack_outline
+      - light.jack_top_eyes
+      - light.jack_bottom_eyes
+      - light.jack_top_mouth
+      - light.jack_normal_mouth
+      - light.jack_wide_mouth
+      - light.jack_o_mouth
+      - light.jack_small_mouth
+
+  yule_ghoul_1:
+    name: "Yule Ghoul 1"
+    icon: mdi:ghost
+    entities:
+      - light.yule_ghoul_1_outline
+      - light.yule_ghoul_1_top_eyes
+      - light.yule_ghoul_1_bottom_eyes
+      - light.yule_ghoul_1_top_mouth
+      - light.yule_ghoul_1_normal_mouth
+      - light.yule_ghoul_1_wide_mouth
+      - light.yule_ghoul_1_o_mouth
+      - light.yule_ghoul_1_small_mouth
+
+  yule_ghoul_2:
+    name: "Yule Ghoul 2"
+    icon: mdi:ghost
+    entities:
+      - light.yule_ghoul_2_outline
+      - light.yule_ghoul_2_top_eyes
+      - light.yule_ghoul_2_bottom_eyes
+      - light.yule_ghoul_2_top_mouth
+      - light.yule_ghoul_2_normal_mouth
+      - light.yule_ghoul_2_wide_mouth
+      - light.yule_ghoul_2_o_mouth
+      - light.yule_ghoul_2_small_mouth
+
+  yule_ghoul_3:
+    name: "Yule Ghoul 3"
+    icon: mdi:ghost
+    entities:
+      - light.yule_ghoul_3_outline
+      - light.yule_ghoul_3_top_eyes
+      - light.yule_ghoul_3_bottom_eyes
+      - light.yule_ghoul_3_top_mouth
+      - light.yule_ghoul_3_normal_mouth
+      - light.yule_ghoul_3_wide_mouth
+      - light.yule_ghoul_3_o_mouth
+      - light.yule_ghoul_3_small_mouth
+
+  yule_ghoul_4:
+    name: "Yule Ghoul 4"
+    icon: mdi:ghost
+    entities:
+      - light.yule_ghoul_4_outline
+      - light.yule_ghoul_4_top_eyes
+      - light.yule_ghoul_4_bottom_eyes
+      - light.yule_ghoul_4_top_mouth
+      - light.yule_ghoul_4_normal_mouth
+      - light.yule_ghoul_4_wide_mouth
+      - light.yule_ghoul_4_o_mouth
+      - light.yule_ghoul_4_small_mouth
+
+  ghosts:
+    name: Ghosts
+    icon: mdi:ghost
+    entities:
+      - light.ghost1
+      - light.ghost2
+      - light.ghost3
+      - light.ghost4
+      - light.ghost5
+      - light.ghost6
+      - light.ghost7
+      - light.ghost8
+
+automation:
+  - alias: Front lights off at night
+    id: "1599449030138"
+    description: ""
+    trigger:
+      - at: input_datetime.front_lights_off
+        platform: time
+    condition:
+      - condition: state
+        entity_id: input_boolean.guests_over
+        state: "off"
+    action:
+      - service: scene.turn_on
+        target:
+          entity_id: scene.front_lights_all_off
+      - service: input_boolean.turn_on
+        target:
+          entity_id:
+            - input_boolean.front_lights_off_for_the_night
+      - service: light.turn_off
+        target:
+          entity_id:
+            - light.front_columns_button_led
+            - light.front_columns_black_lights
+        data:
+          transition: 2
+      - service: script.fpp_stop_now
+    mode: single
+  - alias: Front Lights On At Dusk
+    id: "1616533227405"
+    description: Trigger when it gets dark
+    trigger:
+      - type: illuminance
+        platform: device
+        device_id: 2db8b8a959026a5b8339a61834dd3197
+        entity_id: sensor.patio_ambient_light
+        domain: sensor
+        below: 20
+    condition:
+      - condition: state
+        entity_id: input_boolean.front_lights_on_for_the_night
+        state: "off"
+    action:
+      - service: notify.chris
+        data:
+          message: Lights are turning on
+      - service: script.front_lights_turn_on
+      - service: input_boolean.turn_on
+        target:
+          entity_id: input_boolean.front_lights_on_for_the_night
+      - condition: state
+        entity_id: input_boolean.columns_button_enabled
+        state: "on"
+      - service: light.turn_on
+        target:
+          entity_id: light.front_columns_button_led
+    mode: single
+  - alias: Front Lights Reset
+    id: "1617760688958"
+    description: ""
+    trigger:
+      - platform: time
+        at: "12:00:00"
+    condition: []
+    action:
+      - service: input_boolean.turn_off
+        target:
+          entity_id:
+            - input_boolean.front_lights_on_for_the_night
+            - input_boolean.front_lights_off_for_the_night
+    mode: single
+  - alias: Toggle Flood Lights
+    id: "1617761350052"
+    description: ""
+    trigger:
+      - platform: device
+        domain: tasmota
+        device_id: c05382e95d514cffc7ea5ddc936b93b9
+        type: button_double_press
+        subtype: button_1
+        discovery_id: CC50E3E75A8F_button_1_DOUBLE
+    condition: []
+    action:
+      - service: light.toggle
+        data:
+          brightness_pct: 100
+          rgb_color:
+            - 0
+            - 255
+            - 255
+          transition: 5
+        target:
+          entity_id:
+            - light.left_flood
+            - light.right_flood
+    mode: single
+  - alias: FPP Volume Set
+    id: "1632625438084"
+    description: ""
+    trigger:
+      - platform: state
+        entity_id: input_number.fpp_volume
+    condition: []
+    action:
+      - service: script.fpp_set_volume
+    mode: single
+  - alias: Front Columns Button Press
+    id: "1633124084367"
+    description: ""
+    trigger:
+      - platform: device
+        domain: tasmota
+        device_id: 8e07dd38dc9354108f762038aec68c27
+        type: button_short_press
+        subtype: button_1
+        discovery_id: BCFF4D1916A5_button_1_SINGLE
+    condition:
+      - condition: state
+        state: "on"
+        entity_id: light.front_columns_button_led
+    action:
+      - service: notify.chris
+        data:
+          message: Pressed
+      - service: script.fpp_start_playlist_at_random_song
+    mode: single
+  - alias: FPP Status Sync
+    id: "1633371419662"
+    description: ""
+    trigger:
+      - platform: state
+        entity_id: sensor.fpp_status
+    condition: []
+    action:
+      - choose:
+          - conditions:
+              - condition: state
+                entity_id: sensor.fpp_status
+                state: playing
+            sequence:
+              - service: light.turn_off
+                target:
+                  entity_id: light.front_columns_button_led
+                data:
+                  transition: 2
+              - service: automation.turn_off
+                target:
+                  entity_id: automation.front_door_motion_light
+          - conditions:
+              - condition: state
+                entity_id: sensor.fpp_status
+                state: idle
+            sequence:
+              - service: light.turn_on
+                target:
+                  entity_id: light.front_columns_button_led
+                data:
+                  transition: 2
+              - service: automation.turn_on
+                target:
+                  entity_id: automation.front_door_motion_light
+        default: []
+    mode: single
+  - alias: Front Columns Force Stop
+    id: "1633372254150"
+    description: ""
+    trigger:
+      - platform: device
+        domain: tasmota
+        device_id: 8e07dd38dc9354108f762038aec68c27
+        type: button_quadruple_press
+        subtype: button_1
+        discovery_id: BCFF4D1916A5_button_1_QUAD
+    condition:
+      - condition: state
+        entity_id: sensor.fpp_status
+        state: playing
+    action:
+      - service: script.fpp_stop_now
+    mode: single
+  - alias: Front Lights Resume
+    id: "1633386529995"
+    description: ""
+    trigger:
+      - platform: state
+        entity_id: sensor.fpp_status
+        from: playing
+        to: idle
+    condition:
+      - condition: state
+        entity_id: input_boolean.front_lights_on_for_the_night
+        state: "on"
+    action:
+      - service: script.front_lights_turn_on
+    mode: single
+
+scene:
+  - name: Jack Smile
+    id: "1601668951462"
+    entities:
+      light.jack_outline:
+        brightness: 255
+        hs_color:
+          - 0
+          - 0
+        rgb_color:
+          - 255
+          - 255
+          - 255
+        xy_color:
+          - 0.323
+          - 0.329
+        friendly_name: jack_outline
+        supported_features: 57
+        state: "on"
+      light.jack_top_eyes:
+        brightness: 255
+        hs_color:
+          - 0
+          - 0
+        rgb_color:
+          - 255
+          - 255
+          - 255
+        xy_color:
+          - 0.323
+          - 0.329
+        friendly_name: jack_top_eyes
+        supported_features: 57
+        state: "on"
+      light.jack_bottom_eyes:
+        brightness: 255
+        hs_color:
+          - 0
+          - 0
+        rgb_color:
+          - 255
+          - 255
+          - 255
+        xy_color:
+          - 0.323
+          - 0.329
+        friendly_name: jack_bottom_eyes
+        supported_features: 57
+        state: "on"
+      light.jack_top_mouth:
+        brightness: 255
+        hs_color:
+          - 0
+          - 0
+        rgb_color:
+          - 255
+          - 255
+          - 255
+        xy_color:
+          - 0.323
+          - 0.329
+        friendly_name: jack_top_mouth
+        supported_features: 57
+        state: "on"
+      light.jack_normal_mouth:
+        brightness: 255
+        hs_color:
+          - 0
+          - 0
+        rgb_color:
+          - 255
+          - 255
+          - 255
+        xy_color:
+          - 0.323
+          - 0.329
+        friendly_name: jack_normal_mouth
+        supported_features: 57
+        state: "on"
+      light.jack_wide_mouth:
+        friendly_name: jack_wide_mouth
+        supported_features: 57
+        state: "off"
+      light.jack_o_mouth:
+        friendly_name: jack_o_mouth
+        supported_features: 57
+        state: "off"
+      light.jack_small_mouth:
+        friendly_name: jack_small_mouth
+        supported_features: 57
+        state: "off"
+    icon: mdi:halloween
+  - name: Yule Ghoul 1 Smile
+    id: "1601669127150"
+    entities:
+      light.yule_ghoul_1_outline:
+        supported_color_modes:
+          - hs
+        friendly_name: yule_ghoul_1_outline
+        supported_features: 57
+        state: "off"
+      light.yule_ghoul_1_top_eyes:
+        supported_color_modes:
+          - hs
+        color_mode: hs
+        brightness: 255
+        hs_color:
+          - 0
+          - 0
+        rgb_color:
+          - 255
+          - 255
+          - 255
+        xy_color:
+          - 0.323
+          - 0.329
+        friendly_name: yule_ghoul_1_top_eyes
+        supported_features: 57
+        state: "on"
+      light.yule_ghoul_1_bottom_eyes:
+        supported_color_modes:
+          - hs
+        color_mode: hs
+        brightness: 255
+        hs_color:
+          - 0
+          - 0
+        rgb_color:
+          - 255
+          - 255
+          - 255
+        xy_color:
+          - 0.323
+          - 0.329
+        friendly_name: yule_ghoul_1_bottom_eyes
+        supported_features: 57
+        state: "on"
+      light.yule_ghoul_1_top_mouth:
+        supported_color_modes:
+          - hs
+        color_mode: hs
+        brightness: 255
+        hs_color:
+          - 0
+          - 0
+        rgb_color:
+          - 255
+          - 255
+          - 255
+        xy_color:
+          - 0.323
+          - 0.329
+        friendly_name: yule_ghoul_1_top_mouth
+        supported_features: 57
+        state: "on"
+      light.yule_ghoul_1_normal_mouth:
+        supported_color_modes:
+          - hs
+        color_mode: hs
+        brightness: 255
+        hs_color:
+          - 0
+          - 0
+        rgb_color:
+          - 255
+          - 255
+          - 255
+        xy_color:
+          - 0.323
+          - 0.329
+        friendly_name: yule_ghoul_1_normal_mouth
+        supported_features: 57
+        state: "on"
+      light.yule_ghoul_1_wide_mouth:
+        supported_color_modes:
+          - hs
+        friendly_name: yule_ghoul_1_wide_mouth
+        supported_features: 57
+        state: "off"
+      light.yule_ghoul_1_o_mouth:
+        supported_color_modes:
+          - hs
+        friendly_name: yule_ghoul_1_o_mouth
+        supported_features: 57
+        state: "off"
+      light.yule_ghoul_1_small_mouth:
+        supported_color_modes:
+          - hs
+        friendly_name: yule_ghoul_1_small_mouth
+        supported_features: 57
+        state: "off"
+    icon: mdi:pine-tree
+  - name: Yule Ghoul 2 Smile
+    id: "1601669770420"
+    entities:
+      light.yule_ghoul_2_outline:
+        supported_color_modes:
+          - hs
+        friendly_name: yule_ghoul_2_outline
+        supported_features: 57
+        state: "off"
+      light.yule_ghoul_2_top_eyes:
+        supported_color_modes:
+          - hs
+        color_mode: hs
+        brightness: 255
+        hs_color:
+          - 0
+          - 0
+        rgb_color:
+          - 255
+          - 255
+          - 255
+        xy_color:
+          - 0.323
+          - 0.329
+        friendly_name: yule_ghoul_2_top_eyes
+        supported_features: 57
+        state: "on"
+      light.yule_ghoul_2_bottom_eyes:
+        supported_color_modes:
+          - hs
+        color_mode: hs
+        brightness: 255
+        hs_color:
+          - 0
+          - 0
+        rgb_color:
+          - 255
+          - 255
+          - 255
+        xy_color:
+          - 0.323
+          - 0.329
+        friendly_name: yule_ghoul_2_bottom_eyes
+        supported_features: 57
+        state: "on"
+      light.yule_ghoul_2_top_mouth:
+        supported_color_modes:
+          - hs
+        color_mode: hs
+        brightness: 255
+        hs_color:
+          - 0
+          - 0
+        rgb_color:
+          - 255
+          - 255
+          - 255
+        xy_color:
+          - 0.323
+          - 0.329
+        friendly_name: yule_ghoul_2_top_mouth
+        supported_features: 57
+        state: "on"
+      light.yule_ghoul_2_normal_mouth:
+        supported_color_modes:
+          - hs
+        color_mode: hs
+        brightness: 255
+        hs_color:
+          - 0
+          - 0
+        rgb_color:
+          - 255
+          - 255
+          - 255
+        xy_color:
+          - 0.323
+          - 0.329
+        friendly_name: yule_ghoul_2_normal_mouth
+        supported_features: 57
+        state: "on"
+      light.yule_ghoul_2_wide_mouth:
+        supported_color_modes:
+          - hs
+        friendly_name: yule_ghoul_2_wide_mouth
+        supported_features: 57
+        state: "off"
+      light.yule_ghoul_2_o_mouth:
+        supported_color_modes:
+          - hs
+        friendly_name: yule_ghoul_2_o_mouth
+        supported_features: 57
+        state: "off"
+      light.yule_ghoul_2_small_mouth:
+        supported_color_modes:
+          - hs
+        friendly_name: yule_ghoul_2_small_mouth
+        supported_features: 57
+        state: "off"
+    icon: mdi:pine-tree
+  - name: Yule Ghoul 3 Smile
+    id: "1601669832851"
+    entities:
+      light.yule_ghoul_3_outline:
+        supported_color_modes:
+          - hs
+        friendly_name: yule_ghoul_3_outline
+        supported_features: 57
+        state: "off"
+      light.yule_ghoul_3_top_eyes:
+        supported_color_modes:
+          - hs
+        color_mode: hs
+        brightness: 255
+        hs_color:
+          - 0
+          - 0
+        rgb_color:
+          - 255
+          - 255
+          - 255
+        xy_color:
+          - 0.323
+          - 0.329
+        friendly_name: yule_ghoul_3_top_eyes
+        supported_features: 57
+        state: "on"
+      light.yule_ghoul_3_bottom_eyes:
+        supported_color_modes:
+          - hs
+        color_mode: hs
+        brightness: 255
+        hs_color:
+          - 0
+          - 0
+        rgb_color:
+          - 255
+          - 255
+          - 255
+        xy_color:
+          - 0.323
+          - 0.329
+        friendly_name: yule_ghoul_3_bottom_eyes
+        supported_features: 57
+        state: "on"
+      light.yule_ghoul_3_top_mouth:
+        supported_color_modes:
+          - hs
+        color_mode: hs
+        brightness: 255
+        hs_color:
+          - 0
+          - 0
+        rgb_color:
+          - 255
+          - 255
+          - 255
+        xy_color:
+          - 0.323
+          - 0.329
+        friendly_name: yule_ghoul_3_top_mouth
+        supported_features: 57
+        state: "on"
+      light.yule_ghoul_3_normal_mouth:
+        supported_color_modes:
+          - hs
+        color_mode: hs
+        brightness: 255
+        hs_color:
+          - 0
+          - 0
+        rgb_color:
+          - 255
+          - 255
+          - 255
+        xy_color:
+          - 0.323
+          - 0.329
+        friendly_name: yule_ghoul_3_normal_mouth
+        supported_features: 57
+        state: "on"
+      light.yule_ghoul_3_wide_mouth:
+        supported_color_modes:
+          - hs
+        friendly_name: yule_ghoul_3_wide_mouth
+        supported_features: 57
+        state: "off"
+      light.yule_ghoul_3_o_mouth:
+        supported_color_modes:
+          - hs
+        friendly_name: yule_ghoul_3_o_mouth
+        supported_features: 57
+        state: "off"
+      light.yule_ghoul_3_small_mouth:
+        supported_color_modes:
+          - hs
+        friendly_name: yule_ghoul_3_small_mouth
+        supported_features: 57
+        state: "off"
+    icon: mdi:pine-tree
+  - name: Yule Ghoul 4 Smile
+    id: "1601669894206"
+    entities:
+      light.yule_ghoul_4_outline:
+        supported_color_modes:
+          - hs
+        friendly_name: yule_ghoul_4_outline
+        supported_features: 57
+        state: "off"
+      light.yule_ghoul_4_top_eyes:
+        supported_color_modes:
+          - hs
+        color_mode: hs
+        brightness: 255
+        hs_color:
+          - 0
+          - 0
+        rgb_color:
+          - 255
+          - 255
+          - 255
+        xy_color:
+          - 0.323
+          - 0.329
+        friendly_name: yule_ghoul_4_top_eyes
+        supported_features: 57
+        state: "on"
+      light.yule_ghoul_4_bottom_eyes:
+        supported_color_modes:
+          - hs
+        color_mode: hs
+        brightness: 255
+        hs_color:
+          - 0
+          - 0
+        rgb_color:
+          - 255
+          - 255
+          - 255
+        xy_color:
+          - 0.323
+          - 0.329
+        friendly_name: yule_ghoul_4_bottom_eyes
+        supported_features: 57
+        state: "on"
+      light.yule_ghoul_4_top_mouth:
+        supported_color_modes:
+          - hs
+        color_mode: hs
+        brightness: 255
+        hs_color:
+          - 0
+          - 0
+        rgb_color:
+          - 255
+          - 255
+          - 255
+        xy_color:
+          - 0.323
+          - 0.329
+        friendly_name: yule_ghoul_4_top_mouth
+        supported_features: 57
+        state: "on"
+      light.yule_ghoul_4_normal_mouth:
+        supported_color_modes:
+          - hs
+        color_mode: hs
+        brightness: 255
+        hs_color:
+          - 0
+          - 0
+        rgb_color:
+          - 255
+          - 255
+          - 255
+        xy_color:
+          - 0.323
+          - 0.329
+        friendly_name: yule_ghoul_4_normal_mouth
+        supported_features: 57
+        state: "on"
+      light.yule_ghoul_4_wide_mouth:
+        supported_color_modes:
+          - hs
+        friendly_name: yule_ghoul_4_wide_mouth
+        supported_features: 57
+        state: "off"
+      light.yule_ghoul_4_o_mouth:
+        supported_color_modes:
+          - hs
+        friendly_name: yule_ghoul_4_o_mouth
+        supported_features: 57
+        state: "off"
+      light.yule_ghoul_4_small_mouth:
+        supported_color_modes:
+          - hs
+        friendly_name: yule_ghoul_4_small_mouth
+        supported_features: 57
+        state: "off"
+    icon: mdi:pine-tree
+  - name: Small Palms All On
+    id: "1632950814831"
+    entities:
+      light.house_light_3:
+        supported_color_modes:
+          - hs
+        color_mode: hs
+        brightness: 255
+        hs_color:
+          - 0
+          - 0
+        rgb_color:
+          - 255
+          - 255
+          - 255
+        xy_color:
+          - 0.323
+          - 0.329
+        friendly_name: house_light_3
+        supported_features: 57
+        state: "on"
+      light.house_light_4:
+        supported_color_modes:
+          - hs
+        color_mode: hs
+        brightness: 255
+        hs_color:
+          - 0
+          - 0
+        rgb_color:
+          - 255
+          - 255
+          - 255
+        xy_color:
+          - 0.323
+          - 0.329
+        friendly_name: house_light_4
+        supported_features: 57
+        state: "on"
+      light.house_light_5:
+        supported_color_modes:
+          - hs
+        color_mode: hs
+        brightness: 255
+        hs_color:
+          - 0
+          - 0
+        rgb_color:
+          - 255
+          - 255
+          - 255
+        xy_color:
+          - 0.323
+          - 0.329
+        friendly_name: house_light_5
+        supported_features: 57
+        state: "on"
+      light.house_light_6:
+        supported_color_modes:
+          - hs
+        color_mode: hs
+        brightness: 255
+        hs_color:
+          - 0
+          - 0
+        rgb_color:
+          - 255
+          - 255
+          - 255
+        xy_color:
+          - 0.323
+          - 0.329
+        friendly_name: house_light_6
+        supported_features: 57
+        state: "on"
+    icon: mdi:palm-tree
+  - name: Front Lights All Off
+    id: "1632973383011"
+    entities:
+      light.left_flood:
+        supported_color_modes:
+          - hs
+        friendly_name: Left_Flood
+        supported_features: 57
+        state: "off"
+      light.right_flood:
+        supported_color_modes:
+          - hs
+        friendly_name: Right_Flood
+        supported_features: 57
+        state: "off"
+      light.house_light_1:
+        supported_color_modes:
+          - hs
+        friendly_name: house_light_1
+        supported_features: 57
+        state: "off"
+      light.house_light_2:
+        supported_color_modes:
+          - hs
+        friendly_name: house_light_2
+        supported_features: 57
+        state: "off"
+      light.house_light_3:
+        supported_color_modes:
+          - hs
+        friendly_name: house_light_3
+        supported_features: 57
+        state: "off"
+      light.house_light_4:
+        supported_color_modes:
+          - hs
+        friendly_name: house_light_4
+        supported_features: 57
+        state: "off"
+      light.house_light_5:
+        supported_color_modes:
+          - hs
+        friendly_name: house_light_5
+        supported_features: 57
+        state: "off"
+      light.house_light_6:
+        supported_color_modes:
+          - hs
+        friendly_name: house_light_6
+        supported_features: 57
+        state: "off"
+      light.house_light_7:
+        supported_color_modes:
+          - hs
+        friendly_name: house_light_7
+        supported_features: 57
+        state: "off"
+      light.house_light_8:
+        supported_color_modes:
+          - hs
+        friendly_name: house_light_8
+        supported_features: 57
+        state: "off"
+      light.house_light_9:
+        supported_color_modes:
+          - hs
+        friendly_name: house_light_9
+        supported_features: 57
+        state: "off"
+      light.house_light_10:
+        supported_color_modes:
+          - hs
+        friendly_name: house_light_10
+        supported_features: 57
+        state: "off"
+      light.house_light_11:
+        supported_color_modes:
+          - hs
+        friendly_name: house_light_11
+        supported_features: 57
+        state: "off"
+      light.house_light_12:
+        supported_color_modes:
+          - hs
+        friendly_name: house_light_12
+        supported_features: 57
+        state: "off"
+      light.house_light_13:
+        supported_color_modes:
+          - hs
+        friendly_name: house_light_13
+        supported_features: 57
+        state: "off"
+      light.house_light_14:
+        supported_color_modes:
+          - hs
+        friendly_name: house_light_14
+        supported_features: 57
+        state: "off"
+      light.house_light_15:
+        supported_color_modes:
+          - hs
+        friendly_name: house_light_15
+        supported_features: 57
+        state: "off"
+      light.house_light_16:
+        supported_color_modes:
+          - hs
+        friendly_name: house_light_16
+        supported_features: 57
+        state: "off"
+      light.bottom_pixels:
+        supported_color_modes:
+          - hs
+        friendly_name: bottom_pixels
+        supported_features: 57
+        state: "off"
+      light.top_pixels:
+        supported_color_modes:
+          - hs
+        friendly_name: top_pixels
+        supported_features: 57
+        state: "off"
+      light.bottom_icicle_lights:
+        supported_color_modes:
+          - hs
+        friendly_name: bottom_icicle_lights
+        supported_features: 57
+        state: "off"
+      light.top_icicle_lights:
+        supported_color_modes:
+          - hs
+        friendly_name: top_icicle_lights
+        supported_features: 57
+        state: "off"
+      group.jack:
+        entity_id:
+          - light.jack_outline
+          - light.jack_top_eyes
+          - light.jack_bottom_eyes
+          - light.jack_top_mouth
+          - light.jack_normal_mouth
+          - light.jack_wide_mouth
+          - light.jack_o_mouth
+          - light.jack_small_mouth
+        order: 3
+        friendly_name: Jack
+        icon: mdi:halloween
+        state: "off"
+      group.yule_ghoul_1:
+        entity_id:
+          - light.yule_ghoul_1_outline
+          - light.yule_ghoul_1_top_eyes
+          - light.yule_ghoul_1_bottom_eyes
+          - light.yule_ghoul_1_top_mouth
+          - light.yule_ghoul_1_normal_mouth
+          - light.yule_ghoul_1_wide_mouth
+          - light.yule_ghoul_1_o_mouth
+          - light.yule_ghoul_1_small_mouth
+        order: 4
+        friendly_name: Yule Ghoul 1
+        icon: mdi:ghost
+        state: "on"
+      group.yule_ghoul_2:
+        entity_id:
+          - light.yule_ghoul_2_outline
+          - light.yule_ghoul_2_top_eyes
+          - light.yule_ghoul_2_bottom_eyes
+          - light.yule_ghoul_2_top_mouth
+          - light.yule_ghoul_2_normal_mouth
+          - light.yule_ghoul_2_wide_mouth
+          - light.yule_ghoul_2_o_mouth
+          - light.yule_ghoul_2_small_mouth
+        order: 5
+        friendly_name: Yule Ghoul 2
+        icon: mdi:ghost
+        state: "off"
+      group.yule_ghoul_3:
+        entity_id:
+          - light.yule_ghoul_3_outline
+          - light.yule_ghoul_3_top_eyes
+          - light.yule_ghoul_3_bottom_eyes
+          - light.yule_ghoul_3_top_mouth
+          - light.yule_ghoul_3_normal_mouth
+          - light.yule_ghoul_3_wide_mouth
+          - light.yule_ghoul_3_o_mouth
+          - light.yule_ghoul_3_small_mouth
+        order: 6
+        friendly_name: Yule Ghoul 3
+        icon: mdi:ghost
+        state: "off"
+      group.yule_ghoul_4:
+        entity_id:
+          - light.yule_ghoul_4_outline
+          - light.yule_ghoul_4_top_eyes
+          - light.yule_ghoul_4_bottom_eyes
+          - light.yule_ghoul_4_top_mouth
+          - light.yule_ghoul_4_normal_mouth
+          - light.yule_ghoul_4_wide_mouth
+          - light.yule_ghoul_4_o_mouth
+          - light.yule_ghoul_4_small_mouth
+        order: 7
+        friendly_name: Yule Ghoul 4
+        icon: mdi:ghost
+        state: "off"
+      group.ghosts:
+        entity_id:
+          - light.ghost1
+          - light.ghost2
+          - light.ghost3
+          - light.ghost4
+          - light.ghost5
+          - light.ghost6
+          - light.ghost7
+          - light.ghost8
+        order: 8
+        friendly_name: Ghosts
+        icon: mdi:ghost
+        state: "off"
+
+script:
+  fpp_stop_now:
+    alias: FPP Stop Now
+    sequence:
+      - service: mqtt.publish
+        data:
+          topic: hassio/falcon/player/FPP/set/playlist/ALLPLAYLISTS/stop/now
+    mode: single
+  fpp_stop_gracefully:
+    alias: FPP Stop Gracefully
+    sequence:
+      - service: mqtt.publish
+        data:
+          topic: hassio/falcon/player/FPP/set/playlist/ALLPLAYLISTS/stop/graceful
+    mode: single
+  fpp_stop_after_loop:
+    alias: FPP Stop After Loop
+    sequence:
+      - service: mqtt.publish
+        data:
+          topic: hassio/falcon/player/FPP/set/playlist/ALLPLAYLISTS/stop/afterloop
+    mode: single
+  fpp_start_playlist:
+    alias: FPP Start Playlist
+    sequence:
+      - service: mqtt.publish
+        data:
+          topic: hassio/falcon/player/FPP/set/command/"Start Playlist"
+          payload: '{{ states("input_select.fpp_playlist") }}'
+    mode: single
+  fpp_next_song:
+    alias: FPP Next Song
+    sequence:
+      - service: mqtt.publish
+        data:
+          topic:
+            hassio/falcon/player/FPP/set/playlist/{{ states('input_select.fpp_playlist')
+            }}/next
+    mode: single
+  fpp_previous_song:
+    alias: FPP Previous Song
+    sequence:
+      - service: mqtt.publish
+        data:
+          topic:
+            hassio/falcon/player/FPP/set/playlist/{{ states('input_select.fpp_playlist')
+            }}/prev
+    mode: single
+  front_lights_turn_on:
+    alias: Front Lights Turn On
+    sequence:
+      - choose:
+          - conditions:
+              - condition: state
+                entity_id: input_select.front_yard_light_mode
+                state: Halloween
+            sequence:
+              - scene: scene.small_palms_all_on
+              - scene: scene.jack_smile
+              - scene: scene.yule_ghoul_1_smile
+              - scene: scene.yule_ghoul_2_smile
+              - scene: scene.yule_ghoul_3_smile
+              - scene: scene.yule_ghoul_4_smile
+              - service: light.turn_on
+                target:
+                  entity_id:
+                    - light.house_light_3
+                    - light.house_light_4
+                    - light.house_light_5
+                    - light.house_light_6
+                    - light.front_columns_black_lights
+              - service: light.turn_on
+                target:
+                  entity_id:
+                    - light.ghost1
+                    - light.ghost2
+                    - light.ghost3
+                    - light.ghost4
+                    - light.ghost5
+                    - light.ghost6
+                    - light.ghost7
+                    - light.ghost8
+                data:
+                  rgb_color:
+                    - 255
+                    - 119
+                    - 0
+                  brightness: 255
+              - service: light.turn_on
+                target:
+                  entity_id: light.left_flood
+                data:
+                  rgb_color:
+                    - 255
+                    - 0
+                    - 255
+                  brightness_pct: 100
+              - service: light.turn_on
+                target:
+                  entity_id: light.right_flood
+                data:
+                  rgb_color:
+                    - 0
+                    - 255
+                    - 0
+                  brightness_pct: 100
+              - service: light.turn_on
+                target:
+                  entity_id: light.front_columns_button_led
+                data:
+                  transition: 2
+          - conditions:
+              - condition: state
+                entity_id: input_select.front_yard_light_mode
+                state: Christmas old
+            sequence:
+              - service: notify.chris
+                data:
+                  message: Christmas
+              - scene: scene.yule_ghoul_1_smile
+              - scene: scene.yule_ghoul_2_smile
+              - scene: scene.yule_ghoul_3_smile
+              - scene: scene.yule_ghoul_4_smile
+              - service: light.turn_on
+                target:
+                  entity_id:
+                    - light.house_light_1
+                    - light.house_light_2
+                    - light.house_light_3
+                    - light.house_light_4
+                    - light.house_light_5
+                    - light.house_light_6
+                    - light.house_light_7
+                    - light.house_light_8
+                    - light.house_light_9
+                    - light.house_light_10
+                    - light.house_light_11
+                    - light.house_light_12
+                    - light.house_light_13
+                    - light.house_light_14
+                    - light.house_light_15
+                    - light.house_light_16
+          - conditions:
+              - condition: state
+                entity_id: input_select.front_yard_light_mode
+                state: Christmas
+            sequence:
+              - service: notify.chris
+                data:
+                  message: Christmas Standby
+              - service: mqtt.publish
+                data:
+                  topic: hassio/falcon/player/FPP/set/command/"Start Playlist"
+                  payload: Christmas_Standby
+              - service: mqtt.publish
+                data:
+                  topic: hassio/falcon/player/FPP/set/playlist/Christmas_Standby/repeat
+                  payload: "1"
+              - service: input_boolean.turn_on
+                target:
+                  entity_id: input_boolean.fpp_repeat_playlist
+        default:
+          - service: notify.chris
+            data:
+              message: Default
+          - service: light.turn_on
+            target:
+              entity_id:
+                - light.left_flood
+                - light.right_flood
+            data:
+              rgb_color:
+                - 0
+                - 255
+                - 255
+              brightness_pct: 100
+    mode: single
+  fpp_set_volume:
+    alias: FPP Set Volume
+    sequence:
+      - service: mqtt.publish
+        data:
+          topic: hassio/falcon/player/FPP/set/command/"Volume Set"
+          payload: '{{ states("input_number.fpp_volume") }}'
+    mode: single
+  fpp_start_playlist_at_random_song:
+    alias: FPP Start Playlist At Random Song
+    sequence:
+      - scene: scene.front_lights_all_off
+      - choose:
+          - conditions:
+              - condition: time
+                before: "21:00:00"
+            sequence:
+              - service: input_number.set_value
+                target:
+                  entity_id: input_number.fpp_volume
+                data:
+                  value: 75.001
+          - conditions:
+              - condition: time
+                after: "21:01:00"
+            sequence:
+              - service: input_number.set_value
+                target:
+                  entity_id: input_number.fpp_volume
+                data:
+                  value: 55
+        default: []
+      - service: mqtt.publish
+        data:
+          topic: hassio/falcon/player/FPP/set/command/"Start Playlist At Random Item"
+          payload: '{{ states("input_select.fpp_playlist") }}'
+      - service: script.fpp_stop_gracefully
+    mode: single
+  fpp_start_playlist_at_song:
+    alias: FPP Start Playlist At Song
+    sequence:
+      - choose:
+          - conditions:
+              - condition: state
+                entity_id: input_select.fpp_playlist
+                state: halloween
+            sequence:
+              - service: mqtt.publish
+                data:
+                  topic: hassio/falcon/player/FPP/set/playlist/halloween/start
+                  payload:
+                    "{{ state_attr('input_select.fpp_halloween_song','options').index(states('input_select.fpp_halloween_song'))
+                    }}"
+          - conditions:
+              - condition: state
+                entity_id: input_select.fpp_playlist
+                state: christmas
+            sequence:
+              - service: mqtt.publish
+                data:
+                  topic: hassio/falcon/player/FPP/set/playlist/christmas/start
+                  payload:
+                    "{{ state_attr('input_select.fpp_christmas_song','options').index(states('input_select.fpp_christmas_song'))
+                    }}"
+        default: []
+    mode: single

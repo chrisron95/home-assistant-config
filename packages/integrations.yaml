@@ -1,0 +1,48 @@
+browser_mod:
+  prefix: browser_
+  devices:
+    5ed07d62-ec4ab134:
+      name: Fire HD 10 Tablet Unknown
+      camera: true
+    66d62038-c6b4f197:
+      name: Fire HD 10 Tablet
+      camera: true
+
+calendar:
+  - platform: caldav
+    url: https://caldav.icloud.com
+    username: !secret icloud_cal_username
+    password: !secret icloud_cal_password
+    calendars:
+      - Home
+      - Heder Family Events
+      - Dimpflmaier Family Events
+
+camera:
+  - name: mail_usps
+    platform: local_file
+    file_path: /<config path>/images/mail_and_packages/mail_none.gif
+
+namecheapdns:
+  host: home
+  domain: !secret dns_domain
+  password: !secret dns_password
+
+petkit:
+  username: !secret petkit_username
+  password: !secret petkit_password
+  api_base: http://api.petkt.com/latest/
+
+plant:
+  Francis:
+    sensors:
+      moisture: sensor.francis_soil_moisture
+    min_moisture: 20
+    max_moisture: 70
+
+plex:
+  host: 192.168.1.34
+  port: 32400
+  token: !secret plex_token
+  media_player:
+    use_episode_art: true

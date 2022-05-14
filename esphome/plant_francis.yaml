@@ -1,0 +1,89 @@
+esphome:
+  name: plant_francis
+  platform: ESP8266
+  board: d1_mini
+
+wifi:
+  ssid: "OrderOfThePhoenixHQ"
+  password: "L0ckTh1$F0rM3"
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Plant Francis Fallback Hotspot"
+    password: "4ZoSjsZ8GDQe"
+
+captive_portal:
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+
+ota:
+
+light:
+  - platform: rgb
+    name: "Francis's Light"
+    red: output_component1
+    green: output_component2
+    blue: output_component3
+
+# Example output entry
+output:
+  - platform: esp8266_pwm
+    id: output_component1
+    pin: D5
+  - platform: esp8266_pwm
+    id: output_component2
+    pin: D6
+  - platform: esp8266_pwm
+    id: output_component3
+    pin: D7
+
+sensor:
+  - platform: adc
+    pin: A0
+    id: moisture_sensor
+    name: "Francis's Soil Moisture"
+    icon: mdi:watering-can
+    unit_of_measurement: "%"
+    update_interval: 10s
+    filters:
+  # Sensor dry around 0.825 Volt, sensor wet around 0.425 Volt. Volts are were flickering
+      - calibrate_linear:
+        - 0.85547 -> 0.0
+        - 0.44824 -> 100.0
+  - platform: wifi_signal
+    name: "Francis's WiFi Signal"
+    update_interval: 60s
+    
+  - platform: uptime
+    name: "Francis Uptime"
+    id: francis_uptime
+    update_interval: 60s
+    on_raw_value:
+      then:
+        - text_sensor.template.publish:
+            id: francis_uptime_human
+            state: !lambda |-
+              int seconds = round(id(francis_uptime).raw_state);
+              int days = seconds / (24 * 3600);
+              seconds = seconds % (24 * 3600);
+              int hours = seconds / 3600;
+              seconds = seconds % 3600;
+              int minutes = seconds /  60;
+              seconds = seconds % 60;
+              return (
+                (days ? to_string(days) + "d " : "") +
+                (hours ? to_string(hours) + "h " : "") +
+                (minutes ? to_string(minutes) + "m " : "") +
+                (to_string(seconds) + "s")
+              ).c_str();
+
+text_sensor:
+  - platform: template
+    name: Francis Uptime Human Readable
+    id: francis_uptime_human
+    icon: mdi:clock-start
+    entity_category: diagnostic

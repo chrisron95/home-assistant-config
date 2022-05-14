@@ -1,0 +1,120 @@
+- platform: template
+  sensors:
+    cyberpower_battery_runtime_format:
+      friendly_name: "Battery Runtime"
+      icon_template: mdi:timer-outline
+      value_template: "{{ states('sensor.cyberpower_battery_runtime') | int | timestamp_custom('%H:%M:%S', 0) }}"
+
+    octoprint_time_elapsed_format:
+      friendly_name: "Print Time Elapsed"
+      value_template: "{{ states('sensor.octoprint_time_elapsed') | int | timestamp_custom('%H:%M:%S', 0) }}"
+
+    octoprint_time_remaining_format:
+      friendly_name: "Print Time Remaining"
+      value_template: "{{ states('sensor.octoprint_time_remaining') | int | timestamp_custom('%H:%M:%S', 0) }}"
+
+    ecobee_temperature:
+      friendly_name: "Ecobee Temperature"
+      device_class: "temperature"
+      unit_of_measurement: "°F"
+      value_template: "{{ state_attr('climate.my_ecobee', 'current_temperature') }}"
+
+    ecobee_humidity:
+      friendly_name: "Ecobee Humidity"
+      device_class: "humidity"
+      unit_of_measurement: "%"
+      value_template: "{{ state_attr('climate.my_ecobee', 'current_humidity') }}"
+
+    mail_deliveries_message:
+      friendly_name: "Deliveries Summary"
+      value_template: >
+        {# Deliveries Sentence #}
+          {% macro deliveries_sentence() -%}
+                {%- if states("sensor.mail_usps_mail")|int == 0 -%}
+                  No
+                {%- else -%}
+                  {{states("sensor.mail_usps_mail")|int}}
+                {%- endif -%}
+              {{' '}} 
+                {%- if states("sensor.mail_usps_mail")|int <= 1 -%}
+                  pieces of mail
+                {%- else -%}
+                  pieces of mail
+                {%- endif -%}
+              {{' '}}will be delivered.{{' '}} 
+                {%- if states("sensor.mail_usps_delivering")|int == 0 -%}
+                  No
+                {%- else -%}
+                  {{states("sensor.mail_usps_delivering")|int}}
+                {%- endif -%}
+              {{' '}} 
+                {%- if states("sensor.mail_usps_delivering")|int == 1 -%}
+                  USPS package is
+                {%- else -%}
+                  USPS packages are
+                {%- endif -%}
+              {{' '}}in transit.{{' '}}
+                {%- if states("sensor.mail_fedex_delivering")|int == 0 -%}
+                  No
+                {%- else -%}
+                  {{states("sensor.mail_fedex_delivering")|int}}
+                {%- endif -%}
+              {{' '}} 
+                {%- if states("sensor.mail_fedex_delivering")|int == 1 -%}
+                  FedEx package is
+                {%- else -%}
+                  Fedex packages are
+                {%- endif -%}
+              {{' '}}in transit.{{' '}}
+              {%- if states("sensor.mail_ups_delivering")|int == 0 -%}
+                  No
+                {%- else -%}
+                  {{states("sensor.mail_ups_delivering")|int}}
+                {%- endif -%}
+              {{' '}} 
+                {%- if states("sensor.mail_ups_delivering")|int == 1 -%}
+                  UPS package is
+                {%- else -%}
+                  UPS packages are
+                {%- endif -%}
+              {{' '}}in transit.{{' '}}
+              {%- if states("sensor.mail_amazon_packages")|int == 0 -%}
+                  No
+                {%- else -%}
+                  {{states("sensor.mail_amazon_packages")|int}}
+                {%- endif -%}
+              {{' '}} 
+                {%- if states("sensor.mail_amazon_packages")|int == 1 -%}
+                  Amazon package is
+                {%- else -%}
+                  Amazon packages are
+                {%- endif -%}
+              {{' '}}in transit.{{' '}}
+          {%- endmacro %}
+        {{deliveries_sentence()}}
+
+# MQTT Room using Espresense
+- platform: mqtt_room
+  device_id: "apple:watch6-4"
+  name: "Chris's Apple Watch Presence"
+  state_topic: "espresense/devices/apple:watch6-4"
+  # timeout: 60
+  away_timeout: 120
+# - platform: mqtt_room
+#   device_id: "apple:1005:9-24"
+#   name: "Chris's Apple Watch Presence"
+#   state_topic: "espresense/devices/apple:1005:9-24"
+#   # timeout: 60
+#   away_timeout: 120
+- platform: mqtt_room
+  device_id: "apple:iphone13-3"
+  name: "Chris's iPhone 12 Pro Presence"
+  state_topic: "espresense/devices/apple:iphone13-3"
+  # timeout: 60
+  away_timeout: 120
+- platform: mqtt_room
+  device_id: "apple:ipad11-4"
+  name: "Chris's iPad Air 3 Presence"
+  state_topic: "espresense/devices/apple:ipad11-4"
+  # timeout: 60
+  away_timeout: 120

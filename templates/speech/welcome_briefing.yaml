@@ -1,0 +1,96 @@
+>
+  {# Event Report #}
+  {%- macro getReport() -%}
+    <p>
+    {% set person = expand('group.family')| selectattr('state', 'eq', 'home') | map(attribute='name')|join(' and ') %}
+    {% set peoplecount = expand('group.family') | count %}
+    {% if peoplecount == 0 %}
+      <s>Welcome Home</s>
+    {% else %}
+      {% if peoplecount == 1 %}
+        {% set is_are = ' is ' %}
+        {% set has_have = ' has ' %}
+      {% else %}
+        {% set is_are = ' are ' %}
+        {% set has_have = ' have ' %}
+      {% endif %}
+      {%- macro greeting_sentence(person, is_are, has_have) -%}
+        {{ [
+        "Welcome back to the hub " ~ person + ". ",
+        "Hey " ~ person + "! Glad you are finally back at the hub. ",
+        "Welcome to the hub " ~ person + ". "
+        ] | random }}
+      {%- endmacro -%}
+      {{greeting_sentence(person, is_are, has_have)}}
+    {% endif %}
+    {{ [
+      'It was pretty quiet while you were gone. ', 
+      'Glad to see you made it back. ',
+      'Hopefully noting too crazy happened out there. ',
+      'There definitely were not any wild parties while you were out. ',
+      'I would love to hear about your adventures. <break time="1s"/> On second thought I do not care. '
+    ] | random }}
+
+    </p>
+
+    <p>
+    {%- if is_state('climate.my_ecobee','off') %}
+      <s>The internal climate control system is off. The temperature inside is {{ state_attr('climate.my_ecobee', 'current_temperature') }} degrees</s>
+    {%- elif is_state('climate.my_ecobee','heat_cool') %}
+      <s>The internal climate control system will try to keep the temperature between {{ state_attr('climate.my_ecobee', 'target_temp_low') }} and {{ state_attr('climate.my_ecobee', 'target_temp_high') }}</s>
+    {% else %}
+      <s>The internal climate control system is set to {{ states('climate.my_ecobee') }} with a current temperature of {{ state_attr('climate.my_ecobee', 'current_temperature') }} which is 
+      
+      {%- if state_attr('climate.my_ecobee', 'current_temperature') | int - state_attr('climate.my_ecobee', 'temperature') | int |round > 0 %}
+        {{ state_attr('climate.my_ecobee', 'current_temperature') | int - state_attr('climate.my_ecobee', 'temperature') | int }} degrees above 
+      {%- elif state_attr('climate.my_ecobee', 'current_temperature') | int - state_attr('climate.my_ecobee', 'temperature') | int |round < 0 %}
+        {{ (state_attr('climate.my_ecobee', 'current_temperature') | int - state_attr('climate.my_ecobee', 'temperature') | int) | abs }} degrees below
+      {% else %}
+        right at 
+      {% endif %}
+      the set point of {{ state_attr('climate.my_ecobee', 'temperature') }} degrees</s>
+    {%- endif -%}
+    </p>
+
+    <p>
+    {%- if states('sensor.front_door_motion_away_count') > 0 %}
+      While you were out I detected motion at the front door {{ states('sensor.front_door_motion_away_count') | int }} time{{ 's' if states('sensor.front_door_motion_away_count') > 1 }}.
+    {% endif %}
+    </p>
+
+    {% if is_state('binary_sensor.octoprint_printing_2', 'on') %}
+      <p>
+        {%- set time_left = state_attr('sensor.octoprint_print_progress','printTimeLeftFormatted').split(':') %}
+          There is a 3D print actively printing, currently at {{ states('sensor.octoprint_print_progress') }} percent complete.
+          Theres about
+        {% if int(time_left[0]) != 0 %}
+          {{ int(time_left[0]) }} hour{{ 's' if int(time_left[0]) != 1 }},
+        {% endif %}
+          {{ int(time_left[1]) }} minute{{ 's' if int(time_left[1]) != 1 }},
+          and {{ int(time_left[2]) }} second{{ 's' if float(time_left[2]) != 1 }} left
+      </p>
+    {% elif is_state('input_boolean.print_completed_while_away', 'on') %}
+      Also, your 3D print completed while you were out, so you may want to check that.
+    {% endif %}
+
+
+
+    
+
+
+  {%- endmacro -%}
+
+
+  {# a macro that removes all newline characters, empty spaces, and returns formatted text  #}
+  {%- macro cleanup(data) -%}
+    {%- for item in data.split("\n")  if item | trim != "" -%}
+      {{ item | trim }} {% endfor -%}
+  {%- endmacro -%}
+
+  {# a macro to call all macros :)  #}
+  {%- macro mother_of_all_macros() -%}
+    {{ getReport() }}
+  {%- endmacro -%}
+
+  {# Call the macro  #}
+  {{- cleanup(mother_of_all_macros()) -}}

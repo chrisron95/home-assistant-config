@@ -1,0 +1,116 @@
+>
+  {# Nightly Report #}
+  {%- macro getReport() -%}
+    <p>
+      Good evening.
+    </p>
+
+    <p>
+      It is <say-as interpret-as="time">{{ now().strftime("%I:%M %p") }}</say-as>
+    </p>
+      
+    <p>
+      {% if is_state('sun.sun', 'below_horizon') %}
+        You have
+        {% set seconds = as_timestamp(state_attr('sun.sun', 'next_rising'))-now().timestamp() %}
+        {% set hours = seconds / 60 %}
+        {% if seconds / ( 60 * 60 ) > 1 %}
+          {{ (seconds //  ( 60 * 60 )) | int }} hours
+        {% else %}
+          {{ (seconds // 60) | int }} minutes
+        {% endif %}
+        {{ [
+          'until the sun rises. ',
+          'until the sun is up. ',
+          'before the sun officially rises. '
+        ]|random }}
+      {% else %}
+        You have
+        {% set seconds = as_timestamp(state_attr('sun.sun', 'next_setting'))-now().timestamp() %}
+        {% set hours = seconds / 60 %}
+        {% if seconds / ( 60 * 60 ) > 1 %}
+          {{ (seconds //  ( 60 * 60 )) | int }} hours
+        {% else %}
+          {{ (seconds // 60) | int }} minutes
+        {% endif %}
+        {{ [
+          'until the sun sets for the day. ',
+          'until the sun slips below the horizon. ',
+          'before the sun officially sets. '
+        ]|random }}
+      {% endif %}
+    </p>
+
+    <p>
+      {{ [
+        'The front yard lights are on. ',
+        'I have turned on the front yard lights. ',
+        'You are running out of daylight. The ouside lights have been turned on. ',
+        'Switching Header House to night mode! Front lights are on. ',
+        'Header House has been configured for nighttime. ',
+        'Switching on Header Houses exterior lighting. ',
+        'It is getting dark outside, so I am turning on the outside lights. ',
+        'The sun is setting so it is ime to turn on the front lights. ',
+        'If you have not looked outside lately, the light of the day is almost gone. I am turning on the outside lights. '
+      ]|random }}
+    </p>
+      
+    {% if is_state('binary_sensor.sliding_glass_door', 'on') %}
+      <p> 
+        {{ [ 'The patio door is ajar. ',
+          'The sliding glass door is open. ',
+          'Someone forgot to close the back door. '
+        ] | random }}
+        Someone might want to check it.
+      </p>
+    {% endif %}
+
+    {% if is_state('sensor.today_is', 'Monday') or is_state('sensor.today_is', 'Thursday') %}
+      {% if now().strftime('%H')|int > 17 %}
+        {{ [ 'Do not forget tomorrow is Trash Day. ',
+          'I advise you move the trash cans to the curb for pickup. ',
+          ' The trash should go out'
+        ] | random }}
+      {% endif %}
+    {% endif %}
+
+    {% if is_state('sensor.today_is', 'Tuesday') or is_state('sensor.today_is', 'Friday') %}
+      {% if now().strftime('%H')|int > 17 %}
+        <p>
+          {{ [ 'Do not forget to bring in the trash cans. ',
+            'The trash cans will feel lonely if you leave them out all night. ',
+            'The <say-as interpret-as="characters">HOA</say-as> will get mad if you leave those trash cans out on the street. '
+          ] | random }}
+        </p>
+      {% endif %}
+    {% endif %}
+
+    {% if is_state('binary_sensor.octoprint_printing_2', 'on') %}
+      <p>
+        {%- set time_left = state_attr('sensor.octoprint_print_progress','printTimeLeftFormatted').split(':') %}
+          Also, there is a 3D print actively printing, currently at {{ states('sensor.octoprint_print_progress') }} percent complete.
+          Theres about
+        {% if int(time_left[0]) != 0 %}
+          {{ int(time_left[0]) }} hour{{ 's' if int(time_left[0]) != 1 }},
+        {% endif %}
+          {{ int(time_left[1]) }} minute{{ 's' if int(time_left[1]) != 1 }},
+          and {{ int(time_left[2]) }} second{{ 's' if float(time_left[2]) != 1 }} left
+      </p>
+    {% endif %}
+      
+  {%- endmacro -%}
+
+
+  {# a macro that removes all newline characters, empty spaces, and returns formatted text  #}
+  {%- macro cleanup(data) -%}
+    {%- for item in data.split("\n")  if item | trim != "" -%}
+      {{ item | trim }} {% endfor -%}
+  {%- endmacro -%}
+
+  {# a macro to call all macros :)  #}
+  {%- macro mother_of_all_macros() -%}
+    {{ getReport() }}
+  {%- endmacro -%}
+
+  {# Call the macro  #}
+  {{- cleanup(mother_of_all_macros()) -}}

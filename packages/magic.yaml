@@ -1,0 +1,37 @@
+input_boolean:
+  alohomora:
+    name: "Alohomora"
+    initial: off
+  lumos:
+    name: "Lumos"
+    initial: off
+  lumos_maxima:
+    name: "Lumos Maxima"
+    initial: off
+  knox:
+    name: "Knox"
+    initial: off
+
+automation:
+  - id: "1606452083691"
+    alias: Alohomora
+    description: ""
+    trigger:
+      - platform: state
+        entity_id: input_boolean.alohomora
+        from: "off"
+        to: "on"
+    condition:
+      - condition: device
+        device_id: 88da2f99bc5978f66263d957949cfb6d
+        domain: device_tracker
+        entity_id: device_tracker.iphone_5
+        type: is_home
+    action:
+      - service: lock.unlock
+        data: {}
+        entity_id: lock.schlage_allegion_be469zp_connect_smart_deadbolt_locked_frontdoor
+      - service: input_boolean.turn_off
+        data: {}
+        entity_id: input_boolean.alohomora
+    mode: single

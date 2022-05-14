@@ -1,0 +1,131 @@
+sensor:
+  - platform: history_stats
+    name: Living Room Apple TV time
+    entity_id: media_player.living_room_apple_tv
+    state: "playing"
+    type: time
+    end: "{{ now() }}"
+    duration:
+      hours: 24
+  - platform: history_stats
+    name: Bedroom Apple TV time
+    entity_id: media_player.bedroom_apple_tv
+    state: "playing"
+    type: time
+    end: "{{ now() }}"
+    duration:
+      hours: 24
+  - platform: history_stats
+    name: Game time
+    entity_id: media_player.playstation_4
+    state: "playing"
+    type: time
+    end: "{{ now() }}"
+    duration:
+      hours: 24
+  - platform: statistics
+    name: Front Yard Temp Stats
+    entity_id: sensor.front_yard_temperature
+    state_characteristic: mean
+    sampling_size: 500
+  - platform: statistics
+    name: Patio Temp Stats
+    entity_id: sensor.patio_temperature
+    state_characteristic: mean
+    sampling_size: 500
+  - platform: statistics
+    entity_id: sensor.bedroom_temperature
+    name: "Bedroom Temp Sats"
+    state_characteristic: mean
+  - platform: statistics
+    entity_id: sensor.lab_temperature
+    name: "Lab Temp Sats"
+    state_characteristic: mean
+  - platform: statistics
+    entity_id: sensor.kitchen_temperature
+    name: "Kitchen Temp Sats"
+    state_characteristic: mean
+  - platform: statistics
+    entity_id: sensor.dining_room_temperature
+    name: "Dining Room Temp Sats"
+    state_characteristic: mean
+  - platform: statistics
+    entity_id: sensor.living_room_temperature
+    name: "Living Room Temp Sats"
+    state_characteristic: mean
+  - platform: min_max
+    name: Inside Temp Stats
+    entity_ids:
+      - sensor.bedroom_temperature
+      - sensor.lab_temperature
+      - sensor.kitchen_temperature
+      - sensor.dining_room_temperature
+      - sensor.living_room_temperature
+    type: mean
+  - platform: history_stats
+    name: Cooling Last Day
+    entity_id: sensor.hvac_action
+    state: "cooling"
+    type: time
+    end: "{{ now() }}"
+    duration:
+      hours: 24
+  - platform: history_stats
+    name: Cooling Last Month
+    entity_id: sensor.hvac_action
+    state: "cooling"
+    type: time
+    end: "{{ now() }}"
+    duration:
+      days: 30
+  - platform: template
+    sensors:
+      sensor_count:
+        friendly_name: "Number of Sensors"
+        value_template: >-
+          {{ states.sensor | rejectattr('state', 'eq', 'unavailable') | list | count }}
+      automation_count:
+        friendly_name: "Number of Automations"
+        value_template: >-
+          {{ states.automation| rejectattr('state', 'eq', 'unavailable') | list | count }}
+      script_count:
+        friendly_name: "Number of Scripts"
+        value_template: >-
+          {{ states.script | rejectattr('state', 'eq', 'unavailable') | list | count }}
+      binary_sensor_count:
+        friendly_name: "Number of Binary Sensors"
+        value_template: >-
+          {{ states.binary_sensor | rejectattr('state', 'eq', 'unavailable') | list | count }}
+      tracker_count:
+        friendly_name: "Number of Devices"
+        value_template: >-
+          {{ states.device_tracker| rejectattr('state', 'eq', 'unavailable') | list | count }}
+      lights_count:
+        friendly_name: "Number of Lights"
+        value_template: >-
+          {{ states.light | rejectattr('state', 'eq', 'unavailable') | list | count }}
+      switches_count:
+        friendly_name: "Number of Switches"
+        value_template: >-
+          {{ states.switch | rejectattr('state', 'eq', 'unavailable') | list | count }}
+      camera_count:
+        friendly_name: "Number of online Cameras"
+        value_template: >-
+          {{ states.camera | rejectattr('state', 'eq', 'unavailable') | list | count }}
+      entities_count:
+        friendly_name: "Number of Entities"
+        value_template: >-
+          {{ states | rejectattr('state', 'eq', 'unavailable') | list | count}}
+      na_entities_count:
+        friendly_name: "Number of NA Entities"
+        value_template: >-
+          {{ states | selectattr('state', 'eq', 'unavailable') | map(attribute='entity_id') | list | count }}
+      hvac_action:
+        friendly_name: "HVAC Action"
+        value_template: "{{state_attr('climate.my_ecobee', 'hvac_action')}}"
+      today_is:
+        friendly_name: "Today is"
+        value_template: "{{ ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'][now().weekday()] }}"
+      month_is:
+        friendly_name: "Month is"
+        value_template: "{{ ['January','February','March','April','May','June','August','September','October','November','December'][now().month-1] }}"

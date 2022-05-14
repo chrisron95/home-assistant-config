@@ -1,0 +1,101 @@
+input_boolean:
+  print_completed_overnight:
+    name: 3D Print Completed Overnight
+    icon: mdi:printer-3d-nozzle
+  print_completed_while_away:
+    name: 3D Print Completed While Away
+    icon: mdi:printer-3d-nozzle
+
+automation:
+  - alias: 3D Print Check Status
+    id: "1645589881575"
+    description: ""
+    trigger:
+      - platform: state
+        entity_id: input_button.3d_print_check_status
+    condition: []
+    action:
+      - service: script.status_annc
+        data:
+          who: "{{ ('sensor.room_presence') }}"
+          call_boop: 1
+          speech_message: >
+            {%- set time_left = state_attr('sensor.octoprint_print_progress','printTimeLeftFormatted').split(':') %}
+              your 3D print is {{ states('sensor.octoprint_print_progress') }} percent complete.
+              Theres
+            {% if int(time_left[0]) != 0 %}
+              {{ int(time_left[0]) }} hour{{ 's' if int(time_left[0]) != 1 }},
+            {% endif %}
+              {{ int(time_left[1]) }} minute{{ 's' if int(time_left[1]) != 1 }},
+              and {{ int(time_left[2]) }} second{{ 's' if float(time_left[2]) != 1 }} left
+    mode: single
+
+  - alias: 3D Print Completed
+    id: "1627013660483"
+    description: ""
+    trigger:
+      - platform: numeric_state
+        entity_id: sensor.octoprint_job_percentage
+        above: "99.99"
+    condition: []
+    action:
+      - if:
+          - condition: and
+            conditions:
+              - condition: state
+                entity_id: input_boolean.audible_notifications
+                state: "off"
+              - condition: state
+                entity_id: group.family
+                state: "home"
+        then:
+          - service: input_boolean.turn_on
+            data: {}
+            target:
+              entity_id: input_boolean.print_completed_overnight
+      - if:
+          - condition: state
+            entity_id: group.family
+            state: "away"
+        then:
+          - service: input_boolean.turn_on
+            data: {}
+            target:
+              entity_id: input_boolean.print_completed_while_away
+    mode: single
+
+  - alias: 3D Printing Notifications
+    id: 3d_print_notifications
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.octoprint_printing_2
+        to: "on"
+        id: printing_started
+      - platform: state
+        entity_id: binary_sensor.octoprint_printing_2
+        to: "off"
+        id: printing_ended
+    action:
+      - choose:
+          - conditions:
+              - condition: trigger
+                id: printing_started
+            sequence:
+              - service: script.status_annc
+                data:
+                  who: "{{ states('sensor.room_presence') }}"
+                  call_interuption: 1
+                  speech_message: The three d printer is printing.
+          - conditions:
+              - condition: trigger
+                id: printing_ended
+            sequence:
+              - service: notify.chris
+                data:
+                  title: 3D Printer
+                  message: Print completed!
+              - service: script.status_annc
+                data:
+                  who: "{{ states('sensor.room_presence') }}"
+                  call_inform_chime: 1
+                  call_print_complete: 1

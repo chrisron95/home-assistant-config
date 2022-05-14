@@ -1,0 +1,64 @@
+- platform: onkyo
+  host: 192.168.3.166
+  name: Living Room Pioneer
+  max_volume: 80
+  receiver_max_volume: 191
+  sources:
+    strm-box: "Apple TV"
+    game1: "Nintendo Switch"
+    video2: "PS4"
+    bd: "Blu-Ray"
+    aux1: "Front Aux"
+    fm: "FM"
+- platform: sony
+  host: 192.168.1.183
+  name: Living Room Blu-Ray
+- platform: universal
+  name: Living Room Media Center
+  children:
+    - media_player.living_room_tv
+    - media_player.living_room_apple_tv
+    - media_player.living_room_blu_ray
+    - media_player.playstation_4
+    - media_player.living_room_pioneer
+  commands:
+    turn_on:
+      service: media_player.turn_on
+      target:
+        entity_id: media_player.living_room_tv
+    turn_off:
+      service: media_player.turn_off
+      target:
+        entity_id: media_player.living_room_tv
+    volume_up:
+      service: media_player.volume_up
+      target:
+        entity_id: media_player.living_room_pioneer
+    volume_down:
+      service: media_player.volume_down
+      target:
+        entity_id: media_player.living_room_pioneer
+    volume_mute:
+      service: media_player.volume_mute
+      data:
+        entity_id: media_player.living_room_pioneer
+        is_volume_muted: "{{ is_volume_muted }}"
+    volume_set:
+      service: media_player.volume_set
+      target:
+        entity_id: media_player.living_room_pioneer
+      data:
+        volume_level: "{{ volume_level }}"
+    select_source:
+      service: media_player.select_source
+      target:
+        entity_id: media_player.living_room_pioneer
+      data:
+        source: "{{ source }}"
+  attributes:
+    is_volume_muted: media_player.living_room_pioneer|is_volume_muted
+    state: media_player.living_room_tv
+    volume_level: media_player.living_room_pioneer|volume_level
+    source: media_player.living_room_pioneer|source
+    source_list: media_player.living_room_pioneer|source_list
+  device_class: tv

@@ -1,0 +1,111 @@
+>
+  {# Morning Report #}
+  {%- macro getReport() -%}
+    <p>
+      {% if now().strftime('%H')|int < 12 and now().strftime('%H')|int > 6 %}
+        Good morning, sir.
+      {% elif now().strftime('%H')|int >= 12 and now().strftime('%H')|int < 17 %}
+        Good after noon, sir.
+      {% else %}
+        Good evening, sir.
+      {% endif %}
+    </p>
+    <p>
+      {% if now().strftime('%M')|int == 0 %}
+        It is <say-as interpret-as="time">{{ now().strftime('%I %p') }}</say-as>.
+      {% else %}
+        It is <say-as interpret-as="time">{{ now().strftime('%I:%M %p') }}</say-as>.
+      {% endif %}
+    </p>
+    <p>
+      {{ [
+          'Today is ',
+          'If you have not been keeping track, today is ',
+          'Do you know what day of the week it is? Today is',
+      ]|random }}
+      {{states('sensor.today_is') }}.
+    </p>
+    <p>
+      {% if is_state('binary_sensor.octoprint_printing_2', 'on') %}
+        {%- set time_left = state_attr('sensor.octoprint_print_progress','printTimeLeftFormatted').split(':') %}
+        Your 3D print is still printing, currently at {{ states('sensor.octoprint_print_progress') }} percent complete.
+        Theres
+        {% if int(time_left[0]) != 0 %}
+          {{ int(time_left[0]) }} hour{{ 's' if int(time_left[0]) != 1 }},
+        {% endif %}
+        {{ int(time_left[1]) }} minute{{ 's' if int(time_left[1]) != 1 }},
+        and {{ int(time_left[2]) }} second{{ 's' if float(time_left[2]) != 1 }} left.
+      {% elif is_state('print_completed_overnight', 'on') %}
+        Your 3D print completed while you slept.
+      {% endif %}
+    </p>
+    <p>
+      {{ states('sensor.current_conditions') }}
+    </p>
+    <p>
+      {% if states('sensor.weatheralerts_1_active_alerts') | int > 0 %}
+        {% if states('sensor.weatheralerts_1_active_alerts') | int > 1 %}
+          There are currently {{states('sensor.weatheralerts_1_active_alerts') }} active weather alerts for our area.
+        {% else %}
+          There is currently {{states('sensor.weatheralerts_1_active_alerts') }} active weather alert for our area.
+        {% endif %}
+        The National Weather Service Has issued,
+        a {{ state_attr('sensor.weatheralerts_1_alert_1','alert_title') }}.
+        {% if states('sensor.weatheralerts_1_alert_2') == "on" %}
+          a {{ state_attr('sensor.weatheralerts_1_alert_2','alert_title') }}.
+        {% endif %}
+        {% if states('sensor.weatheralerts_1_alert_3') == "on" %}
+          a {{ state_attr('sensor.weatheralerts_1_alert_3','alert_title') }}.
+        {% endif %}
+        {% if states('sensor.weatheralerts_1_alert_4') == "on" %}
+          a {{ state_attr('sensor.weatheralerts_1_alert_4','alert_title') }}.
+        {% endif %}
+        {% if states('sensor.weatheralerts_1_alert_5') == "on" %}
+          a {{ state_attr('sensor.weatheralerts_1_alert_5','alert_title') }}.
+        {% endif %}
+      {% endif %}
+    </p>
+    <p>
+      {{ [
+          'The rest of the day should be,',
+          'Todays forecast should be ,'
+      ]|random }}
+      {{ states('sensor.current_forecast') }} 
+    </p>
+    <p>
+      {% if is_state('sensor.today_is', 'Monday') %}
+        {% if now().strftime('%H')|int > 17 %}
+          {{ [ 'Do not forget tomorrow is Trash Day. ',
+            'I advise you move the trash cans to the curb for the weekly pickup. ',
+            ' The trash and recycle should go out. '
+          ] | random }}
+        {% endif %}
+      {% endif %}
+    </p>
+    <p>
+      {% if is_state('sensor.holiday_halloween','0') %}
+        Happy Halloween!
+      {% endif %}
+      {% if is_state('sensor.holiday_christmas','0') %}
+        Merry Christmas Everyone!
+      {% endif %}
+      {% if is_state('sensor.anniversary_our_wedding','0') %}
+        Happy Anniversary! It been an amazing {{ state_attr('sensor.anniversary_our_wedding','current_years') }} years!
+      {% endif %}
+    </p>
+  {%- endmacro -%}
+
+
+  {# a macro that removes all newline characters, empty spaces, and returns formatted text  #}
+  {%- macro cleanup(data) -%}
+    {%- for item in data.split("\n")  if item | trim != "" -%}
+      {{ item | trim }} {% endfor -%}
+  {%- endmacro -%}
+
+  {# a macro to call all macros :)  #}
+  {%- macro mother_of_all_macros() -%}
+    {{ getReport() }}
+  {%- endmacro -%}
+
+  {# Call the macro  #}
+  {{- cleanup(mother_of_all_macros()) -}}
