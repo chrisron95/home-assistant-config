@@ -10,6 +10,7 @@
 /themes_old
 /www
 /ssh
+/packages/keymaster
 
 **.DS_Store
 **.HA_VERSION
