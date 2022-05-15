@@ -5,8 +5,8 @@ homeassistant:
   internal_url: !secret internal_url
   external_url: !secret external_url
   # Location required to calculate the time the sun rises and sets
-  latitude: 26.224038
-  longitude: -80.295240
+  latitude: !secret latitude
+  longitude: !secret longitude
   # Impacts weather/sunrise data (altitude above sea level in meters)
   elevation: 0
   # metric for Metric, imperial for Imperial
