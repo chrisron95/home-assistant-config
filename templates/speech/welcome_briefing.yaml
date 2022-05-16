@@ -53,7 +53,7 @@
     </p>
 
     <p>
-    {%- if states('sensor.front_door_motion_away_count') > 0 %}
+    {%- if states('sensor.front_door_motion_away_count') | int > 0 %}
       While you were out I detected motion at the front door {{ states('sensor.front_door_motion_away_count') | int }} time{{ 's' if states('sensor.front_door_motion_away_count') > 1 }}.
     {% endif %}
     </p>
