@@ -10,6 +10,7 @@
 #   - Ability to select sound between Cuckoo and Grandfather Clock
 #   - Quarter toll ability
 #   - Ability to disable quarter and half tolls, and chime entirely
+#   - Time helpers for start and stop times.
 #
 # Changed:
 #   - Now runs every 15 minutes rather than only every half hour
@@ -26,6 +27,16 @@ input_boolean:
   clock_chime_quarter_toll:
     name: Clock Chime Quarter Hour Toll
     icon: mdi:alarm
+
+input_datetime:
+  clock_chime_on_time:
+    name: Clock Chime On Time
+    has_date: false
+    has_time: true
+  clock_chime_off_time:
+    name: Clock Chime Off Time
+    has_date: false
+    has_time: true
 
 input_select:
   clock_chime_sound:
@@ -56,6 +67,9 @@ automation:
         id: "45"
 
     condition:
+      - condition: time
+        after: input_datetime.clock_chime_on_time
+        before: input_datetime.clock_chime_off_time
       - condition: state
         entity_id: input_boolean.audible_notifications
         state: "on"
