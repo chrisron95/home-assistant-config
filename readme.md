@@ -36,6 +36,11 @@ In time, I plan on making some videos detaining some of the things I've implemen
 ---
 
 <a name="devices"></a>
+
+<h2 align="center">
+My Smart Home Devices
+</h2>
+
 <div align="center">
   <h4>
     <a href="https://github.com/chrisron95/home-assistant-config#host">
@@ -522,7 +527,6 @@ In time, I plan on making some videos detaining some of the things I've implemen
       <a href="https://www.amazon.com/gp/product/B0795F19W6/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&th=1">DHT22 Temp and Humidity Sensor</a>
     </td>
     <td align="center" colspan="1">
-      <a href=""></a>
     </td>
   </tr>
   <tr>
@@ -542,9 +546,6 @@ In time, I plan on making some videos detaining some of the things I've implemen
       </a>
     </td>
     <td align="center" colspan="1">
-      <a href="" target="_blank">
-        <img border="0" src="" height="auto" width="200px">
-      </a>
     </td>
   </tr>
   <tr>
