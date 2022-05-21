@@ -131,10 +131,12 @@ My Smart Home Devices
   </tr>
   <tr>
     <td align="center" colspan="1">
-	    <img border="0" src="https://refreshcomputers.net/shop/wp-content/uploads/2018/05/71z-mURq4QL._SL1500_-15.jpg" height="auto" width="200px">
+    	<a href="#" target="_blank">
+	      <img border="0" src="https://refreshcomputers.net/shop/wp-content/uploads/2018/05/71z-mURq4QL._SL1500_-15.jpg" height="auto" width="200px">
+	   </a>
     </td>
     <td align="center" colspan="1">
-      <a href="https://www.amazon.com/dp/B000QZ3UG0?ref_=cm_sw_r_cp_ud_dp_9W3M92E3S2GS9DCYW436" target="_blank">
+      <a href="https://www.amazon.com/LaCie-FireWire800-External-301543-Aluminum/dp/B0052MNIAA" target="_blank">
         <img border="0" src="https://m.media-amazon.com/images/I/81yxj+cck7L._AC_SL1500_.jpg" height="auto" width="200px">
       </a>
     </td>
@@ -729,7 +731,7 @@ My Smart Home Devices
   </tr>
   <tr>
     <td align="center" colspan="1">
-      <a href="" target="_blank">
+      <a href="https://www.holidaycoro.com/AlphaPix-4-V2-RGB-Pixel-Controller-p/722-v2.htm" target="_blank">
         <img border="0" src="https://www.holidaycoro.com/v/vspfiles/photos/722-V2-2T.jpg?v-cache=1535294099" height="auto" width="200px">
       </a>
     </td>
