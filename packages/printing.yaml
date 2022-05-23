@@ -69,10 +69,12 @@ automation:
     trigger:
       - platform: state
         entity_id: binary_sensor.octoprint_printing_2
+        from: "off"
         to: "on"
         id: printing_started
       - platform: state
         entity_id: binary_sensor.octoprint_printing_2
+        from: "on"
         to: "off"
         id: printing_ended
     action:
