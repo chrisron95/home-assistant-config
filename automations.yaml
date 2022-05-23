@@ -1157,7 +1157,7 @@
   - choose:
     - conditions:
       - condition: template
-        value_template: '{{ wait.trigger is defined }}'
+        value_template: '{{ wait.trigger.id is defined }}'
       sequence:
       - stop: '{{ wait.trigger.id }}'
     default:
