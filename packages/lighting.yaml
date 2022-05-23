@@ -591,16 +591,14 @@ automation:
     alias: Front Yard Motion Light Handler
     description: ""
     trigger:
-      - type: motion
-        platform: device
-        device_id: 4d21f46ec9c7a89a6442dd4e631e96c1
+      - platform: state
         entity_id: binary_sensor.front_yard_motion
-        domain: binary_sensor
+        from: "off"
+        to: "on"
         for:
           hours: 0
           minutes: 0
           seconds: 2
-          milliseconds: 0
     condition:
       - condition: state
         entity_id: input_boolean.front_yard_motion_lights
