@@ -73,11 +73,6 @@
       Also, your 3D print completed while you were out, so you may want to check that.
     {% endif %}
 
-
-
-    
-
-
   {%- endmacro -%}
 
 
