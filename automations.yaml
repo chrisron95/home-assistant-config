@@ -314,8 +314,8 @@
     target:
       entity_id: light.lab_fan_light
   mode: single
-- alias: Western Electric Rectifier Toggle
-  id: '1628691692223'
+- id: '1628691692223'
+  alias: Western Electric Rectifier Toggle
   description: ''
   trigger:
   - platform: device
@@ -330,11 +330,13 @@
     type: button_long_press
     subtype: button_6
     discovery_id: 9C9C1F47AE83_button_6_HOLD
+    enabled: false
   condition: []
   action:
   - service: switch.toggle
     target:
       entity_id: switch.western_electric_rectifier
+    data: {}
   mode: single
 - alias: 3D Printer Toggle Power
   id: '1632278000510'
