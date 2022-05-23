@@ -669,7 +669,7 @@ script:
 
             {% macro iss() %}
               {{ [
-                  'But the International Space Station is passing over. Wave.',
+                  'But the International Space Station is passing over. You should wave! ',
                   'But The International Space Station just flew by.',
                   'But if you were to look up right now, and it was dark outside, and you happened to be looking in the right place you would see the International Space Station go by. But, it has already passed.'
                   ] | random}}
