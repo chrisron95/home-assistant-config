@@ -315,7 +315,7 @@
       entity_id: light.lab_fan_light
   mode: single
 - id: '1628691692223'
-  alias: Western Electric Rectifier Toggle
+  alias: Western Electric Rectifier Controller
   description: ''
   trigger:
   - platform: device
@@ -733,8 +733,8 @@
     target:
       entity_id: light.living_room_fan_light
   mode: single
-- alias: Lab TV Toggle
-  id: '1637599699240'
+- id: '1637599699240'
+  alias: Lab TV Toggle
   description: ''
   trigger:
   - platform: device
@@ -743,11 +743,18 @@
     type: button_double_press
     subtype: button_1
     discovery_id: 9C9C1F47AE83_button_1_DOUBLE
+  - platform: device
+    domain: tasmota
+    device_id: 082f2d49dab1e06234cbc1a01d3787dc
+    type: button_double_press
+    subtype: button_1
+    discovery_id: ECFABC56F484_button_1_DOUBLE
   condition: []
   action:
   - service: media_player.toggle
     target:
       entity_id: media_player.lab_tv
+    data: {}
   mode: single
 - alias: Fish Tank Filter Toggle
   id: '1638942926537'
@@ -1144,18 +1151,17 @@
     entity_id: input_boolean.do_not_disturb
     state: 'off'
   action:
+  - condition: state
+    entity_id: binary_sensor.front_door_recent_activity
+    state: 'off'
   - wait_for_trigger:
     - platform: state
       entity_id:
-      - binary_sensor.front_door
-      - binary_sensor.front_door_ring_ding
-      id: door_or_doorbell_activity
-    - platform: event
-      event_type: keymaster_lock_state_changed
-      event_data:
-        lockname: frontdoor
-      id: lock_changed
-    timeout: 00:00:07
+      - binary_sensor.front_door_recent_activity
+      to: 'on'
+      from: 'off'
+      id: door_activity
+    timeout: 00:00:05
   - choose:
     - conditions:
       - condition: template
@@ -1240,3 +1246,47 @@
       message: '{{ trigger.to_state.attributes.friendly_name }} has arrived'
   mode: parallel
   max: 10
+- id: '1653577962938'
+  alias: Western Electric Cabinet Lights Controller
+  description: ''
+  trigger:
+  - platform: device
+    domain: tasmota
+    device_id: f51e5de9797e5949aa2cacb1b5bbfb8f
+    type: button_double_press
+    subtype: button_2
+    discovery_id: 9C9C1F47AE83_button_2_DOUBLE
+    id: button
+  - platform: state
+    entity_id:
+    - switch.western_electric_rectifier
+    from: 'off'
+    to: 'on'
+    id: rectifier_on
+  condition: []
+  action:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id: button
+      sequence:
+      - service: light.toggle
+        data:
+          color_temp: 380
+          effect: Wake up
+          brightness_pct: 100
+        target:
+          entity_id: light.western_electric_cabinet_lights
+    - conditions:
+      - condition: trigger
+        id: rectifier_on
+      sequence:
+      - service: light.turn_on
+        data:
+          brightness_pct: 100
+          color_temp: 380
+          effect: Wake up
+        target:
+          entity_id: light.western_electric_cabinet_lights
+    default: []
+  mode: single
