@@ -330,16 +330,6 @@ script:
 
   speech_engine:
     sequence:
-      - service: mqtt.publish
-        data:
-          topic: "house/speech/lastmsg"
-          payload: 'This message is from {{ now().strftime("%-I") }}:{{ now().strftime("%M") }} {{ now().strftime("%p") }}. {{ message | striptags | truncate(220)}}'
-          retain: true
-      - service: mqtt.publish
-        data:
-          topic: "house/speech/lastloc"
-          payload: "{{ who }}"
-          retain: true
       - condition: state
         entity_id: input_boolean.audible_notifications
         state: "on"
@@ -360,70 +350,73 @@ script:
     sequence:
       - variables:
           echo: >
-            {% if who in ['kitchen_echo_dot','media_player.kitchen_echo_dot','kitchen'] %}
+            {% set loc = states('sensor.room_presence') if who in ['presence','room_presence','current','current_room'] else who %}
+            {% if loc in ['kitchen_echo_dot','media_player.kitchen_echo_dot','kitchen'] %}
               kitchen_echo_dot
-            {% elif who in ['chris_s_echo_show','media_player.chris_s_echo_show','bedroom'] %}
+            {% elif loc in ['chris_s_echo_show','media_player.chris_s_echo_show','bedroom'] %}
               chris_s_echo_show
-            {% elif who in ['living_room_echo','media_player.living_room_echo','living_room','dining_room'] %}
+            {% elif loc in ['living_room_echo','media_player.living_room_echo','living_room','dining_room'] %}
               living_room_echo
-            {% elif who in ['lab_echo_dot','media_player.lab_echo_dot','lab'] %}
+            {% elif loc in ['lab_echo_dot','media_player.lab_echo_dot','lab'] %}
               lab_echo_dot
-            {% elif who in ['chris_s_echo_flex','media_player.chris_s_echo_flex','garage'] %}
+            {% elif loc in ['chris_s_echo_flex','media_player.chris_s_echo_flex','garage'] %}
               chris_s_echo_flex
-            {% elif who in ['_chris_s_ecobee4','media_player._chris_s_ecobee4','ecobee','hallway'] %}
+            {% elif loc in ['_chris_s_ecobee4','media_player._chris_s_ecobee4','ecobee','hallway'] %}
               chris_s_ecobee4
-            {% elif who in ['chris_s_fire','media_player.chris_s_fire','fire','tablet','wall_tablet'] %}
+            {% elif loc in ['chris_s_fire','media_player.chris_s_fire','fire','tablet','wall_tablet'] %}
               chris_s_fire
-            {% elif who in ['chris_s_echo_auto','media_player.chris_s_echo_auto','truck'] %}
+            {% elif loc in ['chris_s_echo_auto','media_player.chris_s_echo_auto','truck'] %}
               chris_s_echo_auto
-            {% elif who in ['chris_s_sonos_roam','chriss_sonos_roam','media_player.chris_s_sonos_roam','media_player.chriss_sonos_roam','sonos_roam'] %}
+            {% elif loc in ['chris_s_sonos_roam','chriss_sonos_roam','media_player.chris_s_sonos_roam','media_player.chriss_sonos_roam','sonos_roam','sonos'] %}
               chris_s_sonos_roam
-            {% elif who in ['everywhere'] %}
+            {% elif loc in ['everywhere'] %}
               everywhere
             {% else %}
               living_room_echo
             {% endif %}
+          volume: >
+            {%- if volume_override is defined -%}
+              {{ volume_override }}
+            {%- elif states('input_boolean.audible_notifications') == 'on' -%}
+              0.6
+            {%- elif states('input_boolean.audible_notifications') == 'off' -%}
+              0.3
+            {%- endif -%}
+      # - if:
+      #     - condition: state
+      #       entity_id: media_player.lab_echo_dot
+      #       state: playing
+      #   then:
+      #     - wait_for_trigger:
+      #         - platform: state
+      #           entity_id:
+      #             - media_player.lab_echo_dot
+      #           to: standby
+      #       continue_on_timeout: false
+      #       timeout: '00:00:30'
+      - service: mqtt.publish
+        data:
+          topic: "house/speech/lastmsg"
+          payload: 'This message is from {{ now().strftime("%-I") }}:{{ now().strftime("%M") }} {{ now().strftime("%p") }}. {{ message | striptags | truncate(220)}}'
+          retain: true
+      - service: mqtt.publish
+        data:
+          topic: "house/speech/lastloc"
+          payload: "{{ echo }}"
+          retain: true
       - alias: Set echo volume if needed
-        choose:
-          - conditions:
-              - condition: state
-                entity_id: input_boolean.audible_notifications
-                state: "on"
-            sequence:
-              - choose:
-                  - conditions:
-                      - condition: not
-                        conditions:
-                          - condition: template
-                            value_template: >
-                              {{ is_state_attr('media_player.' + echo, 'volume_level', 0.6) }}
-                    sequence:
-                      - service: media_player.volume_set
-                        data:
-                          volume_level: 0.6
-                        target:
-                          entity_id: media_player.{{ echo }}
-                default: []
-          - conditions:
-              - condition: state
-                entity_id: input_boolean.audible_notifications
-                state: "off"
-            sequence:
-              - choose:
-                  - conditions:
-                      - condition: not
-                        conditions:
-                          - condition: template
-                            value_template: >
-                              {{ is_state_attr('media_player.' + echo, 'volume_level', 0.3) }}
-                    sequence:
-                      - service: media_player.volume_set
-                        data:
-                          volume_level: 0.3
-                        target:
-                          entity_id: media_player.{{ echo }}
-                default: []
-        default: []
+        if:
+          - condition: not
+            conditions:
+              - condition: template
+                value_template: >-
+                  {{ is_state_attr('media_player.' + echo, 'volume_level', volume | float) }}
+        then:
+          - service: media_player.volume_set
+            data:
+              volume_level: "{{ volume | float }}"
+            target:
+              entity_id: media_player.{{ echo }}
       - service: notify.alexa_media
         data:
           message: >
@@ -433,7 +426,7 @@ script:
             </prosody>
             </voice>
           target: >
-            {% if who == 'everywhere' %}
+            {% if echo == 'everywhere' %}
               group.echos_main
             {% else %}
               media_player.{{ echo }}
