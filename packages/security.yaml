@@ -76,6 +76,29 @@ sensor:
     name: front_door_motion_away_count
     state_topic: "house/front_door_motion/away_count"
 
+template:
+  - sensor:
+      - name: Front Door Last Activity
+        state: >
+          {% set values = [
+            states.binary_sensor.front_door_ring_ding.last_changed,
+            states.binary_sensor.front_door.last_changed,
+            states.lock.touchscreen_deadbolt_z_wave_plus_frontdoor.last_changed ] %}
+          {{ values | max }}
+        device_class: timestamp
+  - trigger:
+      - platform: state
+        entity_id: sensor.front_door_last_activity
+        id: activity
+      - platform: state
+        entity_id: sensor.front_door_last_activity
+        id: timeout
+        for: "00:00:30"
+    binary_sensor:
+      - name: Front Door Recent Activity
+        state: >
+          {{ true if trigger.id == "activity" or states("binary_sensor.front_door") == "on" else false }}
+
 automation:
   #############################################
   # When sentry mode is enabled / security armed by any method, check the doors and notify everyone.
