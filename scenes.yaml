@@ -241,19 +241,21 @@
       - light.ceiling_fan_south
       - light.ceiling_fan_east
       - light.ceiling_fan_west
+      icon: mdi:ceiling-fan-light
       friendly_name: Bedroom Fan Lights
-      icon: mdi:lightbulb-group
       supported_features: 40
       state: 'off'
     light.hue_color_lamp_1:
       min_mireds: 153
       max_mireds: 500
-      effect_list:
-      - colorloop
-      - random
       supported_color_modes:
       - color_temp
-      - hs
+      - xy
+      mode: normal
+      dynamics: none
+      icon: mdi:lamp
+      friendly_name: Hue color lamp 1
+      supported_features: 40
       color_mode: color_temp
       brightness: 102
       color_temp: 454
@@ -267,27 +269,27 @@
       xy_color:
       - 0.579
       - 0.388
-      effect: none
-      friendly_name: Hue color lamp 1
-      supported_features: 63
       state: 'on'
     light.bathroom_light:
       supported_color_modes:
       - brightness
-      color_mode: brightness
-      brightness: 69
+      icon: mdi:vanity-light
       friendly_name: Bathroom Light
       supported_features: 0
+      color_mode: brightness
+      brightness: 69
       state: 'on'
     light.lab_fan_light:
       supported_color_modes:
       - onoff
+      icon: mdi:ceiling-fan-light
       friendly_name: Lab Light
       supported_features: 0
       state: 'off'
     light.living_room_fan_light:
       supported_color_modes:
       - onoff
+      icon: mdi:ceiling-fan-light
       friendly_name: Living Room Light
       supported_features: 0
       state: 'off'
@@ -305,12 +307,13 @@
       - Candle Multi
       - Candy Cane
       - Chase
+      - Chase 2
+      - Chase 3
       - Chase Flash
       - Chase Flash Rnd
       - Chase Rainbow
       - Chase Random
       - Chunchun
-      - Circus
       - Colorful
       - Colorloop
       - Colortwinkles
@@ -322,6 +325,8 @@
       - Dynamic
       - Dynamic Smooth
       - Fade
+      - Fairy
+      - Fairytwinkle
       - Fill Noise
       - Fire 2012
       - Fire Flicker
@@ -356,7 +361,6 @@
       - Phased Noise
       - Plasma
       - Police
-      - Police All
       - Popcorn
       - Pride 2015
       - Railway
@@ -367,7 +371,7 @@
       - Ripple
       - Ripple Rainbow
       - Running
-      - Running 2
+      - Running Dual
       - Saw
       - Scan
       - Scan Dual
@@ -399,78 +403,123 @@
       - Theater
       - Theater Rainbow
       - Traffic Light
-      - Tri Chase
       - Tri Fade
       - Tri Wipe
       - Twinkle
       - Twinklecat
       - Twinklefox
       - Twinkleup
-      - Two Areas
       - Two Dots
       - Washing Machine
       - Wipe
       - Wipe Random
       supported_color_modes:
       - rgb
-      intensity: 205
-      palette: Default
-      reverse: false
-      speed: 68
-      friendly_name: Living Room LEDs
       icon: mdi:led-strip-variant
+      friendly_name: Living Room LEDs
       supported_features: 36
       state: 'off'
     light.francis_s_light:
       supported_color_modes:
       - rgb
+      icon: mdi:lightbulb-spot
       friendly_name: Francis's Light
       supported_features: 40
       state: 'off'
     light.dining_room_light:
       supported_color_modes:
       - onoff
+      icon: mdi:chandelier
       friendly_name: Dining Room Light
       supported_features: 0
       state: 'off'
     light.kitchen_light:
       supported_color_modes:
       - onoff
+      icon: mdi:ceiling-fan-light
       friendly_name: Kitchen Light
       supported_features: 0
       state: 'off'
     light.kitchen_leds:
       supported_color_modes:
       - brightness
+      icon: mdi:led-strip-variant
       friendly_name: Kitchen LEDs
       supported_features: 32
       state: 'off'
     light.front_hall_light:
       supported_color_modes:
       - onoff
+      icon: mdi:ceiling-light
       friendly_name: Front Hall Light
       supported_features: 0
       state: 'off'
     light.hallway_light:
       supported_color_modes:
       - onoff
-      color_mode: onoff
       friendly_name: Hallway Light
       supported_features: 0
+      color_mode: onoff
       state: 'on'
     media_player.living_room_tv:
       source_list:
+      - AV
+      - Amazon Alexa
+      - Amazon Prime Video
+      - Apple TV
+      - Component
+      - Disney+
+      - HBO Max
+      - HDMI 1
+      - HDMI 2
+      - HDMI 3
+      - HDMI 4
+      - Hulu
+      - LG Channels
+      - LG Content Store
       - Live TV
-      friendly_name: Living Room TV
-      supported_features: 20413
+      - Music
+      - Netflix
+      - Photo & Video
+      - Shop Time
+      - Sling TV
+      - Web Browser
+      - YouTube
+      assumed_state: true
       device_class: tv
+      icon: mdi:television
+      friendly_name: Living Room TV
+      supported_features: 24509
       state: 'off'
     media_player.lab_tv:
       source_list:
+      - AV
+      - Amazon Prime Video
+      - Apple TV
+      - Component
+      - Disney+
+      - HBO Max
+      - HDMI 1
+      - HDMI 2
+      - HDMI 3
+      - Hulu
+      - LG Channels
+      - LG Content Store
       - Live TV
-      friendly_name: Lab TV
-      supported_features: 20413
+      - Music
+      - Netflix
+      - Pandora
+      - Paramount+
+      - Photo & Video
+      - Plex
+      - Shop Time
+      - VUDU
+      - Web Browser
+      - YouTube
+      assumed_state: true
       device_class: tv
+      friendly_name: Lab TV
+      supported_features: 24509
       state: 'off'
     light.fish_tank_leds:
       min_mireds: 153
@@ -484,33 +533,28 @@
       supported_color_modes:
       - color_temp
       - hs
-      friendly_name: Fish Tank LEDs
       icon: mdi:fishbowl
+      friendly_name: Fish Tank LEDs
       supported_features: 36
       state: 'off'
-    light.fiber_optic_decoration:
+    light.western_electric_cabinet_lights:
+      min_mireds: 153
+      max_mireds: 500
+      effect_list:
+      - None
+      - Wake up
+      - Cycle up
+      - Cycle down
+      - Random
       supported_color_modes:
-      - onoff
-      friendly_name: Fiber Optic Decoration
-      icon: mdi:snowman
-      supported_features: 0
+      - color_temp
+      - hs
+      friendly_name: Western Electric Cabinet Lights
+      supported_features: 36
       state: 'off'
-    light.christmas_tree:
-      supported_color_modes:
-      - onoff
-      color_mode: onoff
-      friendly_name: Christmas Tree
-      icon: mdi:pine-tree
-      supported_features: 0
-      state: 'on'
-    light.village:
-      supported_color_modes:
-      - onoff
-      color_mode: onoff
-      friendly_name: Village
-      icon: mdi:home-city-outline
-      supported_features: 0
-      state: 'on'
+    switch.western_electric_rectifier:
+      friendly_name: Western Electric Rectifier
+      state: 'off'
 - id: '1617936340958'
   name: Nighttime
   entities:
@@ -573,12 +617,13 @@
       - Candle Multi
       - Candy Cane
       - Chase
+      - Chase 2
+      - Chase 3
       - Chase Flash
       - Chase Flash Rnd
       - Chase Rainbow
       - Chase Random
       - Chunchun
-      - Circus
       - Colorful
       - Colorloop
       - Colortwinkles
@@ -590,6 +635,8 @@
       - Dynamic
       - Dynamic Smooth
       - Fade
+      - Fairy
+      - Fairytwinkle
       - Fill Noise
       - Fire 2012
       - Fire Flicker
@@ -624,7 +671,6 @@
       - Phased Noise
       - Plasma
       - Police
-      - Police All
       - Popcorn
       - Pride 2015
       - Railway
@@ -635,7 +681,7 @@
       - Ripple
       - Ripple Rainbow
       - Running
-      - Running 2
+      - Running Dual
       - Saw
       - Scan
       - Scan Dual
@@ -667,14 +713,12 @@
       - Theater
       - Theater Rainbow
       - Traffic Light
-      - Tri Chase
       - Tri Fade
       - Tri Wipe
       - Twinkle
       - Twinklecat
       - Twinklefox
       - Twinkleup
-      - Two Areas
       - Two Dots
       - Washing Machine
       - Wipe
@@ -705,14 +749,17 @@
       icon: mdi:ceiling-fan-light
       friendly_name: Kitchen Light
       supported_features: 0
-      state: 'off'
+      color_mode: onoff
+      state: 'on'
     light.kitchen_leds:
       supported_color_modes:
       - brightness
       icon: mdi:led-strip-variant
       friendly_name: Kitchen LEDs
       supported_features: 32
-      state: 'off'
+      color_mode: brightness
+      brightness: 255
+      state: 'on'
     light.front_hall_light:
       supported_color_modes:
       - onoff
@@ -750,28 +797,44 @@
       - Sling TV
       - Web Browser
       - YouTube
-      sound_output: external_optical
+      assumed_state: true
       device_class: tv
       icon: mdi:television
       friendly_name: Living Room TV
-      supported_features: 20413
+      supported_features: 24509
       state: 'off'
     media_player.lab_tv:
       source_list:
+      - AV
+      - Amazon Prime Video
+      - Apple TV
+      - Component
+      - Disney+
+      - HBO Max
+      - HDMI 1
+      - HDMI 2
+      - HDMI 3
+      - Hulu
+      - LG Channels
+      - LG Content Store
       - Live TV
+      - Music
+      - Netflix
+      - Pandora
+      - Paramount+
+      - Photo & Video
+      - Plex
+      - Shop Time
+      - VUDU
+      - Web Browser
+      - YouTube
+      assumed_state: true
       device_class: tv
-      icon: mdi:television
       friendly_name: Lab TV
-      supported_features: 20413
+      supported_features: 24509
       state: 'off'
     fan.bedroom_fan:
-      speed_list:
-      - 'off'
-      - low
-      - medium
-      - high
-      preset_modes: []
-      speed: medium
+      preset_modes:
       percentage: 66
       percentage_step: 33.333333333333336
       preset_mode:
@@ -782,11 +845,11 @@
       volume_level: 0.3
       is_volume_muted: false
       media_content_type: standby
-      media_position_updated_at: '2022-01-18T02:07:09.316027+00:00'
+      media_position_updated_at: '2022-06-02T15:29:58.031822+00:00'
       available: true
-      last_called: true
-      last_called_timestamp: 1642470994081
-      last_called_summary: never mind
+      last_called: false
+      last_called_timestamp: 1654182126548
+      last_called_summary: ''
       connected_bluetooth:
       bluetooth_list: []
       friendly_name: Bedroom Echo Show
@@ -813,31 +876,23 @@
       icon: mdi:minus-circle
       friendly_name: Do Not Disturb
       state: 'on'
-    lock.schlage_allegion_be469zp_connect_smart_deadbolt_locked_frontdoor:
-      restored: true
-      friendly_name: Front Door Deadbolt
-      supported_features: 0
-      state: unavailable
-    light.fiber_optic_decoration:
+    light.western_electric_cabinet_lights:
+      min_mireds: 153
+      max_mireds: 500
+      effect_list:
+      - None
+      - Wake up
+      - Cycle up
+      - Cycle down
+      - Random
       supported_color_modes:
-      - onoff
-      icon: mdi:snowman
-      friendly_name: Fiber Optic Decoration
-      supported_features: 0
-      state: unavailable
-    light.christmas_tree:
-      supported_color_modes:
-      - onoff
-      icon: mdi:pine-tree
-      friendly_name: Christmas Tree
-      supported_features: 0
+      - color_temp
+      - hs
+      friendly_name: Western Electric Cabinet Lights
+      supported_features: 36
       state: 'off'
-    light.village:
-      supported_color_modes:
-      - onoff
-      icon: mdi:home-city-outline
-      friendly_name: Village
-      supported_features: 0
+    switch.western_electric_rectifier:
+      friendly_name: Western Electric Rectifier
       state: 'off'
 - id: '1618020693377'
   name: Downstairs All On
@@ -2286,13 +2341,7 @@
       supported_features: 36
       state: 'off'
     fan.living_room_fan:
-      speed_list:
-      - 'off'
-      - low
-      - medium
-      - high
-      preset_modes: []
-      speed: 'off'
+      preset_modes:
       percentage: 0
       percentage_step: 33.333333333333336
       preset_mode:
@@ -2320,12 +2369,13 @@
       - Candle Multi
       - Candy Cane
       - Chase
+      - Chase 2
+      - Chase 3
       - Chase Flash
       - Chase Flash Rnd
       - Chase Rainbow
       - Chase Random
       - Chunchun
-      - Circus
       - Colorful
       - Colorloop
       - Colortwinkles
@@ -2337,6 +2387,8 @@
       - Dynamic
       - Dynamic Smooth
       - Fade
+      - Fairy
+      - Fairytwinkle
       - Fill Noise
       - Fire 2012
       - Fire Flicker
@@ -2371,7 +2423,6 @@
       - Phased Noise
       - Plasma
       - Police
-      - Police All
       - Popcorn
       - Pride 2015
       - Railway
@@ -2382,7 +2433,7 @@
       - Ripple
       - Ripple Rainbow
       - Running
-      - Running 2
+      - Running Dual
       - Saw
       - Scan
       - Scan Dual
@@ -2414,14 +2465,12 @@
       - Theater
       - Theater Rainbow
       - Traffic Light
-      - Tri Chase
       - Tri Fade
       - Tri Wipe
       - Twinkle
       - Twinklecat
       - Twinklefox
       - Twinkleup
-      - Two Areas
       - Two Dots
       - Washing Machine
       - Wipe
@@ -2485,7 +2534,7 @@
     button.wled_update:
       device_class: update
       friendly_name: WLED Update
-      state: unknown
+      state: unavailable
     select.wled_live_override:
       options:
       - '0'
@@ -2507,17 +2556,39 @@
       - light.christmas_tree
       - light.fiber_optic_decoration
       - light.village
-      order: 9
+      order: 1
       icon: mdi:pine-tree
       friendly_name: X-mas Decor
-      state: 'off'
+      state: unknown
     media_player.living_room_tv:
       source_list:
+      - AV
+      - Amazon Alexa
+      - Amazon Prime Video
+      - Apple TV
+      - Component
+      - Disney+
+      - HBO Max
+      - HDMI 1
+      - HDMI 2
+      - HDMI 3
+      - HDMI 4
+      - Hulu
+      - LG Channels
+      - LG Content Store
       - Live TV
+      - Music
+      - Netflix
+      - Photo & Video
+      - Shop Time
+      - Sling TV
+      - Web Browser
+      - YouTube
+      assumed_state: true
       device_class: tv
       icon: mdi:television
       friendly_name: Living Room TV
-      supported_features: 20413
+      supported_features: 24509
       state: 'off'
     light.patio_light:
       supported_color_modes:
@@ -2545,20 +2616,36 @@
       state: 'off'
     media_player.lab_tv:
       source_list:
+      - AV
+      - Amazon Prime Video
+      - Apple TV
+      - Component
+      - Disney+
+      - HBO Max
+      - HDMI 1
+      - HDMI 2
+      - HDMI 3
+      - Hulu
+      - LG Channels
+      - LG Content Store
       - Live TV
+      - Music
+      - Netflix
+      - Pandora
+      - Paramount+
+      - Photo & Video
+      - Plex
+      - Shop Time
+      - VUDU
+      - Web Browser
+      - YouTube
+      assumed_state: true
       device_class: tv
-      icon: mdi:television
       friendly_name: Lab TV
-      supported_features: 20413
+      supported_features: 24509
       state: 'off'
     fan.lab_fan:
-      speed_list:
-      - 'off'
-      - low
-      - medium
-      - high
-      preset_modes: []
-      speed: 'off'
+      preset_modes:
       percentage: 0
       percentage_step: 33.333333333333336
       preset_mode:
@@ -2600,13 +2687,7 @@
       supported_features: 40
       state: 'off'
     fan.bedroom_fan:
-      speed_list:
-      - 'off'
-      - low
-      - medium
-      - high
-      preset_modes: []
-      speed: 'off'
+      preset_modes:
       percentage: 0
       percentage_step: 33.333333333333336
       preset_mode:
@@ -2619,6 +2700,21 @@
       icon: mdi:vanity-light
       friendly_name: Bathroom Light
       supported_features: 0
+      state: 'off'
+    light.western_electric_cabinet_lights:
+      min_mireds: 153
+      max_mireds: 500
+      effect_list:
+      - None
+      - Wake up
+      - Cycle up
+      - Cycle down
+      - Random
+      supported_color_modes:
+      - color_temp
+      - hs
+      friendly_name: Western Electric Cabinet Lights
+      supported_features: 36
       state: 'off'
   icon: fas:power-off
 - id: '1642473524336'
