@@ -125,7 +125,7 @@ sensor:
           {% elif expand('group.occupancy') | selectattr('state', 'eq', 'on') | list | count >= 1 %}
             {% set sensor = expand('group.occupancy') | selectattr('state', 'eq', 'on') | sort(attribute='last_changed') | last %}
               {% if is_state('input_boolean.audible_notifications', 'off') %}
-                {% if sensor.name == 'Bedroom Motion occupancy' %}
+                {% if sensor.name == 'Bedroom Motion' %}
                   bedroom
                 {% else %}
                   kitchen
