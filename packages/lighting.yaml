@@ -464,36 +464,89 @@ automation:
             - light.patio_string_lights
     mode: restart
 
-  - id: "garage_motion_light_handler"
-    alias: Garage Motion Light Handler
+  - id: "garage_automatic_light_handler"
+    alias: Garage Automatic Light Handler
     description: ""
     trigger:
       - platform: state
         entity_id: input_boolean.garage_motion
+        id: motion_active
         from: "off"
         to: "on"
-    condition:
-      - condition: state
-        entity_id: input_boolean.motion_lights_master
-        state: "on"
-      - condition: state
-        entity_id: input_boolean.garage_motion_lights
-        state: "on"
+      - platform: state
+        entity_id: input_boolean.garage_motion
+        id: motion_inactive
+        from: "on"
+        to: "off"
+        for:
+          minutes: "{{ states('input_number.motion_lights_delay')|int }}"
+      - platform: state
+        entity_id: binary_sensor.garage_door
+        id: door_open
+        from: "off"
+        to: "on"
+      - platform: state
+        entity_id: binary_sensor.garage_door
+        id: door_closed
+        from: "on"
+        to: "off"
     action:
-      - service: light.turn_on
-        entity_id: light.garage_light
-      - wait_for_trigger:
-          - platform: state
-            entity_id: input_boolean.garage_motion
-            from: "on"
-            to: "off"
-            for:
-              minutes: "{{ states('input_number.motion_lights_delay')|int }}"
-      - service: light.turn_off
-        data: {}
-        target:
-          entity_id:
-            - light.garage_light
+      - choose:
+          - alias: Motion Active
+            conditions:
+              - condition: trigger
+                id: motion_active
+              - condition: state
+                entity_id: binary_sensor.garage_door
+                state: 'on'
+              - condition: state
+                entity_id: input_boolean.motion_lights_master
+                state: "on"
+              - condition: state
+                entity_id: input_boolean.garage_motion_lights
+                state: "on"
+            sequence:
+              - service: light.turn_on
+                data: {}
+                target:
+                  entity_id: light.garage_light
+          - alias: Motion Inactive
+            conditions:
+              - condition: trigger
+                id: motion_inactive
+              - condition: state
+                entity_id: binary_sensor.garage_door
+                state: 'on'
+              - condition: state
+                entity_id: input_boolean.motion_lights_master
+                state: "on"
+              - condition: state
+                entity_id: input_boolean.garage_motion_lights
+                state: "on"
+            sequence:
+              - service: light.turn_off
+                data: {}
+                target:
+                  entity_id: light.garage_light
+          - alias: Door Open
+            conditions:
+              - condition: trigger
+                id: door_open
+            sequence:
+              - service: light.turn_on
+                data: {}
+                target:
+                  entity_id: light.garage_light
+          - alias: Door Closed
+            conditions:
+              - condition: trigger
+                id: door_closed
+            sequence:
+              - service: light.turn_off
+                data: {}
+                target:
+                  entity_id: light.garage_light
+        default: []
     mode: restart
 
   - id: "living_room_motion_light_handler"
