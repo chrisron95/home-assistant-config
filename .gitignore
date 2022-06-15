@@ -46,6 +46,7 @@
 **phue.conf 
 **ios.conf
 **themes.yaml
+**hidden.yaml
 **ui-lovelace.yaml
 **button_card_templates.yaml
 **rtsp*
