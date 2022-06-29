@@ -213,6 +213,18 @@ script:
           message: >
             {{ message }}
 
+  text_notify_everyone:
+    sequence:
+      - condition: state
+        entity_id: input_boolean.text_notifications
+        state: "on"
+      - service: notify.all_ios
+        data:
+          title: >
+            {{ title }}
+          message: >
+            {{ message }}
+
   text_notify:
     sequence:
       - condition: state
