@@ -89,3 +89,142 @@ input_button:
     # show off
     # show them what you do
     # show them what you can do
+
+automation:
+  - id: alexa_weather_check
+    alias: Alexa Weather Check
+    initial_state: true
+    trigger:
+      platform: state
+      entity_id:
+        - input_button.alexa_weather_check
+    action:
+      service: script.alexa_voice
+      data:
+        who: presence
+        message: ""
+
+  - id: alexa_weather_forecast
+    alias: Alexa Weather Forecast
+    initial_state: true
+    trigger:
+      platform: state
+      entity_id:
+        - input_button.alexa_weather_forecast
+    action:
+      service: script.alexa_voice
+      data:
+        who: presence
+        message: ""
+
+  - id: alexa_weather_rain_check
+    alias: Alexa Weather Rain Check
+    initial_state: true
+    trigger:
+      platform: state
+      entity_id:
+        - input_button.alexa_weather_rain_check
+    action:
+      service: script.alexa_voice
+      data:
+        who: presence
+        message: >
+          {%- if states("sensor.openweathermap_weather") in ["thunderstorm"] -%}
+            {{ [
+              "Do you not hear the thunder out there? ",
+              "According to my sensors, there should actually be some thunder out there. ",
+              "It's probably storming right now. But I can only work with what I've got so what do I really know? "
+            ] | random }}
+          {%- elif states("sensor.openweathermap_weather") in ["moderate rain"] -%}
+            {{ [
+              "It's probably raining right now. If not, it probably will. But it's Florida, so who knows ",
+              "According to my sensors, it should be raining pretty well right about now. ",
+              "It should be raining right now. But I can only work with what I've got so what do I really know? "
+            ] | random }}
+          {%- elif states("sensor.openweathermap_weather") in ["light rain","mist"] -%}
+            {{ [
+              "It's probably raining a little bit right now actually. If not, it probably will. You know, Florida. ",
+              "According to my sensors, it's probably drizzling out. Take a look. ",
+              "It might actually be raining slightly right now. But I can only work with what I've got so what do I really know? "
+            ] | random }}
+          {%- else -%}
+            {{ state_attr("sensor.precipitation_forecast", "next_rain_timeframe") }}
+          {%- endif -%}
+
+  - id: alexa_weather_temperature_check
+    alias: Alexa Weather Temperature Check
+    initial_state: true
+    trigger:
+      platform: state
+      entity_id:
+        - input_button.alexa_weather_temperature_check
+    action:
+      service: script.alexa_voice
+      data:
+        who: presence
+        message: ""
+
+  - id: alexa_location_of_chris
+    alias: Alexa Location Of Chris
+    initial_state: true
+    trigger:
+      platform: state
+      entity_id:
+        - input_button.alexa_location_of_chris
+    action:
+      service: script.alexa_voice
+      data:
+        who: presence
+        message: ""
+
+  - id: alexa_location_of_steven
+    alias: Alexa Location Of Steven
+    initial_state: true
+    trigger:
+      platform: state
+      entity_id:
+        - input_button.alexa_location_of_steven
+    action:
+      service: script.alexa_voice
+      data:
+        who: presence
+        message: ""
+
+  - id: alexa_set_the_mood
+    alias: Alexa Set The Mood
+    initial_state: true
+    trigger:
+      platform: state
+      entity_id:
+        - input_button.alexa_set_the_mood
+    action:
+      service: script.alexa_voice
+      data:
+        who: presence
+        message: ""
+
+  - id: alexa_what_to_eat
+    alias: Alexa What To Eat
+    initial_state: true
+    trigger:
+      platform: state
+      entity_id:
+        - input_button.alexa_what_to_eat
+    action:
+      service: script.alexa_voice
+      data:
+        who: presence
+        message: ""
+
+  - id: alexa_introduce_yourself
+    alias: Alexa Introduce Yourself
+    initial_state: true
+    trigger:
+      platform: state
+      entity_id:
+        - input_button.alexa_introduce_yourself
+    action:
+      service: script.alexa_voice
+      data:
+        who: presence
+        message: ""
