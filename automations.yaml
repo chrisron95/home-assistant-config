@@ -1238,9 +1238,13 @@
   - platform: state
     entity_id: person.nico
     to: home
+  - platform: state
+    entity_id:
+    - person.mari
+    to: home
   condition: []
   action:
-  - service: script.text_notify_chris
+  - service: script.text_notify_everyone
     data:
       title: Guest Arrival
       message: '{{ trigger.to_state.attributes.friendly_name }} has arrived'
@@ -1290,3 +1294,41 @@
           entity_id: light.western_electric_cabinet_lights
     default: []
   mode: single
+- id: '1656455659129'
+  alias: Living Room Magic Cube
+  description: ''
+  use_blueprint:
+    path: rvaidya/aqara_magic_cube.yaml
+    input:
+      remote: 3146f49fef4d10d8cf2a4be6609f44f3
+      active_face: input_number.living_room_magic_cube_side
+      flip_90: true
+      cube_flip_90:
+      - service: light.toggle
+        data: {}
+        target:
+          entity_id: light.living_room_fan_light
+      flip_180: true
+      cube_flip_180: []
+      slide_any_side: true
+      cube_slide_any: []
+      knock_any_side: true
+      cube_knock_any:
+      - service: media_player.media_play_pause
+        data: {}
+        target:
+          entity_id: media_player.living_room_apple_tv
+      rotate_right:
+      - service: media_player.volume_up
+        data: {}
+        target:
+          entity_id: media_player.living_room_pioneer
+      rotate_left:
+      - service: media_player.volume_down
+        data: {}
+        target:
+          entity_id: media_player.living_room_pioneer
+      rotate_any_side: true
+      cube_shake:
+      - service: script.downstairs_chill
+        data: {}
