@@ -78,10 +78,10 @@ automation:
         data:
           who: everywhere
           call_time_for_bed: 1
-      - service: script.status_annc
-        data:
-          who: "{{ states('sensor.room_presence') }}"
-          speech_message: <p> {{ states('sensor.current_conditions')}} </p>
+      # - service: script.status_annc
+      #   data:
+      #     who: presence
+      #     speech_message: <p> {{ states('sensor.current_conditions')}} </p>
 
 script:
   welcome_briefing:
@@ -89,16 +89,6 @@ script:
       - condition: state
         entity_id: input_boolean.welcome_home
         state: "on"
-      - wait_for_trigger:
-          - platform: state
-            entity_id: binary_sensor.front_door
-            from: "off"
-            to: "on"
-      - delay:
-          hours: 0
-          minutes: 0
-          seconds: 10
-          milliseconds: 0
       - service: script.speech_engine
         data:
           who: main
