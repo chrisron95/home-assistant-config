@@ -28,6 +28,10 @@ input_boolean:
     name: Bedroom Motion Lights
   lab_motion_lights:
     name: Lab Motion Lights
+  hallway_smart_lights:
+    name: Hallway Smart Lights
+  front_hall_smart_lights:
+    name: Front Hall Smart Lights
   patio_motion_lights:
     name: Patio Motion Lights
   front_yard_motion_lights:
@@ -429,6 +433,112 @@ automation:
             - light.lab_fan_light
     mode: restart
 
+  - id: "linen_closet_smart_light_handler"
+    alias: Linen Closet Smart Light Handler
+    description: ""
+    trigger:
+      - type: opened
+        platform: device
+        device_id: b80845462ce1646784961b89e888c56a
+        entity_id: binary_sensor.linen_closet
+        domain: binary_sensor
+        id: open
+      - type: not_opened
+        platform: device
+        device_id: b80845462ce1646784961b89e888c56a
+        entity_id: binary_sensor.linen_closet
+        domain: binary_sensor
+        id: closed
+    action:
+      - choose:
+          - conditions:
+              - condition: trigger
+                id: open
+            sequence:
+              - service: light.turn_on
+                data:
+                  brightness_pct: 100
+                target:
+                  entity_id: light.linen_closet
+          - conditions:
+              - condition: trigger
+                id: closed
+            sequence:
+              - service: light.turn_off
+                data: {}
+                target:
+                  entity_id: light.linen_closet
+        default: []
+    mode: restart
+
+  - id: "hallway_smart_light_handler"
+    alias: Hallway Smart Light Handler
+    description: ""
+    trigger:
+      - type: motion
+        platform: device
+        device_id: 7a7926b5a8d399f1cf7fcd1f450ada99
+        entity_id: binary_sensor.hallway_motion_sensor
+        domain: binary_sensor
+    condition:
+      - condition: state
+        entity_id: input_boolean.do_not_disturb
+        state: "off"
+      - condition: state
+        entity_id: input_boolean.motion_lights_master
+        state: "on"
+      - condition: state
+        entity_id: input_boolean.hallway_smart_lights
+        state: "on"
+    action:
+      - service: light.turn_on
+        entity_id: light.hallway_light
+      - wait_for_trigger:
+          - platform: state
+            entity_id: binary_sensor.hallway_motion_sensor
+            from: "on"
+            to: "off"
+      - service: light.turn_off
+        target:
+          entity_id:
+            - light.hallway_light
+    mode: restart
+
+  - id: "front_hall_smart_light_handler"
+    alias: Front Hall Smart Light Handler
+    description: ""
+    trigger:
+      - type: motion
+        platform: device
+        device_id: 7a7926b5a8d399f1cf7fcd1f450ada99
+        entity_id: binary_sensor.front_hall_motion_sensor
+        domain: binary_sensor
+    condition:
+      - condition: state
+        entity_id: input_boolean.do_not_disturb
+        state: "off"
+      - condition: state
+        entity_id: input_boolean.motion_lights_master
+        state: "on"
+      - condition: state
+        entity_id: input_boolean.front_hall_smart_lights
+        state: "on"
+    action:
+      - service: light.turn_on
+        entity_id: light.front_hall_light
+      - wait_for_trigger:
+          - platform: state
+            entity_id: binary_sensor.front_hall_motion_sensor
+            from: "on"
+            to: "off"
+            for:
+              minutes: 1
+      - service: light.turn_off
+        target:
+          entity_id:
+            - light.front_hall_light
+    mode: restart
+
   - id: "patio_motion_light_handler"
     alias: Patio Motion Light Handler
     description: ""
@@ -498,7 +608,7 @@ automation:
                 id: motion_active
               - condition: state
                 entity_id: binary_sensor.garage_door
-                state: 'on'
+                state: "on"
               - condition: state
                 entity_id: input_boolean.motion_lights_master
                 state: "on"
@@ -516,7 +626,7 @@ automation:
                 id: motion_inactive
               - condition: state
                 entity_id: binary_sensor.garage_door
-                state: 'on'
+                state: "on"
               - condition: state
                 entity_id: input_boolean.motion_lights_master
                 state: "on"
