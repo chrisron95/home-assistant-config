@@ -741,8 +741,275 @@ sensor:
         friendly_name: "Current Visability"
         value_template: "{{ ((state_attr('weather.home_2','visibility') | int) * 0.621371) | round }}"
 
+      hourly_forecast:
+        friendly_name: Hourly Forecast
+        icon_template: mdi:weather-partly-cloudy
+        unit_of_measurement: ""
+        value_template: >-
+          {{ states("sensor.openweathermap_weather") }}
+        attribute_templates:
+          forecasts: >-
+            {%- if state_attr("weather.openweathermap", "forecast") is defined -%}
+              {# Iterate through the hourly forecasts #}
+              {# Add any forecasts with potential rain to their respective arrays #}
+              {%- set forecasts = namespace(all=[]) -%}
+              {%- for forecast in state_attr("weather.openweathermap", "forecast") -%}
+                {%- set forecast_data = {
+                  "time": as_timestamp(forecast.datetime) | timestamp_local,
+                  "time_simple": as_timestamp(forecast.datetime) | timestamp_custom("%-I %p", local=true),
+                  "time_verbal": '<say-as interpret-as="time">' + as_timestamp(forecast.datetime) | timestamp_custom("%-I %p", local=true) + '</say-as>',
+                  "chance_of_rain": forecast.precipitation_probability,
+                  "rainfall": (forecast.precipitation/25.4) | round(2),
+                  "condition": forecast.condition,
+                  "wind_speed": forecast.wind_speed,
+                  "wind_bearing": forecast.wind_bearing,
+                  "temperature": forecast.temperature,
+                  "clouds": forecast.clouds,
+                  "pressure": forecast.pressure
+                } -%}
+                {%- set forecasts.all = forecasts.all + [forecast_data] -%}
+              {%- endfor -%}
+
+              {# Return an object with all the different forecasts #}
+              {{ forecasts.all }}
+            {%- else -%}
+              Undefined
+            {%- endif -%}
+          first24: >-
+            {%- if state_attr("sensor.hourly_forecast", "forecasts") is defined -%}
+              {# Return the first 24 hours #}
+              {{ state_attr("sensor.hourly_forecast", "forecasts")[:25] }}
+            {%- else -%}
+              Undefined
+            {%- endif -%}
+          expecting_rain: >-
+            {%- if state_attr("sensor.hourly_forecast", "forecasts") is defined -%}
+              {# Iterate through the hourly forecasts #}
+              {# Add any forecasts with potential rain to their respective arrays #}
+              {%- set forecasts = namespace(expecting_rain=[]) -%}
+              {%- for forecast in state_attr("sensor.hourly_forecast", "forecasts") -%}
+                {%- set forecasts.expecting_rain = forecasts.expecting_rain + [forecast] if forecast.rainfall > 0 and forecast.chance_of_rain > 25 else forecasts.expecting_rain -%}
+              {%- endfor -%}
+
+              {# Return an object with all the different forecasts #}
+              {{ forecasts.expecting_rain }}
+            {%- else -%}
+              Undefined
+            {%- endif -%}
+
+      precipitation_forecast:
+        friendly_name: Precipitation Forecast
+        unit_of_measurement: ""
+        icon_template: mdi:weather-rainy
+        value_template: >-
+          {%- macro getReport() -%}
+            {%- if state_attr("weather.openweathermap", "forecast") is defined -%}
+              {# Iterate through the hourly forecasts #}
+              {# Add any forecasts with potential rain to their respective arrays #}
+              {%- set forecasts = namespace(all=[]) -%}
+              {%- set needs_n = [11,18,80,81,82,83,84,85,86,87,88,89] -%}
+              {%- for forecast in state_attr("weather.openweathermap", "forecast")[:24] -%}
+                {%- set time_data = {"time":as_timestamp(forecast.datetime) | timestamp_local, "time_simple":as_timestamp(forecast.datetime) | timestamp_custom("%-I %p", local=true), "time_verbal":'<say-as interpret-as="time">' + as_timestamp(forecast.datetime) | timestamp_custom("%-I %p", local=true) + '</say-as>', "chance": forecast.precipitation_probability, "rainfall": forecast.precipitation/25.4} -%}
+                {%- if forecast.precipitation_probability >= 25 -%}
+                  {%- set forecasts.all = forecasts.all + [time_data] -%}
+                {%- endif -%}
+              {%- endfor -%}
+              {%- if forecasts.all -%}
+                First chance of rain at around
+                {{ forecasts.all[0].time_simple }},
+                there's a{{ "n" if forecasts.all[0].chance in needs_n }}
+                {{ forecasts.all[0].chance }}%
+                chance. You can expect
+                {{ "less than an inch" if forecasts.all[0].rainfall < 1 else forecasts.all[0].rainfall | round(2) | string + " inch" + "es" if forecasts.all[0].rainfall | round(2) != 1 }}
+                of rain.
+              {%- else -%}
+                No rain is expected in the next 24 hours.
+              {%- endif -%}
+            {%- else -%}
+              Undefined
+            {%- endif -%}
+          {%- endmacro -%}
+
+          {# a macro that removes all newline characters, empty spaces, and returns formatted text  #}
+          {%- macro cleanup(data) -%}
+            {%- set msg = namespace(message=[]) -%}
+            {%- for item in data.split("\n")  if item | trim != "" -%}
+              {%- set msg.message = msg.message + [item | trim] -%}
+            {%- endfor -%}
+            {{ msg.message | join(" ") }}
+          {%- endmacro -%}
+
+          {# a macro to call all macros :)  #}
+          {%- macro mother_of_all_macros() -%}
+            {{ getReport() }}
+          {%- endmacro -%}
+
+          {# Call the macro  #}
+          {{- cleanup(mother_of_all_macros()) -}}
+        attribute_templates:
+          next_rain_timeframe: >-
+            {%- macro getReport() -%}
+              {%- if state_attr("sensor.precipitation_forecast", "forecasts") != "Undefined" -%}
+                {# Get the list of forecasts and sequences set in the respective attributes #}
+                {%- set forecasts = state_attr("sensor.precipitation_forecast", "forecasts") -%}
+                {%- set sequences = state_attr("sensor.precipitation_forecast", "sequences") -%}
+                {%- set needs_n = [11,18,80,81,82,83,84,85,86,87,88,89] -%}
+                {# Return the timeframe of the soonest sequence #}
+                {%- if sequences -%}
+                  {%- set first_seq = sequences[0] | sort(attribute="rainfall", reverse=true) | first -%}
+                  {{ "Its going to rain today" if first_seq.chance > 95 else "It might rain at some point today between" }},
+                  {{ (sequences[0] | first).time_verbal }}
+                  and
+                  {{ (sequences[0] | last).time_verbal }}.
+                  The greatest chance is at
+                  {{ first_seq.time_verbal }}
+                  with a{{ "n" if sequences[0].chance in needs_n }}
+                  {{ first_seq.chance }}%
+                  chance. You can expect
+                  {{ "less than an inch" if first_seq.rainfall < 1 else (first_seq.rainfall | round(2) | string + " inch") + "es" if first_seq.rainfall | round(2) != 1 }}
+                  of rain.
+                {# If there's no sequences, find the soonest forecast expecting rain #}
+                {%- else -%}
+                  {%- if forecasts.expecting_rain -%}
+                    {%- set first_f = (forecasts.expecting_rain | list)[0] -%}
+                    {{ "Its going to rain today" if first_f.chance > 95 else "It might rain today" }},
+                    theres a{{ "n" if first_f.chance in needs_n }}
+                    {{ first_f.chance }}%
+                    chance around
+                    {{ first_f.time_verbal }}.
+                    You can expect
+                    {{ "less than an inch" if first_f.rainfall < 1 else (first_f.rainfall | round(2) | string + " inch") + "es" if first_f.rainfall | round(2) != 1 }}
+                    of rain.
+                  {%- else -%}
+                    No rain is expected.
+                  {%- endif -%}
+                {%- endif -%}
+              {%- else -%}
+                Undefined
+              {%- endif -%}
+            {%- endmacro -%}
+
+            {# a macro that removes all newline characters, empty spaces, and returns formatted text  #}
+            {%- macro cleanup(data) -%}
+              {%- set msg = namespace(message=[]) -%}
+              {%- for item in data.split("\n")  if item | trim != "" -%}
+                {%- set msg.message = msg.message + [item | trim] -%}
+              {%- endfor -%}
+              {{ msg.message | join(" ") }}
+            {%- endmacro -%}
+
+            {# a macro to call all macros :)  #}
+            {%- macro mother_of_all_macros() -%}
+              {{ getReport() }}
+            {%- endmacro -%}
+
+            {# Call the macro  #}
+            {{- cleanup(mother_of_all_macros()) -}}
+          expectation: >-
+            {%- macro getReport() -%}
+              {%- if state_attr("sensor.precipitation_forecast", "forecasts") != "Undefined" -%}
+                {%- set forecasts = state_attr("sensor.precipitation_forecast", "forecasts") -%}
+                {%- set needs_n = [11,18,80,81,82,83,84,85,86,87,88,89] -%}
+                {%- if forecasts.expected -%}
+                  Rain is expected, theres a {{ (forecasts.expected[0]).chance }}% chance at {{ (forecasts.expected[0]).time_verbal }}
+                {%- elif forecasts.likely -%}
+                  Rain is likely, theres a{{ "n" if forecasts.likely[0].chance in needs_n }} {{ (forecasts.likely[0]).chance }}% chance at {{ (forecasts.likely[0]).time_verbal }}
+                {%- elif forecasts.possible -%}
+                  Rain is possible, theres a{{ "n" if forecasts.possible[0].chance in needs_n }} {{ (forecasts.possible[0]).chance }}% chance at {{ (forecasts.possible[0]).time_verbal }}
+                {%- elif forecasts.not_likely -%}
+                  Rain is not likely, theres only a{{ "n" if forecasts.not_likely[0].chance in needs_n }} {{ (forecasts.not_likely[0]).chance }}% chance at {{ (forecasts.not_likely[0]).time_verbal }}
+                {%- else -%}
+                  No rain expected
+                {%- endif -%}
+              {%- else -%}
+                Undefined
+              {%- endif -%}
+            {%- endmacro -%}
+
+            {# a macro that removes all newline characters, empty spaces, and returns formatted text  #}
+            {%- macro cleanup(data) -%}
+              {%- set msg = namespace(message=[]) -%}
+              {%- for item in data.split("\n")  if item | trim != "" -%}
+                {%- set msg.message = msg.message + [item | trim] -%}
+              {%- endfor -%}
+              {{ msg.message | join(" ") }}
+            {%- endmacro -%}
+
+            {# a macro to call all macros :)  #}
+            {%- macro mother_of_all_macros() -%}
+              {{ getReport() }}
+            {%- endmacro -%}
+
+            {# Call the macro  #}
+            {{- cleanup(mother_of_all_macros()) -}}
+          forecasts: >-
+            {%- if state_attr("weather.openweathermap", "forecast") is defined -%}
+              {# Iterate through the hourly forecasts #}
+              {# Add any forecasts with potential rain to their respective arrays #}
+              {%- set forecasts = namespace(all=[],expected=[],likely=[],possible=[],not_likely=[],expecting_rain=[]) -%}
+              {%- for forecast in state_attr("weather.openweathermap", "forecast")[:24] -%}
+                {%- set time_data = {"time":as_timestamp(forecast.datetime) | timestamp_local, "time_simple":as_timestamp(forecast.datetime) | timestamp_custom("%-I %p", local=true), "time_verbal":'<say-as interpret-as="time">' + as_timestamp(forecast.datetime) | timestamp_custom("%-I %p", local=true) + '</say-as>', "chance": forecast.precipitation_probability, "rainfall": forecast.precipitation/25.4} -%}
+                {%- if forecast.precipitation_probability >= 25 -%}
+                  {%- set forecasts.all = forecasts.all + [time_data] -%}
+                {%- endif -%}
+                {%- if forecast.precipitation_probability >= 90 -%}
+                  {%- set forecasts.expected = forecasts.expected + [time_data] -%}
+                {%- elif forecast.precipitation_probability >= 75 -%}
+                  {%- set forecasts.likely = forecasts.likely + [time_data] -%}
+                {%- elif forecast.precipitation_probability >= 40 -%}
+                  {%- set forecasts.possible = forecasts.possible + [time_data] -%}
+                {%- elif forecast.precipitation_probability >= 25 -%}
+                  {%- set forecasts.not_likely = forecasts.not_likely + [time_data] -%}
+                {%- endif -%}
+              {%- endfor -%}
+
+              {# Find forecasts in the all array that actually predict rainfall #}
+              {%- for item in forecasts.all  if item.rainfall > 0 -%}
+                {%- set forecasts.expecting_rain = forecasts.expecting_rain + [item] -%} {%- endfor -%}
+
+              {# Return an object with all the different forecasts #}
+              {
+                "all":{{ forecasts.all }},
+                "expected":{{ forecasts.expected }},
+                "likely":{{ forecasts.likely }},
+                "possible":{{ forecasts.possible }},
+                "not_likely":{{ forecasts.not_likely }},
+                "expecting_rain":{{ forecasts.expecting_rain }}
+              }
+            {%- else -%}
+              Undefined
+            {%- endif -%}
+          sequences: >-
+            {%- if state_attr("sensor.precipitation_forecast", "forecasts") != "Undefined" -%}
+              {# Get the list of forecasts set in the forecasts attribute #}
+              {%- set forecasts = state_attr("sensor.precipitation_forecast", "forecasts") -%}
+
+              {# Find any sequential hours. Add any instances of sequential hours to sequence.sequences #}
+              {%- set sequence = namespace(current_sequence=[], sequences=[]) -%}
+              {%- for time in range(0, forecasts.all | count) if time > 0 -%}
+                {%- if as_timestamp(forecasts.all[time].time) - as_timestamp(forecasts.all[time - 1].time) == 3600 -%}
+                  {%- if time < (forecasts.all | count) - 1 -%}
+                    {%- set sequence.current_sequence = sequence.current_sequence + [forecasts.all[time - 1]] -%}
+                  {%- else -%}
+                    {%- set sequence.current_sequence = sequence.current_sequence + [forecasts.all[time - 1], forecasts.all[time]] -%}
+                  {%- endif -%}
+                {%- else -%}
+                  {%- if sequence.current_sequence -%}
+                    {%- set sequence.current_sequence = sequence.current_sequence + [forecasts.all[time - 1]] -%}
+                    {%- set sequence.sequences = sequence.sequences + [sequence.current_sequence] -%}
+                    {%- set sequence.current_sequence = [] -%}
+                  {%- endif -%}
+                {%- endif -%}
+                {%- if time == (forecasts.all | count) - 1 and sequence.current_sequence -%}
+                  {%- set sequence.sequences = sequence.sequences + [sequence.current_sequence] -%}
+                {%- endif -%}
+              {%- endfor -%}
+              {{ sequence.sequences }}
+            {%- else -%}
+              Undefined
+            {%- endif -%}
+
       current_inside_humidity:
         friendly_name: "Current Inside Humidity"
         unit_of_measurement: "%"
         value_template: "{{ state_attr('climate.my_ecobee','current_humidity') }}"
-
