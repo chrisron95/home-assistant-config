@@ -38,6 +38,7 @@ group:
     entities:
       - person.kaitlyn
       - person.ronald
+      - person.mari
       - person.rheena
       - person.danielle
       - person.brian
@@ -51,6 +52,7 @@ group:
       - person.steven
       - person.kaitlyn
       - person.ronald
+      - person.mari
       - person.rheena
       - person.danielle
       - person.brian
@@ -273,6 +275,7 @@ automation:
           - person.steven
           - person.kaitlyn
           - person.ronald
+          - person.mari
           - person.rheena
           - person.danielle
           - person.brian
@@ -287,6 +290,19 @@ automation:
                 entity_id: input_boolean.welcome_home
                 state: "on"
             sequence:
+              - wait_for_trigger:
+                  - platform: state
+                    entity_id: binary_sensor.front_door
+                    from: "off"
+                    to: "on"
+              - service: scene.turn_on
+                target:
+                  entity_id: scene.arrival
+              - delay:
+                  hours: 0
+                  minutes: 0
+                  seconds: 10
+                  milliseconds: 0
               - service: script.turn_on
                 entity_id: script.welcome_briefing
         default:
@@ -346,6 +362,7 @@ automation:
         entity_id:
           - person.kaitlyn
           - person.ronald
+          - person.mari
           - person.rheena
           - person.danielle
           - person.brian
