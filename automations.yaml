@@ -1311,13 +1311,18 @@
       flip_180: true
       cube_flip_180: []
       slide_any_side: true
-      cube_slide_any: []
-      knock_any_side: true
-      cube_knock_any:
+      cube_slide_any:
       - service: media_player.media_play_pause
         data: {}
         target:
           entity_id: media_player.living_room_apple_tv
+      knock_any_side: true
+      cube_knock_any:
+      - service: media_player.toggle
+        data: {}
+        target:
+          entity_id:
+          - media_player.living_room_tv
       rotate_right:
       - service: media_player.volume_up
         data: {}
