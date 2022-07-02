@@ -71,14 +71,14 @@ group:
       - media_player.chris_s_echo_flex
       - media_player.chris_s_echo_show
 
-sensor:
-  # Amazon Polly Sensors to see last message and location of audible notification
-  - platform: mqtt
-    name: "Last Audible Msg"
-    state_topic: "house/speech/lastmsg"
-  - platform: mqtt
-    name: "Last Audible Msg Location"
-    state_topic: "house/speech/lastloc"
+mqtt:
+  sensor:
+    - name: "Jarvis Last Msg"
+      state_topic: "house/speech/lastmsg"
+    - name: "Jarvis Last Location"
+      state_topic: "house/speech/lastloc"
+    - name: "Jarvis Last Msg Time"
+      state_topic: "house/speech/msgtime"
 
 template:
   - sensor:
@@ -130,9 +130,18 @@ input_boolean:
   debug_texts:
     name: Debug Texts
 
-input_text:
-  alexa_voice:
-    name: Alexa Voice
+input_select:
+  echo_voice:
+    name: Echo voice
+    options:
+      - Brian
+      - Emma
+      - Amy
+      - Joanna
+      - Justin
+      - Matthew
+      - Salli
+    initial: Brian
 
 notify:
   - name: all_devices
@@ -171,18 +180,6 @@ script:
   text_notify_all:
     sequence:
       - service: notify.all_devices
-        data:
-          title: >
-            {{ title }}
-          message: >
-            {{ message }}
-
-  text_debug:
-    sequence:
-      - condition: state
-        entity_id: input_boolean.debug_texts
-        state: "on"
-      - service: notify.chris
         data:
           title: >
             {{ title }}
@@ -394,25 +391,33 @@ script:
             {%- elif states('input_boolean.audible_notifications') == 'off' -%}
               0.3
             {%- endif -%}
-      # - if:
-      #     - condition: state
-      #       entity_id: media_player.lab_echo_dot
-      #       state: playing
-      #   then:
-      #     - wait_for_trigger:
-      #         - platform: state
-      #           entity_id:
-      #             - media_player.lab_echo_dot
-      #           to: standby
-      #       continue_on_timeout: false
-      #       timeout: '00:00:30'
-      - service: mqtt.publish
-        data:
+      - alias: Save your message for recall
+        service: mqtt.publish
+        data_template:
           topic: "house/speech/lastmsg"
-          payload: 'This message is from {{ now().strftime("%-I") }}:{{ now().strftime("%M") }} {{ now().strftime("%p") }}. {{ message | striptags | truncate(220)}}'
+          payload: >
+            {% if msg_summary == 'recall' %}
+              {{- states('sensor.jarvis_last_msg') -}}
+            {% else %}
+              {% if msg_summary %}
+                {% set message = msg_summary %}
+              {% endif %}
+              {%- macro cleanup(data) -%}
+                {%- for item in data.split("\n")  if item | trim != "" -%}
+                  {{ item | trim }} {% endfor -%}
+              {%- endmacro -%}
+              {{- cleanup( message | striptags | truncate(220) ) -}}
+            {% endif %}
+      - alias: Save time of last message
+        service: mqtt.publish
+        data_template:
+          topic: "house/speech/msgtime"
+          payload: >
+            {{ now().strftime("%-I") }}:{{ now().strftime("%M") }} {{ now().strftime("%p") }}
           retain: true
-      - service: mqtt.publish
-        data:
+      - alias: Save location
+        service: mqtt.publish
+        data_template:
           topic: "house/speech/lastloc"
           payload: "{{ echo }}"
           retain: true
@@ -429,13 +434,16 @@ script:
               volume_level: "{{ volume | float }}"
             target:
               entity_id: media_player.{{ echo }}
-      - service: notify.alexa_media
+      - alias: Send the notification
+        service: notify.alexa_media
         data:
           message: >
-            <voice name="{{ states('input_text.alexa_voice') }}">
+            <voice name="{{ states('input_select.echo_voice') }}">
+            <amazon:auto-breaths>
             <prosody rate="fast">
             {{ message }}
             </prosody>
+            </amazon:auto-breaths>
             </voice>
           target: >
             {% if echo == 'everywhere' %}
@@ -446,12 +454,22 @@ script:
           data:
             type: tts
 
-  alexa_interjection:
+  # Script for playing the last message.
+  play_last_message:
     sequence:
-      - service: script.status_annc
+      - service: script.alexa_voice
         data:
-          who: "{{ states('sensor.last_alexa')}}"
-          call_confirmation: 1
+          who: >
+            {{ who or 'presence' }}
+          message: >
+            At {{ states('sensor.jarvis_last_msg_time') }} 
+            {% if states('sensor.jarvis_last_location') == 'everywhere' %}
+              I announced. {{ states('sensor.jarvis_last_msg') }}
+            {% else %}
+              from the {{ states('sensor.jarvis_last_location') }} 
+              I said. {{ states('sensor.jarvis_last_msg') }}
+            {% endif %}
+          msg_summary: "recall"
 
   ###############################################################################
   # Status Announcements

@@ -73,6 +73,13 @@ The other cool spot in here is the `status_annc` script. I added quite a few of 
 ## party.yaml
 Nothing exciting... yet. So far it's basically just a house party switch, but doesn't really actually... do anything. One of these days I'll get around to making this do some actual fun stuff like set the lights, turn on music and things like that.
 
+## phone.yaml
+This one's interesting. So first off, I use this [Cell2Jack adapter](https://smile.amazon.com/gp/product/B089984QRT/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1) which connects to my phone via bluetooth and turns my home's landline into an extension of my cell phone. I actually use my old iPad Mini for this instead of my iPhone, since it rings just the same when I'm home. It even rings for Microsoft Teams calls. Makes old rotary phones ring and all!
+
+Now, I use the [phone modem integration](https://www.home-assistant.io/integrations/modem_callerid/) with a simple [USB modem](https://amazon.com/dp/B077YBTC2J/?coliid=I26KZS3FC8F8E2&colid=3MMTOG62V9RKC&psc=1&ref_=lv_ov_lig_dp_it) to get the data into Home Assistant. With this, I can have Jarvis announce my phone calls.
+
+It's a bit of a long way around, but it's pretty cool having old rotary phones in the house that work with my cell phone.
+
 ## presence.yaml
 As you'd imagine, this is where all my presence-based automations are stored. Basically tracks who's in the house, welcomes us when we get home, friends included (that's always fun and makes them smile).
 

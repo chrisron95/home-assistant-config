@@ -41,6 +41,19 @@ input_boolean:
   garage_motion:
     name: Garage Motion
 
+mqtt:
+  light:
+    - name: "Hallway Light"
+      state_topic: "stat/hall_light/POWER1"
+      command_topic: "cmnd/hall_light/EVENT"
+      availability_topic: "tele/hall_light/LWT"
+      qos: 0
+      payload_on: "ON"
+      payload_off: "OFF"
+      payload_available: "Online"
+      payload_not_available: "Offline"
+      retain: false
+
 sensor:
   - name: Kitchen Motion Count
     platform: history_stats
@@ -110,6 +123,7 @@ group:
     name: Lab Lights
     entities:
       - light.lab_fan_light
+      - light.western_electric_cabinet_lights
 
   living_room:
     name: Living Room Lights
@@ -135,7 +149,7 @@ group:
     name: Kitchen Lights
     entities:
       - light.kitchen_light
-      - light.litchen_leds
+      - light.kitchen_leds
 
   patio:
     name: Patio Lights
@@ -143,135 +157,99 @@ group:
       - light.patio_light
       - light.patio_string_lights
 
+  upstairs:
+    name: Upstairs Lights
+    entities:
+      - light.bedroom_fan_lights
+      - light.hue_color_lamp_1
+      - light.bathroom_light
+      - light.lab_fan_light
+      - light.western_electric_cabinet_lights
+      - light.hallway_light
+
+  downstairs:
+    name: Downstairs Lights
+    entities:
+      - light.living_room_fan_light
+      - light.living_room_leds
+      - light.francis_s_light
+      - light.fish_tank_leds
+      - light.dining_room_light
+      - light.kitchen_light
+      - light.kitchen_leds
+      - light.front_hall_light
+
+  exterior:
+    name: Exterior Lights
+    entities:
+      # Patio
+      - light.patio_light
+      - light.patio_string_lights
+      - light.garage_light
+      # Porch
+      - light.porch_light
+      # Landscape
+      - light.left_flood
+      - light.right_flood
+      - light.top_pixels
+      - light.bottom_pixels
+
+  interior:
+    name: All Interior Lights
+    entities:
+      # Downstairs
+      - light.living_room_fan_light
+      - light.living_room_leds
+      - light.francis_s_light
+      - light.fish_tank_leds
+      - light.dining_room_light
+      - light.kitchen_light
+      - light.kitchen_leds
+      - light.front_hall_light
+      # Upstairs
+      - light.bedroom_fan_lights
+      - light.hue_color_lamp_1
+      - light.bathroom_light
+      - light.lab_fan_light
+      - light.western_electric_cabinet_lights
+      - light.hallway_light
+
+  all_lights:
+    name: All Lights
+    entities:
+      # Downstairs
+      - light.living_room_fan_light
+      - light.living_room_leds
+      - light.francis_s_light
+      - light.fish_tank_leds
+      - light.dining_room_light
+      - light.kitchen_light
+      - light.kitchen_leds
+      - light.front_hall_light
+      # Upstairs
+      - light.bedroom_fan_lights
+      - light.hue_color_lamp_1
+      - light.bathroom_light
+      - light.lab_fan_light
+      - light.western_electric_cabinet_lights
+      - light.hallway_light
+      # Exterior
+      # Patio
+      - light.patio_light
+      - light.patio_string_lights
+      - light.garage_light
+      # Porch
+      - light.porch_light
+      # Landscape
+      - light.left_flood
+      - light.right_flood
+      - light.top_pixels
+      - light.bottom_pixels
+
 automation:
-  - id: "dining_room_motion_light_handler"
-    alias: Dining Room Motion Light Handler
-    description: ""
-    trigger:
-      - platform: state
-        entity_id: binary_sensor.espresense_dining_room_motion
-        from: "off"
-        to: "on"
-        for:
-          seconds: 1
-    condition:
-      - condition: state
-        entity_id: input_boolean.do_not_disturb
-        state: "off"
-      - condition: state
-        entity_id: input_boolean.motion_lights_master
-        state: "on"
-      - condition: state
-        entity_id: input_boolean.dining_room_motion_lights
-        state: "on"
-    action:
-      - service: light.turn_on
-        data: {}
-        target:
-          entity_id: light.dining_room_light
-      - wait_for_trigger:
-          - platform: state
-            entity_id: binary_sensor.espresense_dining_room_motion
-            from: "on"
-            to: "off"
-            for:
-              minutes: "{{ states('input_number.motion_lights_delay')|int }}"
-      - service: light.turn_off
-        data: {}
-        target:
-          entity_id: light.dining_room_light
-    mode: restart
-
-  - id: "kitchen_motion_light_handler"
-    alias: Kitchen Motion Light Handler
-    description: ""
-    trigger:
-      - platform: state
-        entity_id: binary_sensor.espresense_kitchen_motion
-        from: "off"
-        to: "on"
-        for:
-          seconds: 1
-    condition:
-      - condition: state
-        entity_id: input_boolean.motion_lights_master
-        state: "on"
-      - condition: state
-        entity_id: input_boolean.kitchen_motion_lights
-        state: "on"
-    action:
-      - choose:
-          - alias: Night
-            conditions:
-              - condition: state
-                entity_id: binary_sensor.do_not_disturb
-                state: "on"
-            sequence:
-              - service: light.turn_on
-                data:
-                  brightness_pct: 85
-                target:
-                  entity_id: light.kitchen_leds
-              - wait_for_trigger:
-                  - platform: state
-                    entity_id: binary_sensor.espresense_kitchen_motion
-                    from: "on"
-                    to: "off"
-                    for:
-                      minutes: "{{ states('input_number.motion_lights_delay')|int }}"
-              - service: light.turn_off
-                target:
-                  entity_id:
-                    - light.kitchen_light
-                    - light.kitchen_leds
-          - alias: Evening and Night While Awake
-            conditions:
-              - condition: or
-                conditions:
-                  - condition: state
-                    entity_id: binary_sensor.evening
-                    state: "on"
-                  - condition: state
-                    entity_id: binary_sensor.night
-                    state: "on"
-            sequence:
-              - service: light.turn_on
-                data:
-                  brightness_pct: 100
-                target:
-                  entity_id: light.kitchen_leds
-              - wait_for_trigger:
-                  - platform: state
-                    entity_id: binary_sensor.espresense_kitchen_motion
-                    from: "on"
-                    to: "off"
-                    for:
-                      minutes: "{{ states('input_number.motion_lights_delay')|int }}"
-              - service: scene.turn_on
-                target:
-                  entity_id: scene.kitchen_dim
-        default:
-          - service: light.turn_on
-            data: {}
-            target:
-              entity_id: light.kitchen_light
-          - wait_for_trigger:
-              - platform: state
-                entity_id: binary_sensor.espresense_kitchen_motion
-                from: "on"
-                to: "off"
-                for:
-                  minutes: "{{ states('input_number.motion_lights_delay')|int }}"
-          - service: light.turn_off
-            data: {}
-            target:
-              entity_id:
-                - light.kitchen_light
-                - light.kitchen_leds
-    mode: restart
-
-  - id: "bedroom_motion_light_handler"
-    alias: Bedroom Motion Light Handler
+  # Main rooms
+  - id: "bedroom_smart_light_handler"
+    alias: Bedroom Smart Light Handler
     description: ""
     trigger:
       - platform: state
@@ -395,8 +373,8 @@ automation:
         default: []
     mode: restart
 
-  - id: "lab_motion_light_handler"
-    alias: Lab Motion Light Handler
+  - id: "lab_smart_light_handler"
+    alias: Lab Smart Light Handler
     description: ""
     trigger:
       - platform: state
@@ -433,234 +411,8 @@ automation:
             - light.lab_fan_light
     mode: restart
 
-  - id: "linen_closet_smart_light_handler"
-    alias: Linen Closet Smart Light Handler
-    description: ""
-    trigger:
-      - type: opened
-        platform: device
-        device_id: b80845462ce1646784961b89e888c56a
-        entity_id: binary_sensor.linen_closet
-        domain: binary_sensor
-        id: open
-      - type: not_opened
-        platform: device
-        device_id: b80845462ce1646784961b89e888c56a
-        entity_id: binary_sensor.linen_closet
-        domain: binary_sensor
-        id: closed
-    action:
-      - choose:
-          - conditions:
-              - condition: trigger
-                id: open
-            sequence:
-              - service: light.turn_on
-                data:
-                  brightness_pct: 100
-                target:
-                  entity_id: light.linen_closet
-          - conditions:
-              - condition: trigger
-                id: closed
-            sequence:
-              - service: light.turn_off
-                data: {}
-                target:
-                  entity_id: light.linen_closet
-        default: []
-    mode: restart
-
-  - id: "hallway_smart_light_handler"
-    alias: Hallway Smart Light Handler
-    description: ""
-    trigger:
-      - type: motion
-        platform: device
-        device_id: 7a7926b5a8d399f1cf7fcd1f450ada99
-        entity_id: binary_sensor.hallway_motion_sensor
-        domain: binary_sensor
-    condition:
-      - condition: state
-        entity_id: input_boolean.do_not_disturb
-        state: "off"
-      - condition: state
-        entity_id: input_boolean.motion_lights_master
-        state: "on"
-      - condition: state
-        entity_id: input_boolean.hallway_smart_lights
-        state: "on"
-    action:
-      - service: light.turn_on
-        entity_id: light.hallway_light
-      - wait_for_trigger:
-          - platform: state
-            entity_id: binary_sensor.hallway_motion_sensor
-            from: "on"
-            to: "off"
-      - service: light.turn_off
-        target:
-          entity_id:
-            - light.hallway_light
-    mode: restart
-
-  - id: "front_hall_smart_light_handler"
-    alias: Front Hall Smart Light Handler
-    description: ""
-    trigger:
-      - type: motion
-        platform: device
-        device_id: 7a7926b5a8d399f1cf7fcd1f450ada99
-        entity_id: binary_sensor.front_hall_motion_sensor
-        domain: binary_sensor
-    condition:
-      - condition: state
-        entity_id: input_boolean.do_not_disturb
-        state: "off"
-      - condition: state
-        entity_id: input_boolean.motion_lights_master
-        state: "on"
-      - condition: state
-        entity_id: input_boolean.front_hall_smart_lights
-        state: "on"
-    action:
-      - service: light.turn_on
-        entity_id: light.front_hall_light
-      - wait_for_trigger:
-          - platform: state
-            entity_id: binary_sensor.front_hall_motion_sensor
-            from: "on"
-            to: "off"
-            for:
-              minutes: 1
-      - service: light.turn_off
-        target:
-          entity_id:
-            - light.front_hall_light
-    mode: restart
-
-  - id: "patio_motion_light_handler"
-    alias: Patio Motion Light Handler
-    description: ""
-    trigger:
-      - platform: state
-        entity_id: binary_sensor.patio_ring_motion
-        from: "off"
-        to: "on"
-    condition:
-      - condition: state
-        entity_id: input_boolean.motion_lights_master
-        state: "on"
-      - condition: state
-        entity_id: input_boolean.patio_motion_lights
-        state: "on"
-      - below: 60
-        condition: numeric_state
-        entity_id: sensor.patio_ambient_light
-    action:
-      - service: light.turn_on
-        entity_id: light.patio_string_lights
-      - wait_for_trigger:
-          - platform: state
-            entity_id: binary_sensor.patio_motion
-            from: "on"
-            to: "off"
-            for:
-              minutes: "{{ states('input_number.motion_lights_delay')|int }}"
-      - service: light.turn_off
-        data: {}
-        target:
-          entity_id:
-            - light.patio_string_lights
-    mode: restart
-
-  - id: "garage_automatic_light_handler"
-    alias: Garage Automatic Light Handler
-    description: ""
-    trigger:
-      - platform: state
-        entity_id: input_boolean.garage_motion
-        id: motion_active
-        from: "off"
-        to: "on"
-      - platform: state
-        entity_id: input_boolean.garage_motion
-        id: motion_inactive
-        from: "on"
-        to: "off"
-        for:
-          minutes: "{{ states('input_number.motion_lights_delay')|int }}"
-      - platform: state
-        entity_id: binary_sensor.garage_door
-        id: door_open
-        from: "off"
-        to: "on"
-      - platform: state
-        entity_id: binary_sensor.garage_door
-        id: door_closed
-        from: "on"
-        to: "off"
-    action:
-      - choose:
-          - alias: Motion Active
-            conditions:
-              - condition: trigger
-                id: motion_active
-              - condition: state
-                entity_id: binary_sensor.garage_door
-                state: "on"
-              - condition: state
-                entity_id: input_boolean.motion_lights_master
-                state: "on"
-              - condition: state
-                entity_id: input_boolean.garage_motion_lights
-                state: "on"
-            sequence:
-              - service: light.turn_on
-                data: {}
-                target:
-                  entity_id: light.garage_light
-          - alias: Motion Inactive
-            conditions:
-              - condition: trigger
-                id: motion_inactive
-              - condition: state
-                entity_id: binary_sensor.garage_door
-                state: "on"
-              - condition: state
-                entity_id: input_boolean.motion_lights_master
-                state: "on"
-              - condition: state
-                entity_id: input_boolean.garage_motion_lights
-                state: "on"
-            sequence:
-              - service: light.turn_off
-                data: {}
-                target:
-                  entity_id: light.garage_light
-          - alias: Door Open
-            conditions:
-              - condition: trigger
-                id: door_open
-            sequence:
-              - service: light.turn_on
-                data: {}
-                target:
-                  entity_id: light.garage_light
-          - alias: Door Closed
-            conditions:
-              - condition: trigger
-                id: door_closed
-            sequence:
-              - service: light.turn_off
-                data: {}
-                target:
-                  entity_id: light.garage_light
-        default: []
-    mode: restart
-
-  - id: "living_room_motion_light_handler"
-    alias: Living Room Motion Light Handler
+  - id: "living_room_smart_light_handler"
+    alias: Living Room Smart Light Handler
     description: ""
     trigger:
       - platform: state
@@ -750,8 +502,152 @@ automation:
         default: []
     mode: restart
 
-  - id: "front_yard_motion_light_handler"
-    alias: Front Yard Motion Light Handler
+  - id: "dining_room_smart_light_handler"
+    alias: Dining Room Smart Light Handler
+    description: ""
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.espresense_dining_room_motion
+        from: "off"
+        to: "on"
+        for:
+          seconds: 1
+    condition:
+      - condition: state
+        entity_id: input_boolean.do_not_disturb
+        state: "off"
+      - condition: state
+        entity_id: input_boolean.motion_lights_master
+        state: "on"
+      - condition: state
+        entity_id: input_boolean.dining_room_motion_lights
+        state: "on"
+    action:
+      - service: light.turn_on
+        data: {}
+        target:
+          entity_id: light.dining_room_light
+      - wait_for_trigger:
+          - platform: state
+            entity_id: binary_sensor.espresense_dining_room_motion
+            from: "on"
+            to: "off"
+            for:
+              minutes: "{{ states('input_number.motion_lights_delay')|int }}"
+      - service: light.turn_off
+        data: {}
+        target:
+          entity_id: light.dining_room_light
+    mode: restart
+
+  - id: "kitchen_smart_light_handler"
+    alias: Kitchen Smart Light Handler
+    description: ""
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.espresense_kitchen_motion
+        id: motion_active
+        from: "off"
+        to: "on"
+        for:
+          seconds: 1
+      - platform: device
+        type: turned_on
+        device_id: 7e8b95744c7040bbbee460145db11d97
+        entity_id: light.kitchen_light
+        id: light_turned_on
+        domain: light
+    condition:
+      - condition: state
+        entity_id: input_boolean.motion_lights_master
+        state: "on"
+      - condition: state
+        entity_id: input_boolean.kitchen_motion_lights
+        state: "on"
+    action:
+      - choose:
+          - alias: Light Turned On
+            conditions:
+              - condition: trigger
+                id: light_turned_on
+            sequence:
+              - service: light.turn_on
+                data:
+                  brightness_pct: 100
+                target:
+                  entity_id: light.kitchen_leds
+          - alias: Night
+            conditions:
+              - condition: state
+                entity_id: binary_sensor.do_not_disturb
+                state: "on"
+            sequence:
+              - service: light.turn_on
+                data:
+                  brightness_pct: 85
+                target:
+                  entity_id: light.kitchen_leds
+              - wait_for_trigger:
+                  - platform: state
+                    entity_id: binary_sensor.espresense_kitchen_motion
+                    from: "on"
+                    to: "off"
+                    for:
+                      minutes: "{{ states('input_number.motion_lights_delay')|int }}"
+              - service: light.turn_off
+                target:
+                  entity_id:
+                    - light.kitchen_light
+                    - light.kitchen_leds
+          - alias: Evening and Night While Awake
+            conditions:
+              - condition: or
+                conditions:
+                  - condition: state
+                    entity_id: binary_sensor.evening
+                    state: "on"
+                  - condition: state
+                    entity_id: binary_sensor.night
+                    state: "on"
+            sequence:
+              - service: light.turn_on
+                data:
+                  brightness_pct: 100
+                target:
+                  entity_id: light.kitchen_leds
+              - wait_for_trigger:
+                  - platform: state
+                    entity_id: binary_sensor.espresense_kitchen_motion
+                    from: "on"
+                    to: "off"
+                    for:
+                      minutes: "{{ states('input_number.motion_lights_delay')|int }}"
+              - service: scene.turn_on
+                target:
+                  entity_id: scene.kitchen_dim
+        default:
+          - service: light.turn_on
+            data: {}
+            target:
+              entity_id: light.kitchen_light
+          - wait_for_trigger:
+              - platform: state
+                entity_id: binary_sensor.espresense_kitchen_motion
+                from: "on"
+                to: "off"
+                for:
+                  minutes: "{{ states('input_number.motion_lights_delay')|int }}"
+          - service: light.turn_off
+            data: {}
+            target:
+              entity_id:
+                - light.kitchen_light
+                - light.kitchen_leds
+    mode: restart
+
+  # Exterior lights
+  - id: "front_yard_smart_light_handler"
+    alias: Front Yard Smart Light Handler
     description: ""
     trigger:
       - platform: state
@@ -787,23 +683,232 @@ automation:
         data: {}
     mode: restart
 
-  - alias: Turn on Kitchen LEDs with Kitchen Light
-    id: "1628872984181"
+  - id: "patio_smart_light_handler"
+    alias: Patio Smart Light Handler
     description: ""
     trigger:
-      - platform: device
-        type: turned_on
-        device_id: 7e8b95744c7040bbbee460145db11d97
-        entity_id: light.kitchen_light
-        domain: light
-    condition: []
+      - platform: state
+        entity_id: binary_sensor.patio_ring_motion
+        from: "off"
+        to: "on"
+    condition:
+      - condition: state
+        entity_id: input_boolean.motion_lights_master
+        state: "on"
+      - condition: state
+        entity_id: input_boolean.patio_motion_lights
+        state: "on"
+      - below: 60
+        condition: numeric_state
+        entity_id: sensor.patio_ambient_light
     action:
       - service: light.turn_on
+        entity_id: light.patio_string_lights
+      - wait_for_trigger:
+          - platform: state
+            entity_id: binary_sensor.patio_motion
+            from: "on"
+            to: "off"
+            for:
+              minutes: "{{ states('input_number.motion_lights_delay')|int }}"
+      - service: light.turn_off
+        data: {}
         target:
-          entity_id: light.kitchen_leds
-        data:
-          brightness_pct: 100
-    mode: single
+          entity_id:
+            - light.patio_string_lights
+    mode: restart
+
+  - id: "garage_smart_light_handler"
+    alias: Garage Smart Light Handler
+    description: ""
+    trigger:
+      - platform: state
+        entity_id: input_boolean.garage_motion
+        id: motion_active
+        from: "off"
+        to: "on"
+      - platform: state
+        entity_id: input_boolean.garage_motion
+        id: motion_inactive
+        from: "on"
+        to: "off"
+        for:
+          minutes: "{{ states('input_number.motion_lights_delay')|int }}"
+      - platform: state
+        entity_id: binary_sensor.garage_door
+        id: door_open
+        from: "off"
+        to: "on"
+      - platform: state
+        entity_id: binary_sensor.garage_door
+        id: door_closed
+        from: "on"
+        to: "off"
+    action:
+      - choose:
+          - alias: Motion Active
+            conditions:
+              - condition: trigger
+                id: motion_active
+              - condition: state
+                entity_id: binary_sensor.garage_door
+                state: "on"
+              - condition: state
+                entity_id: input_boolean.motion_lights_master
+                state: "on"
+              - condition: state
+                entity_id: input_boolean.garage_motion_lights
+                state: "on"
+            sequence:
+              - service: light.turn_on
+                data: {}
+                target:
+                  entity_id: light.garage_light
+          - alias: Motion Inactive
+            conditions:
+              - condition: trigger
+                id: motion_inactive
+              - condition: state
+                entity_id: binary_sensor.garage_door
+                state: "on"
+              - condition: state
+                entity_id: input_boolean.motion_lights_master
+                state: "on"
+              - condition: state
+                entity_id: input_boolean.garage_motion_lights
+                state: "on"
+            sequence:
+              - service: light.turn_off
+                data: {}
+                target:
+                  entity_id: light.garage_light
+          - alias: Door Open
+            conditions:
+              - condition: trigger
+                id: door_open
+            sequence:
+              - service: light.turn_on
+                data: {}
+                target:
+                  entity_id: light.garage_light
+          - alias: Door Closed
+            conditions:
+              - condition: trigger
+                id: door_closed
+            sequence:
+              - service: light.turn_off
+                data: {}
+                target:
+                  entity_id: light.garage_light
+        default: []
+    mode: restart
+
+  # Minor lights
+  - id: "hallway_smart_light_handler"
+    alias: Hallway Smart Light Handler
+    description: ""
+    trigger:
+      - type: motion
+        platform: device
+        device_id: 7a7926b5a8d399f1cf7fcd1f450ada99
+        entity_id: binary_sensor.hallway_motion_sensor
+        domain: binary_sensor
+    condition:
+      - condition: state
+        entity_id: input_boolean.do_not_disturb
+        state: "off"
+      - condition: state
+        entity_id: input_boolean.motion_lights_master
+        state: "on"
+      - condition: state
+        entity_id: input_boolean.hallway_smart_lights
+        state: "on"
+    action:
+      - service: light.turn_on
+        entity_id: light.hallway_light
+      - wait_for_trigger:
+          - platform: state
+            entity_id: binary_sensor.hallway_motion_sensor
+            from: "on"
+            to: "off"
+      - service: light.turn_off
+        target:
+          entity_id:
+            - light.hallway_light
+    mode: restart
+
+  - id: "front_hall_smart_light_handler"
+    alias: Front Hall Smart Light Handler
+    description: ""
+    trigger:
+      - type: motion
+        platform: device
+        device_id: 7a7926b5a8d399f1cf7fcd1f450ada99
+        entity_id: binary_sensor.front_hall_motion_sensor
+        domain: binary_sensor
+    condition:
+      - condition: state
+        entity_id: input_boolean.do_not_disturb
+        state: "off"
+      - condition: state
+        entity_id: input_boolean.motion_lights_master
+        state: "on"
+      - condition: state
+        entity_id: input_boolean.front_hall_smart_lights
+        state: "on"
+    action:
+      - service: light.turn_on
+        entity_id: light.front_hall_light
+      - wait_for_trigger:
+          - platform: state
+            entity_id: binary_sensor.front_hall_motion_sensor
+            from: "on"
+            to: "off"
+            for:
+              minutes: 1
+      - service: light.turn_off
+        target:
+          entity_id:
+            - light.front_hall_light
+    mode: restart
+
+  - id: "linen_closet_smart_light_handler"
+    alias: Linen Closet Smart Light Handler
+    description: ""
+    trigger:
+      - type: opened
+        platform: device
+        device_id: b80845462ce1646784961b89e888c56a
+        entity_id: binary_sensor.linen_closet
+        domain: binary_sensor
+        id: open
+      - type: not_opened
+        platform: device
+        device_id: b80845462ce1646784961b89e888c56a
+        entity_id: binary_sensor.linen_closet
+        domain: binary_sensor
+        id: closed
+    action:
+      - choose:
+          - conditions:
+              - condition: trigger
+                id: open
+            sequence:
+              - service: light.turn_on
+                data:
+                  brightness_pct: 100
+                target:
+                  entity_id: light.linen_closet
+          - conditions:
+              - condition: trigger
+                id: closed
+            sequence:
+              - service: light.turn_off
+                data: {}
+                target:
+                  entity_id: light.linen_closet
+        default: []
+    mode: restart
 
 script:
   # Turn on Living Room Lights if sun is down or cloud coverage is above 70%

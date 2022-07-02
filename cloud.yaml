@@ -35,8 +35,10 @@ alexa:
       - media_player.lab_tv
       # Input Booleans
       - input_boolean.iphone_wake_up_alarm_activated
-      - input_boolean.enabled_frontdoor_3
-      - input_boolean.enabled_frontdoor_4
+      - input_boolean.enabled_frontdoor_3 # Kaitlyn
+      - input_boolean.enabled_frontdoor_4 # Ronald
+      - input_boolean.enabled_frontdoor_8 # Rheena
+      - input_boolean.enabled_frontdoor_9 # Danielle
       - input_boolean.alohomora
       - input_boolean.lumos
       - input_boolean.lumos_maxima
@@ -71,6 +73,7 @@ alexa:
       - input_button.alexa_location_of_chris
       - input_button.alexa_location_of_steven
       - input_button.alexa_set_the_mood
+      - input_button.alexa_snack_for_blaze
       - input_button.alexa_what_to_eat
       - input_button.alexa_introduce_yourself
   entity_config:
@@ -82,6 +85,12 @@ alexa:
       display_categories: SWITCH
     input_boolean.enabled_frontdoor_4:
       name: "Ronald's Access"
+      display_categories: SWITCH
+    input_boolean.enabled_frontdoor_8:
+      name: "Rheena's Access"
+      display_categories: SWITCH
+    input_boolean.enabled_frontdoor_9:
+      name: "Danielle's Access"
       display_categories: SWITCH
     input_boolean.alohomora:
       display_categories: SWITCH

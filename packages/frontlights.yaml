@@ -1,56 +1,39 @@
-sensor:
-  # Falcon Player MQTT Status Updates
-  - platform: mqtt
-    name: "FPP Status"
-    state_topic: "hassio/falcon/player/FPP/status"
-  - platform: mqtt
-    name: "FPP Version"
-    state_topic: "hassio/falcon/player/FPP/version"
-  - platform: mqtt
-    name: "FPP Playlist Details"
-    state_topic: "hassio/falcon/player/FPP/playlist_details"
-  - platform: mqtt
-    name: "FPP Current Playlist"
-    state_topic: "hassio/falcon/player/FPP/playlist/name/status"
-  - platform: mqtt
-    name: "FPP Repeat Status"
-    state_topic: "hassio/falcon/player/FPP/playlist/repeat/status"
-  - platform: mqtt
-    name: "FPP Current Playlist Section"
-    state_topic: "hassio/falcon/player/FPP/playlist/section/status"
-  - platform: mqtt
-    name: "FPP Current Playlist Section Position"
-    state_topic: "hassio/falcon/player/FPP/playlist/sectionPosition/status"
-  - platform: mqtt
-    name: "FPP Playlist Position"
-    state_topic: "hassio/falcon/player/FPP/playlist/position/status"
-  - platform: mqtt
-    name: "FPP Media Name"
-    state_topic: "hassio/falcon/player/FPP/playlist/media/status"
-  - platform: mqtt
-    name: "FPP Current Song"
-    state_topic: "hassio/falcon/player/FPP/playlist/media/title"
-  - platform: mqtt
-    name: "FPP Sequence"
-    state_topic: "hassio/falcon/player/FPP/playlist/sequence/status"
-  - platform: mqtt
-    name: "FPP Sequence Total Seconds"
-    state_topic: "hassio/falcon/player/FPP/playlist/sequence/secondsTotal"
-  # - platform: mqtt
-  #   name: "FPP Start Time"
-  #   state_topic: "hassio/falcon/player/FPP/startTime"
-  # - platform: mqtt
-  #   name: "FPP Next Playlist"
-  #   state_topic: "hassio/falcon/player/FPP/scheduler/nextPlaylist/name"
-  # - platform: mqtt
-  #   name: "FPP Next Playlist Start Time"
-  #   state_topic: "hassio/falcon/player/FPP/scheduler/nextPlaylist/time/start"
-  # - platform: mqtt
-  #   name: "FPP Next Playlist End Time"
-  #   state_topic: "hassio/falcon/player/FPP/scheduler/nextPlaylist/time/end"
-  # - platform: mqtt
-  #   name: "FPP Sequence Position"
-  #   state_topic: "hassio/falcon/player/FPP/playlist/sequence/position"
+mqtt:
+  sensor:
+    - name: "FPP Status"
+      state_topic: "hassio/falcon/player/FPP/status"
+    - name: "FPP Version"
+      state_topic: "hassio/falcon/player/FPP/version"
+    - name: "FPP Playlist Details"
+      state_topic: "hassio/falcon/player/FPP/playlist_details"
+    - name: "FPP Current Playlist"
+      state_topic: "hassio/falcon/player/FPP/playlist/name/status"
+    - name: "FPP Repeat Status"
+      state_topic: "hassio/falcon/player/FPP/playlist/repeat/status"
+    - name: "FPP Current Playlist Section"
+      state_topic: "hassio/falcon/player/FPP/playlist/section/status"
+    - name: "FPP Current Playlist Section Position"
+      state_topic: "hassio/falcon/player/FPP/playlist/sectionPosition/status"
+    - name: "FPP Playlist Position"
+      state_topic: "hassio/falcon/player/FPP/playlist/position/status"
+    - name: "FPP Media Name"
+      state_topic: "hassio/falcon/player/FPP/playlist/media/status"
+    - name: "FPP Current Song"
+      state_topic: "hassio/falcon/player/FPP/playlist/media/title"
+    - name: "FPP Sequence"
+      state_topic: "hassio/falcon/player/FPP/playlist/sequence/status"
+    - name: "FPP Sequence Total Seconds"
+      state_topic: "hassio/falcon/player/FPP/playlist/sequence/secondsTotal"
+    # - name: "FPP Start Time"
+    #   state_topic: "hassio/falcon/player/FPP/startTime"
+    # - name: "FPP Next Playlist"
+    #   state_topic: "hassio/falcon/player/FPP/scheduler/nextPlaylist/name"
+    # - name: "FPP Next Playlist Start Time"
+    #   state_topic: "hassio/falcon/player/FPP/scheduler/nextPlaylist/time/start"
+    # - name: "FPP Next Playlist End Time"
+    #   state_topic: "hassio/falcon/player/FPP/scheduler/nextPlaylist/time/end"
+    # - name: "FPP Sequence Position"
+    #   state_topic: "hassio/falcon/player/FPP/playlist/sequence/position"
 
 input_datetime:
   front_lights_off:

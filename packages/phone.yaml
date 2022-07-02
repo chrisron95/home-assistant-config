@@ -1,0 +1,32 @@
+automation:
+  - alias: Announce CallerID
+    id: announce_callerid
+    trigger:
+      platform: state
+      entity_id: sensor.phone_modem
+      to: "callerid"
+    action:
+      service: script.alexa_voice
+      data:
+        who: presence
+        message: >
+          {# Set call.name to the name of the caller ID initially #}
+          {%- set call = namespace(name=state_attr('sensor.phone_modem', 'cid_name')) -%}
+
+          {# Iterate through my contacts (example sensor in hidden_example.yaml) #}
+          {# If the caller ID's number matches a number in my contacts #}
+          {# override call.name with the contact's name #}
+          {%- for name, number in state_attr('sensor.contacts','contacts').items() -%}
+            {%- if number == state_attr('sensor.phone_modem', 'cid_number') -%}
+              {%- set call.name = name -%}
+            {%- endif -%}
+          {%- endfor -%}
+
+          {# Announce the call using a random variation of the phrase #}
+          {{ [
+            "Sir, incoming call from " + call.name,
+            "Sir, you have a call from " + call.name,
+            "Sir, you have an incoming call from " + call.name,
+            "Incoming phone call sir, from " + call.name,
+            "Sir, " + call.name + "is calling"
+            ] | random }}

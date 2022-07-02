@@ -1,0 +1,55 @@
+# Package for some features for my cats
+
+input_button:
+  alexa_snack_for_blaze:
+    name: Alexa Snack For Blaze
+    icon: mdi:cat
+    # Give blaze a snack
+    # Give blaze some food
+    # Give blaze a little snack
+    # Snack for blaze
+
+automation:
+  - id: alexa_snack_for_blaze
+    alias: Alexa Snack For Blaze
+    initial_state: true
+    trigger:
+      platform: state
+      entity_id:
+        - input_button.alexa_snack_for_blaze
+    action:
+      - service: script.snack_for_blaze
+
+script:
+  # Probably overkill to have this as a script but I
+  # plan to elaborate on it in the future.
+  snack_for_blaze:
+    alias: Snack For Blaze
+    sequence:
+      - service: script.alexa_voice
+        data:
+          who: presence
+          message: >
+            {{[
+              "Giving the beast a snack.",
+              "Enjoy your snack, Blaze.",
+              "Giving Blaze a snack.",
+              "Giving Blaze some more food. Because thats just what he needs.",
+              "Really? More food? Okay, but don't blame me for a fat cat.",
+              "You know he's a big boy, right? Even my sensors see that."
+            ] | random }}
+      - service: switch.turn_on
+        target:
+          entity_id: switch.feedermini_100027317_feeding
+      - delay:
+          hours: 0
+          minutes: 0
+          seconds: 1
+          milliseconds: 0
+      - service: switch.turn_off
+        target:
+          entity_id: switch.feedermini_100027317_feeding
+      - service: script.text_notify_chris
+        data:
+          title: Snack Time!
+          message: Blaze was given a snack

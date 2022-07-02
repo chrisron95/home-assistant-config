@@ -86,6 +86,17 @@ group:
     name: Arriving
     entities: []
 
+mqtt:
+  sensor:
+    - name: "Family Arrived"
+      state_topic: "house/family/arrived"
+      payload_available: "online"
+      payload_not_available: "offline"
+    - name: "Family Arrived"
+      state_topic: "house/family/arrived"
+      payload_available: "online"
+      payload_not_available: "offline"
+
 sensor:
   - platform: template
     sensors:
@@ -131,16 +142,6 @@ sensor:
               {{ states('person.steven') }}
             {%- endif %}
           {%- endif %}
-  - platform: mqtt
-    name: "Family Status"
-    state_topic: "house/family/status"
-    payload_available: "online"
-    payload_not_available: "offline"
-  - platform: mqtt
-    name: "Family Arrived"
-    state_topic: "house/family/arrived"
-    payload_available: "online"
-    payload_not_available: "offline"
   - platform: template
     sensors:
       chris_home:

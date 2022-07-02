@@ -71,10 +71,10 @@ input_datetime:
     has_date: false
     has_time: true
 
-sensor:
-  - platform: mqtt
-    name: front_door_motion_away_count
-    state_topic: "house/front_door_motion/away_count"
+mqtt:
+  sensor:
+    - name: front_door_motion_away_count
+      state_topic: "house/front_door_motion/away_count"
 
 template:
   - sensor:

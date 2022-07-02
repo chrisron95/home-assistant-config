@@ -1,0 +1,32 @@
+###############################################################################
+#   @original author  :   Chris Heder (@chrisron95)
+#   @date             :   06/29/2022
+#   @package          :   hidden.yaml
+#   @description      :   Contains semi-private info that can't simply
+#                         be stored in secrets.yaml
+#
+#                         If using this file, I suggest you rename
+#                         to 'hidden.yaml' or something similar
+#
+#                         Don't forget to add the file to your
+#                         .gitignore file if applicable
+###############################################################################
+
+template:
+  - sensor:
+      - name: Contacts Example
+        icon: mdi:card-account-phone
+        state: Active # Can be anything, isn't used in this instance
+        attributes:
+          contacts: >
+            {# Put the name as what you want to said in a notification #}
+            {# For example: "your mother" would be "your mother is calling", #}
+            {# or "incoming call from your mother". #}
+            {# The number is the full number as it shows in the caller ID #}
+            {# In the US there's a 1 first. #}
+            {{ { 
+              "Name to say": "number",
+              "your mother": "15558880123",
+              "your father": "15554445678",
+              "Max": "15557773456"
+            } }}
