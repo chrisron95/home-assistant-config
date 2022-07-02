@@ -186,18 +186,6 @@ script:
           message: >
             {{ message }}
 
-  text_debug:
-    sequence:
-      - condition: state
-        entity_id: input_boolean.debug_texts
-        state: "on"
-      - service: notify.chris
-        data:
-          title: >
-            {{ title }}
-          message: >
-            {{ message }}
-
   text_notify_chris:
     sequence:
       - condition: state
