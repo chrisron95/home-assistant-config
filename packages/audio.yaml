@@ -110,10 +110,12 @@ automation:
         data:
           datetime: "{{ now().strftime('%Y-%m-%d %H:%M:%S') }}"
 
+mqtt:
+  sensor:
+    - name: "Room Presence"
+      state_topic: "house/presence/current_room"
+
 sensor:
-  - platform: mqtt
-    name: "Room Presence"
-    state_topic: "house/presence/current_room"
   - platform: template
     sensors:
       room_audio:
