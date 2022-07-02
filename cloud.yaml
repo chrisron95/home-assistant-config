@@ -71,6 +71,7 @@ alexa:
       - input_button.alexa_location_of_chris
       - input_button.alexa_location_of_steven
       - input_button.alexa_set_the_mood
+      - input_button.alexa_snack_for_blaze
       - input_button.alexa_what_to_eat
       - input_button.alexa_introduce_yourself
   entity_config:
