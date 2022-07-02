@@ -8,6 +8,18 @@
 #   @date           :   05/12/2022
 ###############################################################################
 
+alarm_control_panel:
+  - platform: manual
+    name: Home Alarm
+    code: !secret alarm_code
+    arming_time: 30 # The time in seconds of the ‘arming’ state before effecting a state change
+    delay_time: 30 # The time in seconds of the ‘pending’ state before triggering the alarm
+    disarmed:
+      trigger_time: 0 # The time in seconds of the ‘triggered’ state in which the alarm is firing
+    armed_home:
+      arming_time: 0 # The time in seconds of the ‘arming’ state before effecting a state change
+      delay_time: 0 # The time in seconds of the ‘pending’ state before triggering the alarm
+
 group:
   doors:
     name: Doors
@@ -393,6 +405,54 @@ automation:
     mode: single
 
     #############################################
+
+  # Manual Alarm Automations
+  ## Triggers
+  - alias: "Trigger alarm while armed away"
+    id: alarm_armed_away_trigger
+    trigger:
+      - platform: state
+        entity_id: sensor.pir1
+        to: "active"
+      - platform: state
+        entity_id: sensor.pir2
+        to: "active"
+      - platform: state
+        entity_id: binary_sensor.front_door
+        to: "on"
+      - platform: state
+        entity_id: binary_sensor.sliding_glass_door
+        to: "on"
+    condition:
+      - condition: state
+        entity_id: alarm_control_panel.home_alarm
+        state: armed_away
+    action:
+      service: alarm_control_panel.alarm_trigger
+      target:
+        entity_id: alarm_control_panel.home_alarm
+
+  ## Alerts
+  - alias: "Send notification when alarm triggered"
+    id: alarm_trigger_notification
+    trigger:
+      - platform: state
+        entity_id: alarm_control_panel.home_alarm
+        to: "triggered"
+    action:
+      - service: script.text_urgent_alert
+        data:
+          title: "ALARM!"
+          message: "The alarm has been triggered at home"
+  - alias: "Send notification when alarm is Disarmed"
+    trigger:
+      - platform: state
+        entity_id: alarm_control_panel.home_alarm
+    action:
+      - service: script.text_notify_chris
+        data:
+          title: Alarm
+          message: "The alarm is {{ trigger.to_state.state }} at {{ states('sensor.time_date') }}"
 
 script:
   # Called when security is to be disarmed, clears any alarms or issues as well
