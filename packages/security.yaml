@@ -10,15 +10,21 @@
 
 alarm_control_panel:
   - platform: manual
-    name: Home Alarm
+    name: Sentry Network
     code: !secret alarm_code
-    arming_time: 30 # The time in seconds of the ‘arming’ state before effecting a state change
-    delay_time: 30 # The time in seconds of the ‘pending’ state before triggering the alarm
+    code_arm_required: false # Don't need code to arm.
+    disarm_after_trigger: false # Leave alarm armed after
+    arming_time: 60 # The time in seconds of the ‘arming’ state before effecting a state change
+    delay_time: 60 # The time in seconds of the ‘pending’ state before triggering the alarm
+    trigger_time: 300 # How long the alarm goes off for
     disarmed:
-      trigger_time: 0 # The time in seconds of the ‘triggered’ state in which the alarm is firing
+      trigger_time: 0 # Can't be triggered when disarmed
     armed_home:
       arming_time: 0 # The time in seconds of the ‘arming’ state before effecting a state change
       delay_time: 0 # The time in seconds of the ‘pending’ state before triggering the alarm
+    armed_night:
+      arming_time: 0
+      delay_time: 0
 
 group:
   doors:
@@ -26,6 +32,7 @@ group:
     entities:
       - binary_sensor.front_door
       - binary_sensor.sliding_glass_door
+      - binary_sensor.garage_door
   windows:
     name: Windows
     entities:
@@ -41,6 +48,17 @@ group:
     entities:
       - binary_sensor.bedroom_windows
       - binary_sensor.lab_windows
+  alarm_triggers:
+    name: Alarm Triggers
+    entities:
+      - group.doors
+      - group.windows
+  alarm_exit_triggers:
+    name: Alarm Exit Triggers
+    entities:
+      - binary_sensor.sliding_glass_door
+      - binary_sensor.garage_door
+      - group.windows
 
 input_boolean:
   # Main security switch. If this is on, the security is armed.
@@ -76,6 +94,13 @@ input_boolean:
   security_issue:
     name: Security Issue
     icon: mdi:alert-circle-outline
+  # This switch is for whether or not unlocking the front door should disarm the alarm
+  alarm_disarm_on_unlock:
+    name: Alarm Disarm On Unlock
+    icon: mdi:shield-lock-open
+  alarm_alert_on_all_activity:
+    name: Alarm Alert On All Activity
+    icon: mdi:shield-search
 
 input_datetime:
   nightly_lockdown:
@@ -407,52 +432,417 @@ automation:
     #############################################
 
   # Manual Alarm Automations
-  ## Triggers
-  - alias: "Trigger alarm while armed away"
-    id: alarm_armed_away_trigger
+  - alias: Alarm Breach Trigger
+    id: alarm_breach_trigger
     trigger:
-      - platform: state
-        entity_id: sensor.pir1
-        to: "active"
-      - platform: state
-        entity_id: sensor.pir2
-        to: "active"
       - platform: state
         entity_id: binary_sensor.front_door
         to: "on"
       - platform: state
         entity_id: binary_sensor.sliding_glass_door
         to: "on"
+      - platform: state
+        entity_id: binary_sensor.garage_door
+        to: "on"
+      - platform: state
+        entity_id: binary_sensor.kitchen_window
+        to: "on"
+      - platform: state
+        entity_id: binary_sensor.bedroom_windows
+        to: "on"
+      - platform: state
+        entity_id: binary_sensor.lab_windows
+        to: "on"
+    condition:
+      - condition: or
+        conditions:
+          - condition: state
+            entity_id: alarm_control_panel.sentry_network
+            state: armed_away
+          - condition: state
+            entity_id: alarm_control_panel.sentry_network
+            state: armed_home
+          - condition: state
+            entity_id: alarm_control_panel.sentry_network
+            state: armed_night
+          - condition: state
+            entity_id: alarm_control_panel.sentry_network
+            state: armed_vacation
+    action:
+      - service: alarm_control_panel.alarm_trigger
+        entity_id: alarm_control_panel.sentry_network
+
+  - alias: Alarm Disarm On Door Unlock
+    id: alarm_disarm_on_door_unlock
+    trigger:
+      - platform: event
+        event_type: keymaster_lock_state_changed
+        event_data:
+          lockname: frontdoor
+    condition:
+      - condition: template
+        value_template: "{{ trigger.event.data.state == 'unlocked' and trigger.event.data.code_slot > 0 }}"
+      - condition: state
+        entity_id: input_boolean.alarm_disarm_on_unlock
+        state: "on"
+      - condition: or
+        conditions:
+          - condition: state
+            entity_id: alarm_control_panel.sentry_network
+            state: armed_away
+          - condition: state
+            entity_id: alarm_control_panel.sentry_network
+            state: armed_home
+          - condition: state
+            entity_id: alarm_control_panel.sentry_network
+            state: armed_night
+          - condition: state
+            entity_id: alarm_control_panel.sentry_network
+            state: armed_vacation
+    action:
+      - service: alarm_control_panel.alarm_disarm
+        data:
+          entity_id: alarm_control_panel.sentry_network
+          code: !secret alarm_code
+      - service: script.alarm_alert_engine
+        data:
+          ios: true
+          message: "Alarm disarmed by {{ trigger.event.data.code_slot_name }}"
+
+  - alias: Alarm Disarmed
+    id: alarm_disarmed
+    trigger:
+      - platform: state
+        entity_id: alarm_control_panel.sentry_network
+        to: disarmed
+    action:
+      - service: input_boolean.turn_off
+        entity_id: input_boolean.security_alarm
+
+  - alias: Alarm Arming
+    id: alarm_arming
+    trigger:
+      - platform: state
+        entity_id: alarm_control_panel.sentry_network
+        to: arming
+    action:
+      - variables:
+          open_entities: >
+            {%- set open_arr = expand('group.alarm_exit_triggers') | selectattr('state','eq','on') | map(attribute='name') | list -%}
+            {%- set count = open_arr | count -%}
+            {%- if count > 1 -%}
+              {{- open_arr[0:count - 1] | join(", ") -}}
+              {{- (' and ' ~ open_arr[count - 1]) -}}
+            {%- elif count > 0 -%}
+              {{- open_arr[0] -}}
+            {%- endif -%}
+          open_count: "{{ expand('group.alarm_exit_triggers') | selectattr('state','eq','on') | map(attribute='name') | list | count }}"
+          is_are: "{{ ' are ' if open_count | int > 1 or open_entities[-1] == 's' else ' is ' }}"
+          it_them: "{{ ' them ' if open_count | int > 1 or open_entities[-1] == 's' else ' it ' }}"
+      - if:
+          # If any points of entry are open
+          - condition: state
+            entity_id: group.alarm_exit_triggers
+            state: "on"
+        then:
+          # Cancel arming
+          - service: alarm_control_panel.alarm_disarm
+            data:
+              code: !secret alarm_code
+              entity_id: alarm_control_panel.sentry_network
+          # Notify us what is open and to try again
+          - service: script.alarm_alert_engine
+            data:
+              vocal: true
+              who: kitchen
+              voice_message: >
+                {{ [
+                  "Wait! ",
+                  "Stop! ",
+                  "Before you go sir, ",
+                  "Just a minute sir, ",
+                  "Sir, "
+                  ] | random -}}
+                {{ [
+                  "I am unable to engage sentry mode due to the " ~ open_entities ~ " being open",
+                  "I cannot engage sentry mode because you have failed to close the " ~ open_entities,
+                  "I am incapable of engaging sentry mode as you have failed to close the " ~ open_entities,
+                  "The " ~ open_entities ~ is_are ~ "still open. Why don't you go close" ~ it_them ~ "first",
+                  "How do you expect me to engage sentry mode with the " ~ open_entities ~ " still open? Go close " ~ it_them,
+                  "You do know the " ~ open_entities ~ is_are ~ "still open, right? Close " ~ it_them ~ " first, then we'll try this again.",
+                  "I cannot engage sentry mode as the " ~ open_entities ~ is_are ~ "still open. I would close " ~ it_them ~ " myself but you still refuse to give me arms.",
+                  "You should try closing the " ~ open_entities ~ " first. It may work better, you know, since I currently cannot engage sentry mode",
+                  "Where do you think you're going? The " ~ open_entities ~ is_are ~ " still open. Close " ~ it_them ~ " first then we'll try again."
+                  ] | random }}
+              ios: true
+              message: "Alarm couldn't be armed due to the {{ open_entities }}. Please close them and try again. {{ states('sensor.time_date') }}"
+
+  - alias: Alarm Armed
+    id: alarm_armed
+    trigger:
+      - platform: state
+        entity_id: alarm_control_panel.sentry_network
+        to: arming
+        for:
+          seconds: 1
+      - platform: state
+        entity_id: alarm_control_panel.sentry_network
+        to: armed_home
+      - platform: state
+        entity_id: alarm_control_panel.sentry_network
+        to: armed_away
+      - platform: state
+        entity_id: alarm_control_panel.sentry_network
+        to: armed_night
+      - platform: state
+        entity_id: alarm_control_panel.sentry_network
+        to: armed_vacation
+    action:
+      - choose:
+          - alias: Arming
+            conditions:
+              - condition: template
+                value_template: "{{ trigger.to_state.state == arming }}"
+            sequence:
+              - service: script.alarm_alert_engine
+                data:
+                  # Say goodbye from the kitchen
+                  vocal: true
+                  who: kitchen
+                  voice_message: >
+                    {{ [
+                        "Goodbye sir, see you soon. I will monitor the house while you're out.",
+                        'Farwell sir, I will guard the house until we meet again.',
+                        "Have a great day sir. I'll keep the house safe while you're gone.",
+                        'I shall keep the house protected while you are gone.',
+                        'Not to worry, I will not throw any parties while you are out.',
+                        'I will keep the cats entertained and safe while you are gone',
+                        "Very well sir, have a nice day. I'll hold the fort.",
+                        'Farewell sir, drive safe'
+                        ] | random }}
+                  # Message the state
+                  ios: true
+                  message: "Alarm is arming at {{ states('sensor.time_date') }}."
+          - alias: Armed Home or Night
+            conditions:
+              - condition: template
+                value_template: "{{ trigger.to_state.state in ['armed_home','armed_night'] }}"
+            sequence:
+              - service: script.alarm_alert_engine
+                data:
+                  # Alert that the home is secure in the current room
+                  vocal: true
+                  who: presence
+                  voice_message: >
+                    {{ [
+                    "Barn door protocol has been activated.",
+                    "Header House has been secured! ",
+                    "Sentry Mode is active. ",
+                    "I am now monitoring the doors and will let you know if anyone attempts to access.",
+                    "Header House Shields are up."
+                    ] | random }}
+                  # Message the state
+                  ios: true
+                  message: "The alarm has been set to {{ trigger.to_state.state | replace('_', ' ') }} mode at {{ states('sensor.time_date') }}.{{ ' Have a good night.' if trigger.to_state.state == armed_night }}"
+          - alias: Armed Vacation
+            conditions:
+              - condition: template
+                value_template: "{{ trigger.to_state.state == 'armed_vacation' }}"
+            sequence:
+              - service: script.alarm_alert_engine
+                data:
+                  ios: true
+                  message: "Alarm has been armed in vacation mode at {{ states('sensor.time_date') }}. Enjoy your trip!"
+        default:
+          - service: script.alarm_alert_engine
+            data:
+              ios: true
+              message: "The alarm has been set to {{ trigger.to_state.state | replace('_', ' ') }} mode at {{ states('sensor.time_date') }}."
+
+  - alias: Alarm Pending
+    id: alarm_pending
+    trigger:
+      - platform: state
+        entity_id: alarm_control_panel.sentry_network
+        id: away
+        from: armed_away
+        to: pending
+      - platform: state
+        entity_id: alarm_control_panel.sentry_network
+        id: vacation
+        from: armed_vacation
+        to: pending
+    action:
+      - service: script.alarm_alert_engine
+        data:
+          vocal: true
+          who: presence
+          voice_message: "The alarm has been triggered. Please disarm it or I will be forced to activate the sirens."
+          ios: true
+          message: Alarm Pending - Please Disarm!
+      - service: script.text_notify_everyone
+        data:
+          title: Sentry Network
+          message: Alarm Pending - Please Disarm!
+
+  - alias: Alarm Triggered
+    id: alarm_triggered
+    trigger:
+      - platform: state
+        entity_id: alarm_control_panel.sentry_network
+        to: triggered
+    action:
+      - service: script.alarm_alert_engine
+        data:
+          ios: true
+          critical: true
+          message: "THE ALARM HAS BEEN ACTIVATED AT {{ states('sensor.time_date') }}"
+      - service: input_boolean.turn_on
+        entity_id: input_boolean.security_alarm
+
+  - alias: Alarm Light Handler
+    id: alarm_light_handler
+    trigger:
+      - platform: state
+        entity_id: alarm_control_panel.sentry_network
+        to: disarmed
+      - platform: state
+        entity_id: alarm_control_panel.sentry_network
+        to: arming
+        for:
+          seconds: 2
+      - platform: state
+        entity_id: alarm_control_panel.sentry_network
+        to: armed_away
+      - platform: state
+        entity_id: alarm_control_panel.sentry_network
+        to: armed_vacation
+      - platform: state
+        entity_id: alarm_control_panel.sentry_network
+        to: pending
+      - platform: state
+        entity_id: alarm_control_panel.sentry_network
+        to: triggered
+    action:
+      - choose:
+          # When ARMING, activate 'leaving' scene
+          - conditions:
+              - condition: template
+                value_template: "{{ trigger.to_state.state == 'arming' }}"
+            sequence:
+              - service: scene.turn_on
+                entity_id: scene.leaving
+          # When ARMED away or vacation, activate 'all_off' scene
+          - conditions:
+              - condition: template
+                value_template: "{{ trigger.to_state.state in ['armed_away','armed_vacation'] }}"
+            sequence:
+              - service: scene.turn_on
+                entity_id: scene.all_off
+          # When alarm is PENDING, activate 'alarm_pending' scene
+          - conditions:
+              - condition: template
+                value_template: "{{ trigger.to_state.state == 'pending' }}"
+            sequence:
+              - service: scene.turn_on
+                entity_id: scene.alarm_pending
+          # When alarm has been TRIGGERED, activate 'alarm_triggered' scene
+          - conditions:
+              - condition: template
+                value_template: "{{ trigger.to_state.state == 'triggered' }}"
+            sequence:
+              - service: scene.turn_on
+                entity_id: scene.alarm_triggered
+          # If DISARMED from 'triggered', 'pending', or 'arming', activate 'arrival' scene
+          - conditions:
+              - condition: template
+                value_template: "{{ trigger.to_state.state == 'disarmed' and trigger.from_state.state in ['triggered','pending','arming'] }}"
+            sequence:
+              - service: scene.turn_on
+                entity_id: scene.arrival
+
+  - alias: Alarm Sound
+    id: alarm_sound
+    trigger:
+      - platform: state
+        entity_id: input_boolean.security_alarm
+        id: "on"
+        to: "on"
+      - platform: state
+        entity_id: input_boolean.security_alarm
+        id: "off"
+        to: "off"
+    action:
+      - choose:
+          - conditions:
+              - condition: trigger
+                id: "on"
+            sequence:
+              - service: script.alexa_voice
+                data:
+                  who: everywhere
+                  message: The siren has been activated
+          - conditions:
+              - condition: trigger
+                id: "off"
+            sequence:
+              - service: script.alexa_voice
+                data:
+                  who: everywhere
+                  message: The siren has been deactivated
+        default: []
+
+  - alias: Alarm Alert On All Activity
+    id: alarm_alert_on_all_activity
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.front_door
+        to: "on"
+      - platform: state
+        entity_id: binary_sensor.sliding_glass_door
+        to: "on"
+      - platform: state
+        entity_id: binary_sensor.garage_door
+        to: "on"
+      - platform: state
+        entity_id: binary_sensor.kitchen_window
+        to: "on"
+      - platform: state
+        entity_id: binary_sensor.bedroom_windows
+        to: "on"
+      - platform: state
+        entity_id: binary_sensor.lab_windows
+        to: "on"
+      - platform: state
+        entity_id: binary_sensor.espresense_bedroom_motion
+        to: "on"
+      - platform: state
+        entity_id: binary_sensor.espresense_lab_motion
+        to: "on"
+      - platform: state
+        entity_id: binary_sensor.espresense_kitchen_motion
+        to: "on"
+      - platform: state
+        entity_id: binary_sensor.espresense_dining_room_motion
+        to: "on"
+      - platform: state
+        entity_id: binary_sensor.espresense_living_room_motion
+        to: "on"
+      - platform: state
+        entity_id: binary_sensor.hallway_motion_sensor
+        to: "on"
+      - platform: state
+        entity_id: binary_sensor.front_hall_motion_sensor
+        to: "on"
     condition:
       - condition: state
-        entity_id: alarm_control_panel.home_alarm
-        state: armed_away
+        entity_id: binary_sensor.alarm_alert_on_all_activity
+        state: "on"
     action:
-      service: alarm_control_panel.alarm_trigger
-      target:
-        entity_id: alarm_control_panel.home_alarm
-
-  ## Alerts
-  - alias: "Send notification when alarm triggered"
-    id: alarm_trigger_notification
-    trigger:
-      - platform: state
-        entity_id: alarm_control_panel.home_alarm
-        to: "triggered"
-    action:
-      - service: script.text_urgent_alert
+      - service: script.alarm_alert_engine
         data:
-          title: "ALARM!"
-          message: "The alarm has been triggered at home"
-  - alias: "Send notification when alarm is Disarmed"
-    trigger:
-      - platform: state
-        entity_id: alarm_control_panel.home_alarm
-    action:
-      - service: script.text_notify_chris
-        data:
-          title: Alarm
-          message: "The alarm is {{ trigger.to_state.state }} at {{ states('sensor.time_date') }}"
+          ios: true
+          message: "{%- if 'motion' in trigger.to_state.entity_id -%}{{ trigger.to_state.name }} detected motion{%- else -%}{{ trigger.to_state.name }} was opened{%- endif -%} at {{ states('sensor.time_date') }}"
 
 script:
   # Called when security is to be disarmed, clears any alarms or issues as well
