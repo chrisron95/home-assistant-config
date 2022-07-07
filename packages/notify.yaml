@@ -330,6 +330,8 @@ script:
               sound:
                 name: default
                 critical: 1
+                volume: 1.0
+
   ###############################################################################
   # Voice Notify
   # Conditions:
@@ -384,12 +386,11 @@ script:
               living_room_echo
             {% endif %}
           volume: >
+            {%- set default = '0.6' if states('input_boolean.audible_notifications') == 'on' else '0.3' -%}
             {%- if volume_override is defined -%}
               {{ volume_override }}
-            {%- elif states('input_boolean.audible_notifications') == 'on' -%}
-              0.6
-            {%- elif states('input_boolean.audible_notifications') == 'off' -%}
-              0.3
+            {%- else -%}
+              {{ default }}
             {%- endif -%}
       - alias: Save your message for recall
         service: mqtt.publish
@@ -885,3 +886,108 @@ script:
             {%- endmacro -%}
 
             {{- cleanup(mother_of_all_macros()) -}}
+
+  ###############################################################################
+  # Alarm Notifications
+  ###############################################################################
+  alarm_text_actionable_alert:
+    mode: restart
+    sequence:
+      - alias: "Set up variables for the actions"
+        variables:
+          # Including an id in the action allows us to identify this script run
+          # and not accidentally trigger for other notification actions
+          action_disarm: "{{ 'DISARM_' ~ context.id }}"
+          action_trigger: "{{ 'TRIGGER_' ~ context.id }}"
+          notify: >
+            {% if who == 'chris' %}
+              notify.chris
+            {% elif who == 'steven' %}
+              notify.steven
+            {% else %}
+              notify.all_ios
+            {% endif %}
+      - alias: Send the actionable notification
+        service: "{{ notify }}"
+        data:
+          title: "{{ title }}"
+          message: "{{ message }}"
+          data:
+            tag: "alarm-noncritical-notification"
+            actions:
+              - action: "{{ action_disarm }}"
+                title: Disarm the alarm
+                authenticationRequired: true
+                icon: sfsymbols:shield.slash.fill
+              - action: "{{ action_trigger }}"
+                title: Trigger the alarm now
+                authenticationRequired: true
+                destructive: true
+                icon: sfsymbols:exclamationmark.shield.fill
+      - alias: "Wait for a response"
+        wait_for_trigger:
+          - platform: event
+            event_type: mobile_app_notification_action
+            event_data:
+              # waiting for the specific action avoids accidentally continuing
+              # for another script/automation's notification action
+              action: "{{ action_disarm }}"
+          - platform: event
+            event_type: mobile_app_notification_action
+            event_data:
+              action: "{{ action_trigger }}"
+          - platform: state
+            entity_id: alarm_control_panel.sentry_network
+            id: alarm_state_change
+        timeout: "00:03:00"
+        continue_on_timeout: false
+      - alias: "Perform the action"
+        choose:
+          - alias: Alarm state changed
+            conditions:
+              - condition: trigger
+                id: "alarm_state_change"
+            sequence:
+              - service: "{{ notify }}"
+                data:
+                  message: "clear_notification"
+                  data:
+                    tag: "alarm-noncritical-notification"
+          - alias: Disarm button pressed
+            conditions: "{{ wait.trigger.event.data.action == action_disarm }}"
+            sequence:
+              - service: alarm_control_panel.alarm_disarm
+                data:
+                  entity_id: alarm_control_panel.sentry_network
+                  code: !secret alarm_code
+          - alias: Trigger button pressed
+            conditions: "{{ wait.trigger.event.data.action == action_trigger }}"
+            sequence:
+              - service: input_boolean.turn_on
+                entity_id: input_boolean.security_alarm
+
+  alarm_alert_engine:
+    mode: restart
+    sequence:
+      - alias: Alexa Notification
+        if:
+          - condition: template
+            value_template: "{{ vocal }}"
+        then:
+          - service: script.alexa_voice
+            data:
+              who: "{{ who }}"
+              volume_override: >
+                {{ volume_override or false }}
+              message: "{{ voice_message }}"
+      - alias: iOS Notification
+        if:
+          - condition: template
+            value_template: "{{ ios }}"
+        then:
+          # - service: "{{'script.text_urgent_alert' if critical else 'script.alarm_text_actionable_alert'}}"
+          - service: "{% if critical %}script.text_urgent_alert{% elif actionable %}script.alarm_text_actionable_alert{% else %}script.text_alert{% endif %}"
+            data:
+              who: chris
+              title: Sentry Network
+              message: "{{ message }}"
