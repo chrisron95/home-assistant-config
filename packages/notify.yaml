@@ -387,7 +387,7 @@ script:
             {% endif %}
           volume: >
             {%- set default = '0.6' if states('input_boolean.audible_notifications') == 'on' else '0.3' -%}
-            {%- if volume_override is defined -%}
+            {%- if volume_override is float -%}
               {{ volume_override }}
             {%- else -%}
               {{ default }}
