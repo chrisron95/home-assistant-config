@@ -14,8 +14,8 @@ alarm_control_panel:
     code: !secret alarm_code
     code_arm_required: false # Don't need code to arm.
     disarm_after_trigger: false # Leave alarm armed after
-    arming_time: 60 # The time in seconds of the ‘arming’ state before effecting a state change
-    delay_time: 60 # The time in seconds of the ‘pending’ state before triggering the alarm
+    arming_time: 30 # The time in seconds of the ‘arming’ state before effecting a state change
+    delay_time: 30 # The time in seconds of the ‘pending’ state before triggering the alarm
     trigger_time: 300 # How long the alarm goes off for
     disarmed:
       trigger_time: 0 # Can't be triggered when disarmed
@@ -25,6 +25,8 @@ alarm_control_panel:
     armed_night:
       arming_time: 0
       delay_time: 0
+    armed_vacation:
+      arming_time: 0
 
 group:
   doors:
@@ -518,9 +520,24 @@ automation:
     action:
       - service: input_boolean.turn_off
         entity_id: input_boolean.security_alarm
+      - service: script.alarm_alert_engine
+        data:
+          # Alert that Sentry Mode has been disabled
+          vocal: true
+          who: presence
+          voice_message: >
+            {{ [
+            "Barn door protocol has been deactivated.",
+            "I am no longer monitoring the access points. ",
+            "Sentry Mode has been disabled. ",
+            "Header House Shields are down."
+            ] | random }}
+          # Message the state
+          ios: true
+          message: "The alarm has been disarmed at {{ states('sensor.time_date') }}."
 
-  - alias: Alarm Arming
-    id: alarm_arming
+  - alias: Alarm Arming Issue
+    id: alarm_arming_issue
     trigger:
       - platform: state
         entity_id: alarm_control_panel.sentry_network
@@ -550,6 +567,9 @@ automation:
             data:
               code: !secret alarm_code
               entity_id: alarm_control_panel.sentry_network
+          # Turn on Lockdown Issue input_boolean
+          - service: input_boolean.turn_on
+            entity_id: input_boolean.lockdown_issue
           # Notify us what is open and to try again
           - service: script.alarm_alert_engine
             data:
@@ -560,7 +580,7 @@ automation:
                   "Wait! ",
                   "Stop! ",
                   "Before you go sir, ",
-                  "Just a minute sir, ",
+                  "Just a second sir, ",
                   "Sir, "
                   ] | random -}}
                 {{ [
@@ -575,10 +595,10 @@ automation:
                   "Where do you think you're going? The " ~ open_entities ~ is_are ~ " still open. Close " ~ it_them ~ " first then we'll try again."
                   ] | random }}
               ios: true
-              message: "Alarm couldn't be armed due to the {{ open_entities }}. Please close them and try again. {{ states('sensor.time_date') }}"
+              message: "Alarm couldn't be armed due to the {{ open_entities }}. Please close {{ it_them }} and try again. {{ states('sensor.time_date') }}"
 
-  - alias: Alarm Armed
-    id: alarm_armed
+  - alias: Alarm Arm
+    id: alarm_arm
     trigger:
       - platform: state
         entity_id: alarm_control_panel.sentry_network
@@ -598,12 +618,31 @@ automation:
         entity_id: alarm_control_panel.sentry_network
         to: armed_vacation
     action:
+      # If in an armed state and the door is still unlocked, lock it
+      - if:
+          - condition: template
+            value_template: "{{ trigger.to_state.state != 'arming' and states('lock.touchscreen_deadbolt_z_wave_plus_frontdoor') == 'unlocked' }}"
+        then:
+          - service: lock.lock
+            target:
+              entity_id: lock.touchscreen_deadbolt_z_wave_plus_frontdoor
+      # If in an armed state, reset the front door motion count
+      - if:
+          - condition: template
+            value_template: "{{ trigger.to_state.state != 'arming' }}"
+        then:
+          - service: script.turn_on
+            entity_id: script.reset_front_door_motion_count
       - choose:
+          # If arming successfully iniates, reset lockdown issues and alert of the arming
           - alias: Arming
             conditions:
               - condition: template
-                value_template: "{{ trigger.to_state.state == arming }}"
+                value_template: "{{ trigger.to_state.state == 'arming' }}"
             sequence:
+              # Turn off Lockdown Issue input_boolean if it was on before
+              - service: input_boolean.turn_off
+                entity_id: input_boolean.lockdown_issue
               - service: script.alarm_alert_engine
                 data:
                   # Say goodbye from the kitchen
@@ -623,6 +662,7 @@ automation:
                   # Message the state
                   ios: true
                   message: "Alarm is arming at {{ states('sensor.time_date') }}."
+          # If armed in a stay mode, make an announcement and alert us
           - alias: Armed Home or Night
             conditions:
               - condition: template
@@ -644,6 +684,7 @@ automation:
                   # Message the state
                   ios: true
                   message: "The alarm has been set to {{ trigger.to_state.state | replace('_', ' ') }} mode at {{ states('sensor.time_date') }}.{{ ' Have a good night.' if trigger.to_state.state == armed_night }}"
+          # If armed in vacation mode, alert us of the state change
           - alias: Armed Vacation
             conditions:
               - condition: template
@@ -654,6 +695,7 @@ automation:
                   ios: true
                   message: "Alarm has been armed in vacation mode at {{ states('sensor.time_date') }}. Enjoy your trip!"
         default:
+          # If not in a state already specified (so pretty much only armed_away), just alert with the state
           - service: script.alarm_alert_engine
             data:
               ios: true
@@ -676,13 +718,9 @@ automation:
       - service: script.alarm_alert_engine
         data:
           vocal: true
-          who: presence
+          who: living_room
           voice_message: "The alarm has been triggered. Please disarm it or I will be forced to activate the sirens."
           ios: true
-          message: Alarm Pending - Please Disarm!
-      - service: script.text_notify_everyone
-        data:
-          title: Sentry Network
           message: Alarm Pending - Please Disarm!
 
   - alias: Alarm Triggered
