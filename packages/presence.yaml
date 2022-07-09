@@ -162,7 +162,7 @@ automation:
         zone: zone.home
         event: enter
         id: chris
-      - entity_id: device_tracker.steven
+      - entity_id: person.steven
         from: not_home
         platform: state
         to: home
@@ -175,22 +175,24 @@ automation:
     condition: []
     action:
       - service: script.family_is_home
-      - choose:
-          - conditions:
-              - condition: trigger
-                id: chris
-            sequence:
-              - service: input_boolean.turn_off
-                data: {}
-                entity_id: input_boolean.chris_travel_monitor
-          - conditions:
-              - condition: trigger
-                id: steven
-            sequence:
-              - service: input_boolean.turn_off
-                data: {}
-                entity_id: input_boolean.steven_travel_monitor
-        default: []
+      # - if:
+      #     condition:
+      # - choose:
+      #     - conditions:
+      #         - condition: trigger
+      #           id: chris
+      #       sequence:
+      #         - service: input_boolean.turn_off
+      #           data: {}
+      #           entity_id: input_boolean.chris_travel_monitor
+      #     - conditions:
+      #         - condition: trigger
+      #           id: steven
+      #       sequence:
+      #         - service: input_boolean.turn_off
+      #           data: {}
+      #           entity_id: input_boolean.steven_travel_monitor
+      #   default: []
     mode: single
     initial_state: true
 
