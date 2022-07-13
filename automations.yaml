@@ -1,1315 +1,1302 @@
 - alias: Bathroom Humidity High
   id: 06611dfc596b4d79bc1b3cde11e93347
   trigger:
-    - platform: numeric_state
-      entity_id: sensor.bathroom_humidity
-      above: input_number.bathroom_humidity_high_level
-      for: 00:00:30
+  - platform: numeric_state
+    entity_id: sensor.bathroom_humidity
+    above: input_number.bathroom_humidity_high_level
+    for: 00:00:30
   action:
-    - service: switch.turn_on
-      entity_id: switch.bathroom_fan
+  - service: switch.turn_on
+    entity_id: switch.bathroom_fan
   mode: single
 - alias: Bathroom Humidity Low
   id: 331455d398e7440d955caa48f35b6cde
   trigger:
-    - below: input_number.bathroom_humidity_low_level
-      entity_id: sensor.bathroom_humidity
-      for: 00:10
-      platform: numeric_state
-      above: "40"
+  - below: input_number.bathroom_humidity_low_level
+    entity_id: sensor.bathroom_humidity
+    for: 00:10
+    platform: numeric_state
+    above: '40'
   action:
-    - entity_id: switch.bathroom_fan
-      service: switch.turn_off
+  - entity_id: switch.bathroom_fan
+    service: switch.turn_off
   mode: single
 - alias: Living Room Light Toggle by MQTT
-  id: "1587008568649"
-  description: ""
+  id: '1587008568649'
+  description: ''
   trigger:
-    - platform: mqtt
-      topic: living_room/light/toggle
+  - platform: mqtt
+    topic: living_room/light/toggle
   condition: []
   action:
-    - data: {}
-      entity_id: light.living_room_fan_light
-      service: light.toggle
+  - data: {}
+    entity_id: light.living_room_fan_light
+    service: light.toggle
 - alias: Bedroom Light Toggle by MQTT
-  description: ""
+  description: ''
   trigger:
-    - platform: mqtt
-      topic: bedroom/fan_light/toggle
+  - platform: mqtt
+    topic: bedroom/fan_light/toggle
   condition: []
   action:
-    - data: {}
-      entity_id: light.bedroom_fan_lights
-      service: light.toggle
+  - data: {}
+    entity_id: light.bedroom_fan_lights
+    service: light.toggle
   id: 6c9f49dabdea44c19255d71723f3dde4
 - alias: iOS Test Trigger
-  id: "1601067953579"
-  description: ""
+  id: '1601067953579'
+  description: ''
   trigger:
-    - platform: event
-      event_type: ios.action_fired
-      event_data:
-        actionName: Test
+  - platform: event
+    event_type: ios.action_fired
+    event_data:
+      actionName: Test
   condition: []
   action:
-    - service: light.toggle
-      data: {}
-      entity_id: light.lab_fan_light
+  - service: light.toggle
+    data: {}
+    entity_id: light.lab_fan_light
   mode: single
 - alias: Alexa Media Player TTS/Announce from Lovelace UI
-  id: "1615999793826"
-  description: ""
+  id: '1615999793826'
+  description: ''
   use_blueprint:
     path: NachtaktiverHalbaffe/alexa-tts-announcement-from-lovelace-ui-and-without-nabu-casa-alexa-media-player.yaml
     input:
       message: input_text.alexa_message_text
       target: input_select.alexa_devices
 - alias: Bathroom Fan Toggle
-  id: "1616084444705"
-  description: ""
+  id: '1616084444705'
+  description: ''
   trigger:
-    - platform: device
-      domain: tasmota
-      device_id: 517105d1d709294e0650b8f8b53dc3f8
-      type: button_short_press
-      subtype: button_1
-      discovery_id: 500291793CC7_button_1_SINGLE
+  - platform: device
+    domain: tasmota
+    device_id: 517105d1d709294e0650b8f8b53dc3f8
+    type: button_short_press
+    subtype: button_1
+    discovery_id: 500291793CC7_button_1_SINGLE
   condition: []
   action:
-    - type: toggle
-      device_id: 4e235ba7a5f7a2b3f420f7242e96d291
-      entity_id: switch.bathroom_fan
-      domain: switch
+  - type: toggle
+    device_id: 4e235ba7a5f7a2b3f420f7242e96d291
+    entity_id: switch.bathroom_fan
+    domain: switch
   mode: single
-- id: "1616451082602"
+- id: '1616451082602'
   alias: Lab Fan Cycle
-  description: ""
+  description: ''
   trigger:
-    - platform: device
-      domain: tasmota
-      device_id: 082f2d49dab1e06234cbc1a01d3787dc
-      type: button_long_press
-      subtype: button_1
-      discovery_id: ECFABC56F484_button_1_HOLD
-    - platform: device
-      domain: tasmota
-      device_id: f51e5de9797e5949aa2cacb1b5bbfb8f
-      type: button_long_press
-      subtype: button_1
-      discovery_id: 9C9C1F47AE83_button_1_HOLD
+  - platform: device
+    domain: tasmota
+    device_id: 082f2d49dab1e06234cbc1a01d3787dc
+    type: button_long_press
+    subtype: button_1
+    discovery_id: ECFABC56F484_button_1_HOLD
+  - platform: device
+    domain: tasmota
+    device_id: f51e5de9797e5949aa2cacb1b5bbfb8f
+    type: button_long_press
+    subtype: button_1
+    discovery_id: 9C9C1F47AE83_button_1_HOLD
   condition: []
   action:
-    - service: fan.set_percentage
-      data:
-        percentage:
-          "{% if states.fan.lab_fan.state == 'off' %}\n  33\n{% elif states.fan.lab_fan.attributes.percentage\
-          \ == 33 %}\n  66\n{% elif states.fan.lab_fan.attributes.percentage == 66 %}\n\
-          \  100\n{% elif states.fan.lab_fan.attributes.percentage == 100 %}\n  0\n\
-          {% endif %}\n"
-      target:
-        entity_id: fan.lab_fan
+  - service: fan.set_percentage
+    data:
+      percentage: "{% if states.fan.lab_fan.state == 'off' %}\n  33\n{% elif states.fan.lab_fan.attributes.percentage\
+        \ == 33 %}\n  66\n{% elif states.fan.lab_fan.attributes.percentage == 66 %}\n\
+        \  100\n{% elif states.fan.lab_fan.attributes.percentage == 100 %}\n  0\n\
+        {% endif %}\n"
+    target:
+      entity_id: fan.lab_fan
   mode: single
-- id: "1616454279431"
+- id: '1616454279431'
   alias: Bedroom Fan Cycle
-  description: ""
+  description: ''
   trigger:
-    - platform: device
-      domain: tasmota
-      device_id: 7d85bf0a57468f7e8385682e13b24e1d
-      type: button_long_press
-      subtype: button_1
-      discovery_id: CC50E3E7FC32_button_1_HOLD
+  - platform: device
+    domain: tasmota
+    device_id: 7d85bf0a57468f7e8385682e13b24e1d
+    type: button_long_press
+    subtype: button_1
+    discovery_id: CC50E3E7FC32_button_1_HOLD
   condition: []
   action:
-    - service: fan.set_percentage
-      data:
-        percentage:
-          "{% if states.fan.bedroom_fan.state == 'off' %}\n  33\n{% elif states.fan.bedroom_fan.attributes.percentage\
-          \ == 33 %}\n  66\n{% elif states.fan.bedroom_fan.attributes.percentage ==\
-          \ 66 %}\n  100\n{% elif states.fan.bedroom_fan.attributes.percentage == 100\
-          \ %}\n  0\n{% endif %}\n"
-      target:
-        entity_id: fan.bedroom_fan
+  - service: fan.set_percentage
+    data:
+      percentage: "{% if states.fan.bedroom_fan.state == 'off' %}\n  33\n{% elif states.fan.bedroom_fan.attributes.percentage\
+        \ == 33 %}\n  66\n{% elif states.fan.bedroom_fan.attributes.percentage ==\
+        \ 66 %}\n  100\n{% elif states.fan.bedroom_fan.attributes.percentage == 100\
+        \ %}\n  0\n{% endif %}\n"
+    target:
+      entity_id: fan.bedroom_fan
   mode: single
 - alias: Bedroom Lamp Toggle
-  id: "1616454324529"
-  description: ""
+  id: '1616454324529'
+  description: ''
   trigger:
-    - platform: device
-      domain: tasmota
-      device_id: 7d85bf0a57468f7e8385682e13b24e1d
-      type: button_double_press
-      subtype: button_1
-      discovery_id: CC50E3E7FC32_button_1_DOUBLE
+  - platform: device
+    domain: tasmota
+    device_id: 7d85bf0a57468f7e8385682e13b24e1d
+    type: button_double_press
+    subtype: button_1
+    discovery_id: CC50E3E7FC32_button_1_DOUBLE
   condition: []
   action:
-    - service: light.toggle
-      data:
-        brightness_pct: 75
-      target:
-        device_id: e8b907a90b194fdc84c90957f919749d
+  - service: light.toggle
+    data:
+      brightness_pct: 75
+    target:
+      device_id: e8b907a90b194fdc84c90957f919749d
   mode: single
 - alias: Kitchen LEDs Toggle
-  id: "1616476834323"
-  description: ""
+  id: '1616476834323'
+  description: ''
   trigger:
-    - platform: device
-      domain: tasmota
-      device_id: 7e8b95744c7040bbbee460145db11d97
-      type: button_double_press
-      subtype: button_1
-      discovery_id: 2CF432192D54_button_1_DOUBLE
+  - platform: device
+    domain: tasmota
+    device_id: 7e8b95744c7040bbbee460145db11d97
+    type: button_double_press
+    subtype: button_1
+    discovery_id: 2CF432192D54_button_1_DOUBLE
   condition: []
   action:
-    - service: light.toggle
-      data:
-        brightness_pct: 100
-      target:
-        entity_id: light.kitchen_leds
+  - service: light.toggle
+    data:
+      brightness_pct: 100
+    target:
+      entity_id: light.kitchen_leds
   mode: single
-- id: "1616476916110"
+- id: '1616476916110'
   alias: Living Roon Fan Cycle
-  description: ""
+  description: ''
   trigger:
-    - platform: device
-      domain: tasmota
-      device_id: 251ad65bd1a0ec8b40cbd7a8fbf2a51d
-      type: button_long_press
-      subtype: button_1
-      discovery_id: 2CF432192E1D_button_1_HOLD
+  - platform: device
+    domain: tasmota
+    device_id: 251ad65bd1a0ec8b40cbd7a8fbf2a51d
+    type: button_long_press
+    subtype: button_1
+    discovery_id: 2CF432192E1D_button_1_HOLD
   condition: []
   action:
-    - service: fan.set_percentage
-      data:
-        percentage:
-          "{% if states.fan.living_room_fan.state == 'off' %}\n  33\n{% elif\
-          \ states.fan.living_room_fan.attributes.percentage == 33 %}\n  66\n{% elif\
-          \ states.fan.living_room_fan.attributes.percentage == 66 %}\n  100\n{% elif\
-          \ states.fan.living_room_fan.attributes.percentage == 100 %}\n  0\n{% endif\
-          \ %}\n"
-      target:
-        entity_id: fan.living_room_fan
+  - service: fan.set_percentage
+    data:
+      percentage: "{% if states.fan.living_room_fan.state == 'off' %}\n  33\n{% elif\
+        \ states.fan.living_room_fan.attributes.percentage == 33 %}\n  66\n{% elif\
+        \ states.fan.living_room_fan.attributes.percentage == 66 %}\n  100\n{% elif\
+        \ states.fan.living_room_fan.attributes.percentage == 100 %}\n  0\n{% endif\
+        \ %}\n"
+    target:
+      entity_id: fan.living_room_fan
   mode: single
 - alias: Fish Tank Light Toggle
-  id: "1616477007406"
-  description: ""
+  id: '1616477007406'
+  description: ''
   trigger:
-    - platform: device
-      domain: tasmota
-      device_id: 6f7d6c6e1774cd155c791b5e55b771ee
-      type: button_long_press
-      subtype: button_1
-      discovery_id: BCDDC25346ED_button_1_HOLD
-    - platform: device
-      domain: tasmota
-      device_id: cfda927b6ff502b7d88f779339e28f5d
-      type: button_long_press
-      subtype: button_1
-      discovery_id: 84F3EBE0D784_button_1_HOLD
+  - platform: device
+    domain: tasmota
+    device_id: 6f7d6c6e1774cd155c791b5e55b771ee
+    type: button_long_press
+    subtype: button_1
+    discovery_id: BCDDC25346ED_button_1_HOLD
+  - platform: device
+    domain: tasmota
+    device_id: cfda927b6ff502b7d88f779339e28f5d
+    type: button_long_press
+    subtype: button_1
+    discovery_id: 84F3EBE0D784_button_1_HOLD
   condition: []
   action:
-    - service: light.toggle
-      target:
-        entity_id: light.fish_tank_leds
-      data:
-        color_temp: 269
-        brightness_pct: 100
+  - service: light.toggle
+    target:
+      entity_id: light.fish_tank_leds
+    data:
+      color_temp: 269
+      brightness_pct: 100
   mode: single
 - alias: Patio Fan Toggle
-  id: "1616477064062"
-  description: ""
+  id: '1616477064062'
+  description: ''
   trigger:
-    - platform: device
-      domain: tasmota
-      device_id: 5351cc93aaae40182c0633e8de1a775e
-      type: button_long_press
-      subtype: button_1
-      discovery_id: 2CF43219288D_button_1_HOLD
+  - platform: device
+    domain: tasmota
+    device_id: 5351cc93aaae40182c0633e8de1a775e
+    type: button_long_press
+    subtype: button_1
+    discovery_id: 2CF43219288D_button_1_HOLD
   condition: []
   action:
-    - type: toggle
-      device_id: 0600c5452bc3651f1dbb0e9e6913bf7e
-      entity_id: switch.patio_fan
-      domain: switch
+  - type: toggle
+    device_id: 0600c5452bc3651f1dbb0e9e6913bf7e
+    entity_id: switch.patio_fan
+    domain: switch
   mode: single
 - alias: Patio String Lights Toggle
-  id: "1620354646102"
-  description: ""
+  id: '1620354646102'
+  description: ''
   trigger:
-    - platform: device
-      domain: tasmota
-      device_id: 5351cc93aaae40182c0633e8de1a775e
-      type: button_double_press
-      subtype: button_1
-      discovery_id: 2CF43219288D_button_1_DOUBLE
+  - platform: device
+    domain: tasmota
+    device_id: 5351cc93aaae40182c0633e8de1a775e
+    type: button_double_press
+    subtype: button_1
+    discovery_id: 2CF43219288D_button_1_DOUBLE
   condition: []
   action:
-    - service: light.toggle
-      target:
-        entity_id: light.patio_string_lights
+  - service: light.toggle
+    target:
+      entity_id: light.patio_string_lights
   mode: single
 - alias: Turn on bathroom fan for 10 mins
-  id: "1622521426971"
-  description: ""
+  id: '1622521426971'
+  description: ''
   trigger:
-    - platform: device
-      domain: tasmota
-      device_id: 517105d1d709294e0650b8f8b53dc3f8
-      type: button_double_press
-      subtype: button_1
-      discovery_id: 500291793CC7_button_1_DOUBLE
+  - platform: device
+    domain: tasmota
+    device_id: 517105d1d709294e0650b8f8b53dc3f8
+    type: button_double_press
+    subtype: button_1
+    discovery_id: 500291793CC7_button_1_DOUBLE
   condition: []
   action:
-    - type: turn_on
-      device_id: 4e235ba7a5f7a2b3f420f7242e96d291
-      entity_id: switch.bathroom_fan
-      domain: switch
-    - delay:
-        hours: 0
-        minutes: 10
-        seconds: 0
-        milliseconds: 0
-    - type: turn_off
-      device_id: 4e235ba7a5f7a2b3f420f7242e96d291
-      entity_id: switch.bathroom_fan
-      domain: switch
+  - type: turn_on
+    device_id: 4e235ba7a5f7a2b3f420f7242e96d291
+    entity_id: switch.bathroom_fan
+    domain: switch
+  - delay:
+      hours: 0
+      minutes: 10
+      seconds: 0
+      milliseconds: 0
+  - type: turn_off
+    device_id: 4e235ba7a5f7a2b3f420f7242e96d291
+    entity_id: switch.bathroom_fan
+    domain: switch
   mode: single
 - alias: Turn Off Bedroom Apple TV
-  id: "1625634502512"
-  description: ""
+  id: '1625634502512'
+  description: ''
   trigger:
-    - platform: device
-      device_id: 6d0692c3ae0d749aa7037ca10f66291d
-      domain: media_player
-      entity_id: media_player.chriss_room
-      type: turned_off
+  - platform: device
+    device_id: 6d0692c3ae0d749aa7037ca10f66291d
+    domain: media_player
+    entity_id: media_player.chriss_room
+    type: turned_off
   condition: []
   action:
-    - service: script.turn_off_bedroom_apple_tv
+  - service: script.turn_off_bedroom_apple_tv
   mode: single
 - alias: Wake Bedroom Apple TV
-  id: "1625634770413"
-  description: ""
+  id: '1625634770413'
+  description: ''
   trigger:
-    - platform: device
-      device_id: 6d0692c3ae0d749aa7037ca10f66291d
-      domain: media_player
-      entity_id: media_player.chriss_room
-      type: turned_on
+  - platform: device
+    device_id: 6d0692c3ae0d749aa7037ca10f66291d
+    domain: media_player
+    entity_id: media_player.chriss_room
+    type: turned_on
   condition: []
   action:
-    - service: script.wake_bedroom_apple_tv
+  - service: script.wake_bedroom_apple_tv
   mode: single
 - alias: Lab Light Toggle
-  id: "1628655116939"
-  description: ""
+  id: '1628655116939'
+  description: ''
   trigger:
-    - platform: device
-      domain: tasmota
-      device_id: f51e5de9797e5949aa2cacb1b5bbfb8f
-      type: button_short_press
-      subtype: button_1
-      discovery_id: 9C9C1F47AE83_button_1_SINGLE
+  - platform: device
+    domain: tasmota
+    device_id: f51e5de9797e5949aa2cacb1b5bbfb8f
+    type: button_short_press
+    subtype: button_1
+    discovery_id: 9C9C1F47AE83_button_1_SINGLE
   condition: []
   action:
-    - service: light.toggle
-      target:
-        entity_id: light.lab_fan_light
+  - service: light.toggle
+    target:
+      entity_id: light.lab_fan_light
   mode: single
-- id: "1628691692223"
+- id: '1628691692223'
   alias: Western Electric Rectifier Controller
-  description: ""
+  description: ''
   trigger:
-    - platform: device
-      domain: tasmota
-      device_id: f51e5de9797e5949aa2cacb1b5bbfb8f
-      type: button_short_press
-      subtype: button_2
-      discovery_id: 9C9C1F47AE83_button_2_SINGLE
-    - platform: device
-      domain: tasmota
-      device_id: f51e5de9797e5949aa2cacb1b5bbfb8f
-      type: button_long_press
-      subtype: button_6
-      discovery_id: 9C9C1F47AE83_button_6_HOLD
-      enabled: false
+  - platform: device
+    domain: tasmota
+    device_id: f51e5de9797e5949aa2cacb1b5bbfb8f
+    type: button_short_press
+    subtype: button_2
+    discovery_id: 9C9C1F47AE83_button_2_SINGLE
+  - platform: device
+    domain: tasmota
+    device_id: f51e5de9797e5949aa2cacb1b5bbfb8f
+    type: button_long_press
+    subtype: button_6
+    discovery_id: 9C9C1F47AE83_button_6_HOLD
+    enabled: false
   condition: []
   action:
-    - service: switch.toggle
-      target:
-        entity_id: switch.western_electric_rectifier
-      data: {}
+  - service: switch.toggle
+    target:
+      entity_id: switch.western_electric_rectifier
+    data: {}
   mode: single
 - alias: 3D Printer Toggle Power
-  id: "1632278000510"
-  description: ""
+  id: '1632278000510'
+  description: ''
   trigger:
-    - platform: device
-      domain: tasmota
-      device_id: f51e5de9797e5949aa2cacb1b5bbfb8f
-      type: button_short_press
-      subtype: button_5
-      discovery_id: 9C9C1F47AE83_button_5_SINGLE
+  - platform: device
+    domain: tasmota
+    device_id: f51e5de9797e5949aa2cacb1b5bbfb8f
+    type: button_short_press
+    subtype: button_5
+    discovery_id: 9C9C1F47AE83_button_5_SINGLE
   condition:
-    - condition: state
-      entity_id: binary_sensor.octoprint_printing_2
-      state: "off"
+  - condition: state
+    entity_id: binary_sensor.octoprint_printing_2
+    state: 'off'
   action:
-    - service: switch.toggle
-      target:
-        entity_id: switch.3d_printer
+  - service: switch.toggle
+    target:
+      entity_id: switch.3d_printer
   mode: single
 - alias: 3D Printer Update Status Light
-  id: "1634268597502"
-  description: ""
+  id: '1634268597502'
+  description: ''
   trigger:
-    - platform: state
-      entity_id: switch.3d_printer
-    - platform: state
-      entity_id: sensor.octoprint_print_status
-    - platform: state
-      entity_id: sensor.octoprint_print_progress
+  - platform: state
+    entity_id: switch.3d_printer
+  - platform: state
+    entity_id: sensor.octoprint_print_status
+  - platform: state
+    entity_id: sensor.octoprint_print_progress
   condition: []
   action:
-    - choose:
-        - alias: If the 3D printer turns on or goes idle, turn on the light white
-          conditions:
-            - condition: and
-              conditions:
-                - condition: state
-                  entity_id: switch.3d_printer
-                  state: "on"
-                - condition: state
-                  entity_id: sensor.octoprint_print_status
-                  state: Operational
-          sequence:
-            - service: automation.turn_on
-              target:
-                entity_id:
-                  - automation.3d_printer_update_bed_temperature_light
-                  - automation.3d_printer_update_tool_temperature_light
-            - service: automation.trigger
-              target:
-                entity_id:
-                  - automation.3d_printer_update_bed_temperature_light
-                  - automation.3d_printer_update_tool_temperature_light
-            - service: light.turn_on
-              target:
-                entity_id:
-                  - light.3d_printer_status
-              data:
-                rgb_color:
-                  - 255
-                  - 202
-                  - 138
-                effect: Solid
-        - alias: If the 3D printer turns off, turn off the light
-          conditions:
-            - condition: state
-              entity_id: switch.3d_printer
-              state: "off"
-          sequence:
-            - service: light.turn_off
-              target:
-                entity_id: light.3d_printer_status
-            - service: automation.turn_off
-              target:
-                entity_id:
-                  - automation.3d_printer_update_bed_temperature_light
-                  - automation.3d_printer_update_tool_temperature_light
-        - alias: If the 3D printer starts printing, make status light breathe white
-          conditions:
-            - condition: and
-              conditions:
-                - condition: state
-                  entity_id: switch.3d_printer
-                  state: "on"
-                - condition: state
-                  entity_id: sensor.octoprint_print_status
-                  state: Printing
-                - condition: numeric_state
-                  entity_id: sensor.octoprint_print_progress
-                  below: "98"
-          sequence:
-            - service: light.turn_on
-              target:
-                entity_id: light.3d_printer_status
-              data:
-                rgb_color:
-                  - 255
-                  - 202
-                  - 138
-                effect: Breathe
-        - alias: If the 3D printer is at >97% complete, make status light rainbow
-          conditions:
-            - condition: and
-              conditions:
-                - condition: state
-                  entity_id: switch.3d_printer
-                  state: "on"
-                - condition: state
-                  entity_id: sensor.octoprint_print_status
-                  state: Printing
-                - condition: numeric_state
-                  entity_id: sensor.octoprint_print_progress
-                  above: "97"
-          sequence:
-            - service: light.turn_on
-              target:
-                entity_id: light.3d_printer_status
-              data:
-                rgb_color:
-                  - 255
-                  - 255
-                  - 255
-                effect: Rainbow
-      default: []
+  - choose:
+    - alias: If the 3D printer turns on or goes idle, turn on the light white
+      conditions:
+      - condition: and
+        conditions:
+        - condition: state
+          entity_id: switch.3d_printer
+          state: 'on'
+        - condition: state
+          entity_id: sensor.octoprint_print_status
+          state: Operational
+      sequence:
+      - service: automation.turn_on
+        target:
+          entity_id:
+          - automation.3d_printer_update_bed_temperature_light
+          - automation.3d_printer_update_tool_temperature_light
+      - service: automation.trigger
+        target:
+          entity_id:
+          - automation.3d_printer_update_bed_temperature_light
+          - automation.3d_printer_update_tool_temperature_light
+      - service: light.turn_on
+        target:
+          entity_id:
+          - light.3d_printer_status
+        data:
+          rgb_color:
+          - 255
+          - 202
+          - 138
+          effect: Solid
+    - alias: If the 3D printer turns off, turn off the light
+      conditions:
+      - condition: state
+        entity_id: switch.3d_printer
+        state: 'off'
+      sequence:
+      - service: light.turn_off
+        target:
+          entity_id: light.3d_printer_status
+      - service: automation.turn_off
+        target:
+          entity_id:
+          - automation.3d_printer_update_bed_temperature_light
+          - automation.3d_printer_update_tool_temperature_light
+    - alias: If the 3D printer starts printing, make status light breathe white
+      conditions:
+      - condition: and
+        conditions:
+        - condition: state
+          entity_id: switch.3d_printer
+          state: 'on'
+        - condition: state
+          entity_id: sensor.octoprint_print_status
+          state: Printing
+        - condition: numeric_state
+          entity_id: sensor.octoprint_print_progress
+          below: '98'
+      sequence:
+      - service: light.turn_on
+        target:
+          entity_id: light.3d_printer_status
+        data:
+          rgb_color:
+          - 255
+          - 202
+          - 138
+          effect: Breathe
+    - alias: If the 3D printer is at >97% complete, make status light rainbow
+      conditions:
+      - condition: and
+        conditions:
+        - condition: state
+          entity_id: switch.3d_printer
+          state: 'on'
+        - condition: state
+          entity_id: sensor.octoprint_print_status
+          state: Printing
+        - condition: numeric_state
+          entity_id: sensor.octoprint_print_progress
+          above: '97'
+      sequence:
+      - service: light.turn_on
+        target:
+          entity_id: light.3d_printer_status
+        data:
+          rgb_color:
+          - 255
+          - 255
+          - 255
+          effect: Rainbow
+    default: []
   mode: single
 - alias: 3D Printer Update Tool Temperature Light
-  id: "1634272502278"
-  description: ""
+  id: '1634272502278'
+  description: ''
   trigger:
-    - platform: state
-      entity_id: sensor.octoprint_tool_0_temperature
-    - platform: state
-      entity_id: sensor.octoprint_tool_0_target
-    - platform: state
-      entity_id: switch.3d_printer
+  - platform: state
+    entity_id: sensor.octoprint_tool_0_temperature
+  - platform: state
+    entity_id: sensor.octoprint_tool_0_target
+  - platform: state
+    entity_id: switch.3d_printer
   condition: []
   action:
-    - choose:
-        - alias: If the tool is cold, make the light blue
+  - choose:
+    - alias: If the tool is cold, make the light blue
+      conditions:
+      - condition: and
+        conditions:
+        - condition: state
+          entity_id: switch.3d_printer
+          state: 'on'
+        - condition: numeric_state
+          entity_id: sensor.octoprint_tool_0_temperature
+          below: '81'
+        - condition: state
+          entity_id: sensor.octoprint_tool_0_target
+          state: '32.0'
+      sequence:
+      - service: light.turn_on
+        data:
+          rgb_color:
+          - 0
+          - 255
+          - 255
+          effect: Solid
+        target:
+          entity_id: light.3d_printer_tool_temp
+    - alias: If the tool is warming up, make the light breathe orange
+      conditions:
+      - condition: and
+        conditions:
+        - condition: state
+          entity_id: switch.3d_printer
+          state: 'on'
+        - condition: template
+          value_template: '{{ states("sensor.octoprint_tool_0_temperature") | int
+            < states("sensor.octoprint_tool_0_target") | int - 1 }}'
+        - condition: numeric_state
+          entity_id: sensor.octoprint_tool_0_target
+          above: '33'
+      sequence:
+      - service: light.turn_on
+        data:
+          rgb_color:
+          - 255
+          - 142
+          - 0
+          effect: Breathe
+        target:
+          entity_id: light.3d_printer_tool_temp
+    - alias: If the tool is at target heat, make the light red
+      conditions:
+      - condition: and
+        conditions:
+        - condition: state
+          entity_id: switch.3d_printer
+          state: 'on'
+        - condition: numeric_state
+          entity_id: sensor.octoprint_tool_0_target
+          above: '33'
+        - condition: and
           conditions:
-            - condition: and
-              conditions:
-                - condition: state
-                  entity_id: switch.3d_printer
-                  state: "on"
-                - condition: numeric_state
-                  entity_id: sensor.octoprint_tool_0_temperature
-                  below: "81"
-                - condition: state
-                  entity_id: sensor.octoprint_tool_0_target
-                  state: "32.0"
-          sequence:
-            - service: light.turn_on
-              data:
-                rgb_color:
-                  - 0
-                  - 255
-                  - 255
-                effect: Solid
-              target:
-                entity_id: light.3d_printer_tool_temp
-        - alias: If the tool is warming up, make the light breathe orange
-          conditions:
-            - condition: and
-              conditions:
-                - condition: state
-                  entity_id: switch.3d_printer
-                  state: "on"
-                - condition: template
-                  value_template:
-                    '{{ states("sensor.octoprint_tool_0_temperature") | int
-                    < states("sensor.octoprint_tool_0_target") | int - 1 }}'
-                - condition: numeric_state
-                  entity_id: sensor.octoprint_tool_0_target
-                  above: "33"
-          sequence:
-            - service: light.turn_on
-              data:
-                rgb_color:
-                  - 255
-                  - 142
-                  - 0
-                effect: Breathe
-              target:
-                entity_id: light.3d_printer_tool_temp
-        - alias: If the tool is at target heat, make the light red
-          conditions:
-            - condition: and
-              conditions:
-                - condition: state
-                  entity_id: switch.3d_printer
-                  state: "on"
-                - condition: numeric_state
-                  entity_id: sensor.octoprint_tool_0_target
-                  above: "33"
-                - condition: and
-                  conditions:
-                    - condition: template
-                      value_template:
-                        '{{ states("sensor.octoprint_tool_0_temperature") | int
-                        > states("sensor.octoprint_tool_0_target") | int - 2 }}'
-                    - condition: template
-                      value_template:
-                        '{{ states("sensor.octoprint_tool_0_temperature") | int
-                        < states("sensor.octoprint_tool_0_target") | int + 2 }}'
-          sequence:
-            - service: light.turn_on
-              target:
-                entity_id: light.3d_printer_tool_temp
-              data:
-                rgb_color:
-                  - 255
-                  - 0
-                  - 0
-                effect: Solid
-        - alias:
-            If the tool is cooling down but not turning off, make the light breathe
-            yellowish
-          conditions:
-            - condition: and
-              conditions:
-                - condition: state
-                  entity_id: switch.3d_printer
-                  state: "on"
-                - condition: template
-                  value_template:
-                    '{{ states("sensor.octoprint_tool_0_temperature") | int
-                    > states("sensor.octoprint_tool_0_target") | int + 1 }}'
-          sequence:
-            - service: light.turn_on
-              target:
-                entity_id: light.3d_printer_tool_temp
-              data:
-                rgb_color:
-                  - 254
-                  - 254
-                  - 0
-                effect: Breathe
-        - alias: If the 3D printer turns off, turn off the light
-          conditions:
-            - condition: state
-              entity_id: switch.3d_printer
-              state: "off"
-          sequence:
-            - service: light.turn_off
-              target:
-                entity_id: light.3d_printer_tool_temp
-      default: []
+          - condition: template
+            value_template: '{{ states("sensor.octoprint_tool_0_temperature") | int
+              > states("sensor.octoprint_tool_0_target") | int - 2 }}'
+          - condition: template
+            value_template: '{{ states("sensor.octoprint_tool_0_temperature") | int
+              < states("sensor.octoprint_tool_0_target") | int + 2 }}'
+      sequence:
+      - service: light.turn_on
+        target:
+          entity_id: light.3d_printer_tool_temp
+        data:
+          rgb_color:
+          - 255
+          - 0
+          - 0
+          effect: Solid
+    - alias: If the tool is cooling down but not turning off, make the light breathe
+        yellowish
+      conditions:
+      - condition: and
+        conditions:
+        - condition: state
+          entity_id: switch.3d_printer
+          state: 'on'
+        - condition: template
+          value_template: '{{ states("sensor.octoprint_tool_0_temperature") | int
+            > states("sensor.octoprint_tool_0_target") | int + 1 }}'
+      sequence:
+      - service: light.turn_on
+        target:
+          entity_id: light.3d_printer_tool_temp
+        data:
+          rgb_color:
+          - 254
+          - 254
+          - 0
+          effect: Breathe
+    - alias: If the 3D printer turns off, turn off the light
+      conditions:
+      - condition: state
+        entity_id: switch.3d_printer
+        state: 'off'
+      sequence:
+      - service: light.turn_off
+        target:
+          entity_id: light.3d_printer_tool_temp
+    default: []
   mode: single
 - alias: 3D Printer Update Bed Temperature Light
-  id: "1634273868202"
-  description: ""
+  id: '1634273868202'
+  description: ''
   trigger:
-    - platform: state
-      entity_id: sensor.octoprint_bed_target
-    - platform: state
-      entity_id: sensor.octoprint_bed_temperature
-    - platform: state
-      entity_id: switch.3d_printer
+  - platform: state
+    entity_id: sensor.octoprint_bed_target
+  - platform: state
+    entity_id: sensor.octoprint_bed_temperature
+  - platform: state
+    entity_id: switch.3d_printer
   condition: []
   action:
-    - choose:
-        - alias: If the bed is cold, make the light blue
+  - choose:
+    - alias: If the bed is cold, make the light blue
+      conditions:
+      - condition: and
+        conditions:
+        - condition: state
+          entity_id: switch.3d_printer
+          state: 'on'
+        - condition: numeric_state
+          entity_id: sensor.octoprint_bed_temperature
+          below: '116'
+        - condition: state
+          entity_id: sensor.octoprint_bed_target
+          state: '32.0'
+      sequence:
+      - service: light.turn_on
+        data:
+          rgb_color:
+          - 0
+          - 255
+          - 255
+          effect: Solid
+        target:
+          entity_id: light.3d_printer_bed_temp
+    - alias: If the bed is warming up, make the light breathe orange
+      conditions:
+      - condition: and
+        conditions:
+        - condition: state
+          entity_id: switch.3d_printer
+          state: 'on'
+        - condition: numeric_state
+          entity_id: sensor.octoprint_bed_target
+          above: '33'
+        - condition: template
+          value_template: '{{ states("sensor.octoprint_bed_temperature") | int < states("sensor.octoprint_bed_target")
+            | int - 1 }}'
+      sequence:
+      - service: light.turn_on
+        data:
+          rgb_color:
+          - 255
+          - 142
+          - 0
+          effect: Breathe
+        target:
+          entity_id: light.3d_printer_bed_temp
+    - alias: If the bed is at target heat, make the light red
+      conditions:
+      - condition: and
+        conditions:
+        - condition: state
+          entity_id: switch.3d_printer
+          state: 'on'
+        - condition: numeric_state
+          entity_id: sensor.octoprint_bed_target
+          above: '33'
+        - condition: and
           conditions:
-            - condition: and
-              conditions:
-                - condition: state
-                  entity_id: switch.3d_printer
-                  state: "on"
-                - condition: numeric_state
-                  entity_id: sensor.octoprint_bed_temperature
-                  below: "116"
-                - condition: state
-                  entity_id: sensor.octoprint_bed_target
-                  state: "32.0"
-          sequence:
-            - service: light.turn_on
-              data:
-                rgb_color:
-                  - 0
-                  - 255
-                  - 255
-                effect: Solid
-              target:
-                entity_id: light.3d_printer_bed_temp
-        - alias: If the bed is warming up, make the light breathe orange
-          conditions:
-            - condition: and
-              conditions:
-                - condition: state
-                  entity_id: switch.3d_printer
-                  state: "on"
-                - condition: numeric_state
-                  entity_id: sensor.octoprint_bed_target
-                  above: "33"
-                - condition: template
-                  value_template:
-                    '{{ states("sensor.octoprint_bed_temperature") | int < states("sensor.octoprint_bed_target")
-                    | int - 1 }}'
-          sequence:
-            - service: light.turn_on
-              data:
-                rgb_color:
-                  - 255
-                  - 142
-                  - 0
-                effect: Breathe
-              target:
-                entity_id: light.3d_printer_bed_temp
-        - alias: If the bed is at target heat, make the light red
-          conditions:
-            - condition: and
-              conditions:
-                - condition: state
-                  entity_id: switch.3d_printer
-                  state: "on"
-                - condition: numeric_state
-                  entity_id: sensor.octoprint_bed_target
-                  above: "33"
-                - condition: and
-                  conditions:
-                    - condition: template
-                      value_template:
-                        '{{ states("sensor.octoprint_bed_temperature") | int >
-                        states("sensor.octoprint_bed_target") | int - 2 }}'
-                    - condition: template
-                      value_template:
-                        '{{ states("sensor.octoprint_bed_temperature") | int <
-                        states("sensor.octoprint_bed_target") | int + 2 }}'
-          sequence:
-            - service: light.turn_on
-              target:
-                entity_id: light.3d_printer_bed_temp
-              data:
-                rgb_color:
-                  - 255
-                  - 0
-                  - 0
-                effect: Solid
-        - alias:
-            If the bed is cooling down but not turning off, make the light breathe
-            yellowish
-          conditions:
-            - condition: and
-              conditions:
-                - condition: state
-                  entity_id: switch.3d_printer
-                  state: "on"
-                - condition: template
-                  value_template:
-                    '{{ states("sensor.octoprint_bed_temperature") | int > states("sensor.octoprint_bed_target")
-                    | int + 1 }}'
-          sequence:
-            - service: light.turn_on
-              target:
-                entity_id: light.3d_printer_bed_temp
-              data:
-                rgb_color:
-                  - 254
-                  - 254
-                  - 0
-                effect: Breathe
-        - alias: If the 3D printer turns off, turn off the light
-          conditions:
-            - condition: state
-              entity_id: switch.3d_printer
-              state: "off"
-          sequence:
-            - service: light.turn_off
-              target:
-                entity_id: light.3d_printer_bed_temp
-      default: []
+          - condition: template
+            value_template: '{{ states("sensor.octoprint_bed_temperature") | int >
+              states("sensor.octoprint_bed_target") | int - 2 }}'
+          - condition: template
+            value_template: '{{ states("sensor.octoprint_bed_temperature") | int <
+              states("sensor.octoprint_bed_target") | int + 2 }}'
+      sequence:
+      - service: light.turn_on
+        target:
+          entity_id: light.3d_printer_bed_temp
+        data:
+          rgb_color:
+          - 255
+          - 0
+          - 0
+          effect: Solid
+    - alias: If the bed is cooling down but not turning off, make the light breathe
+        yellowish
+      conditions:
+      - condition: and
+        conditions:
+        - condition: state
+          entity_id: switch.3d_printer
+          state: 'on'
+        - condition: template
+          value_template: '{{ states("sensor.octoprint_bed_temperature") | int > states("sensor.octoprint_bed_target")
+            | int + 1 }}'
+      sequence:
+      - service: light.turn_on
+        target:
+          entity_id: light.3d_printer_bed_temp
+        data:
+          rgb_color:
+          - 254
+          - 254
+          - 0
+          effect: Breathe
+    - alias: If the 3D printer turns off, turn off the light
+      conditions:
+      - condition: state
+        entity_id: switch.3d_printer
+        state: 'off'
+      sequence:
+      - service: light.turn_off
+        target:
+          entity_id: light.3d_printer_bed_temp
+    default: []
   mode: single
 - alias: 3D Printer Cancel Print
-  id: "1634606712756"
-  description: ""
+  id: '1634606712756'
+  description: ''
   trigger:
-    - platform: device
-      domain: tasmota
-      device_id: f51e5de9797e5949aa2cacb1b5bbfb8f
-      type: button_long_press
-      subtype: button_5
-      discovery_id: 9C9C1F47AE83_button_5_HOLD
+  - platform: device
+    domain: tasmota
+    device_id: f51e5de9797e5949aa2cacb1b5bbfb8f
+    type: button_long_press
+    subtype: button_5
+    discovery_id: 9C9C1F47AE83_button_5_HOLD
   condition: []
   action:
-    - service: switch.turn_on
-      target:
-        entity_id: switch.octoprint_cancel_print
+  - service: switch.turn_on
+    target:
+      entity_id: switch.octoprint_cancel_print
   mode: single
 - alias: Living Room Light Toggle
-  id: "1634611734007"
-  description: ""
+  id: '1634611734007'
+  description: ''
   trigger:
-    - platform: device
-      domain: tasmota
-      device_id: e4ac095d46cedd58ceb8bb01bbcf6440
-      type: button_double_press
-      subtype: button_2
-      discovery_id: BCDDC2594486_button_2_DOUBLE
+  - platform: device
+    domain: tasmota
+    device_id: e4ac095d46cedd58ceb8bb01bbcf6440
+    type: button_double_press
+    subtype: button_2
+    discovery_id: BCDDC2594486_button_2_DOUBLE
   condition: []
   action:
-    - service: light.toggle
-      target:
-        entity_id: light.living_room_fan_light
+  - service: light.toggle
+    target:
+      entity_id: light.living_room_fan_light
   mode: single
-- id: "1637599699240"
+- id: '1637599699240'
   alias: Lab TV Toggle
-  description: ""
+  description: ''
   trigger:
-    - platform: device
-      domain: tasmota
-      device_id: f51e5de9797e5949aa2cacb1b5bbfb8f
-      type: button_double_press
-      subtype: button_1
-      discovery_id: 9C9C1F47AE83_button_1_DOUBLE
-    - platform: device
-      domain: tasmota
-      device_id: 082f2d49dab1e06234cbc1a01d3787dc
-      type: button_double_press
-      subtype: button_1
-      discovery_id: ECFABC56F484_button_1_DOUBLE
+  - platform: device
+    domain: tasmota
+    device_id: f51e5de9797e5949aa2cacb1b5bbfb8f
+    type: button_double_press
+    subtype: button_1
+    discovery_id: 9C9C1F47AE83_button_1_DOUBLE
+  - platform: device
+    domain: tasmota
+    device_id: 082f2d49dab1e06234cbc1a01d3787dc
+    type: button_double_press
+    subtype: button_1
+    discovery_id: ECFABC56F484_button_1_DOUBLE
   condition: []
   action:
-    - service: media_player.toggle
-      target:
-        entity_id: media_player.lab_tv
-      data: {}
+  - service: media_player.toggle
+    target:
+      entity_id: media_player.lab_tv
+    data: {}
   mode: single
 - alias: Fish Tank Filter Toggle
-  id: "1638942926537"
-  description: ""
+  id: '1638942926537'
+  description: ''
   trigger:
-    - platform: device
-      domain: tasmota
-      device_id: cfda927b6ff502b7d88f779339e28f5d
-      type: button_triple_press
-      subtype: button_1
-      discovery_id: 84F3EBE0D784_button_1_TRIPLE
+  - platform: device
+    domain: tasmota
+    device_id: cfda927b6ff502b7d88f779339e28f5d
+    type: button_triple_press
+    subtype: button_1
+    discovery_id: 84F3EBE0D784_button_1_TRIPLE
   condition: []
   action:
-    - service: switch.toggle
-      target:
-        entity_id: switch.fish_tank_filter
+  - service: switch.toggle
+    target:
+      entity_id: switch.fish_tank_filter
   mode: single
 - alias: Thermostat Preset Select
-  id: "1642469538699"
-  description: ""
+  id: '1642469538699'
+  description: ''
   trigger:
-    - platform: state
-      entity_id: input_select.thermostat_preset
-    - platform: state
-      entity_id: input_boolean.windows_open
+  - platform: state
+    entity_id: input_select.thermostat_preset
+  - platform: state
+    entity_id: input_boolean.windows_open
   condition: []
   action:
-    - service: script.thermostat_preset_handler
+  - service: script.thermostat_preset_handler
   mode: single
 - alias: Thermostat Automated Select
-  id: "1642470565005"
-  description: ""
+  id: '1642470565005'
+  description: ''
   trigger:
-    - platform: state
-      entity_id: person.steven
+  - platform: state
+    entity_id: person.steven
   condition: []
   action:
-    - choose:
-        - conditions:
-            - condition: state
-              entity_id: person.steven
-              state: home
-            - condition: state
-              entity_id: input_select.thermostat_preset
-              state: Daytime - Chris
-          sequence:
-            - service: input_select.select_option
-              target:
-                entity_id: input_select.thermostat_preset
-              data:
-                option: Daytime - Steven
-        - conditions:
-            - condition: state
-              entity_id: person.chris
-              state: home
-            - condition: not
-              conditions:
-                - condition: state
-                  entity_id: person.steven
-                  state: home
-            - condition: state
-              entity_id: input_select.thermostat_preset
-              state: Daytime - Steven
-          sequence:
-            - service: input_select.select_option
-              target:
-                entity_id: input_select.thermostat_preset
-              data:
-                option: Daytime - Chris
-      default: []
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: person.steven
+        state: home
+      - condition: state
+        entity_id: input_select.thermostat_preset
+        state: Daytime - Chris
+      sequence:
+      - service: input_select.select_option
+        target:
+          entity_id: input_select.thermostat_preset
+        data:
+          option: Daytime - Steven
+    - conditions:
+      - condition: state
+        entity_id: person.chris
+        state: home
+      - condition: not
+        conditions:
+        - condition: state
+          entity_id: person.steven
+          state: home
+      - condition: state
+        entity_id: input_select.thermostat_preset
+        state: Daytime - Steven
+      sequence:
+      - service: input_select.select_option
+        target:
+          entity_id: input_select.thermostat_preset
+        data:
+          option: Daytime - Chris
+    default: []
   mode: single
 - alias: Mail Light Update
-  id: "1643264447175"
-  description: ""
+  id: '1643264447175'
+  description: ''
   trigger:
-    - platform: time
-      at: "12:00:00"
-    - platform: state
-      entity_id: binary_sensor.mail_button
-      to: "on"
+  - platform: time
+    at: '12:00:00'
+  - platform: state
+    entity_id: binary_sensor.mail_button
+    to: 'on'
   condition: []
   action:
-    - choose:
-        - conditions:
-            - condition: state
-              entity_id: binary_sensor.mail_button
-              state: "on"
-          sequence:
-            - service: input_boolean.turn_off
-              target:
-                entity_id: input_boolean.new_mail
-              data: {}
-            - service: light.turn_off
-              target:
-                entity_id: light.mail_light
-              data: {}
-        - conditions:
-            - condition: or
-              conditions:
-                - condition: numeric_state
-                  entity_id: sensor.mail_usps_packages
-                  above: "0"
-                - condition: numeric_state
-                  entity_id: sensor.mail_usps_mail
-                  above: "0"
-          sequence:
-            - service: input_boolean.turn_on
-              target:
-                entity_id: input_boolean.new_mail
-              data: {}
-            - service: light.turn_on
-              target:
-                entity_id: light.mail_light
-              data:
-                rgb_color:
-                  - 255
-                  - 200
-                  - 151
-      default: []
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: binary_sensor.mail_button
+        state: 'on'
+      sequence:
+      - service: input_boolean.turn_off
+        target:
+          entity_id: input_boolean.new_mail
+        data: {}
+      - service: light.turn_off
+        target:
+          entity_id: light.mail_light
+        data: {}
+    - conditions:
+      - condition: or
+        conditions:
+        - condition: numeric_state
+          entity_id: sensor.mail_usps_packages
+          above: '0'
+        - condition: numeric_state
+          entity_id: sensor.mail_usps_mail
+          above: '0'
+      sequence:
+      - service: input_boolean.turn_on
+        target:
+          entity_id: input_boolean.new_mail
+        data: {}
+      - service: light.turn_on
+        target:
+          entity_id: light.mail_light
+        data:
+          rgb_color:
+          - 255
+          - 200
+          - 151
+    default: []
   mode: single
 - alias: Trash Light Update
-  id: "1643341212029"
-  description: ""
+  id: '1643341212029'
+  description: ''
   trigger:
-    - platform: state
-      entity_id: input_select.trash_state
-    - platform: numeric_state
-      entity_id: sensor.garbage_collection
-      below: "2"
+  - platform: state
+    entity_id: input_select.trash_state
+  - platform: numeric_state
+    entity_id: sensor.garbage_collection
+    below: '2'
   condition: []
   action:
-    - choose:
-        - conditions:
-            - condition: state
-              entity_id: input_select.trash_state
-              state: Brought In
-          sequence:
-            - service: light.turn_off
-              target:
-                entity_id: light.trash_light
-        - conditions:
-            - condition: state
-              entity_id: input_select.trash_state
-              state: Bring Out
-            - condition: numeric_state
-              entity_id: sensor.garbage_collection
-              below: "1"
-          sequence:
-            - service: light.turn_on
-              target:
-                entity_id: light.trash_light
-              data:
-                rgb_color:
-                  - 255
-                  - 0
-                  - 0
-        - conditions:
-            - condition: state
-              entity_id: input_select.trash_state
-              state: Bring Out
-            - condition: numeric_state
-              entity_id: sensor.garbage_collection
-              below: "2"
-          sequence:
-            - service: light.turn_on
-              target:
-                entity_id: light.trash_light
-              data:
-                rgb_color:
-                  - 255
-                  - 208
-                  - 159
-        - conditions:
-            - condition: state
-              entity_id: input_select.trash_state
-              state: Bring Back In
-          sequence:
-            - service: light.turn_on
-              target:
-                entity_id: light.trash_light
-              data:
-                rgb_color:
-                  - 0
-                  - 255
-                  - 255
-      default: []
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: input_select.trash_state
+        state: Brought In
+      sequence:
+      - service: light.turn_off
+        target:
+          entity_id: light.trash_light
+    - conditions:
+      - condition: state
+        entity_id: input_select.trash_state
+        state: Bring Out
+      - condition: numeric_state
+        entity_id: sensor.garbage_collection
+        below: '1'
+      sequence:
+      - service: light.turn_on
+        target:
+          entity_id: light.trash_light
+        data:
+          rgb_color:
+          - 255
+          - 0
+          - 0
+    - conditions:
+      - condition: state
+        entity_id: input_select.trash_state
+        state: Bring Out
+      - condition: numeric_state
+        entity_id: sensor.garbage_collection
+        below: '2'
+      sequence:
+      - service: light.turn_on
+        target:
+          entity_id: light.trash_light
+        data:
+          rgb_color:
+          - 255
+          - 208
+          - 159
+    - conditions:
+      - condition: state
+        entity_id: input_select.trash_state
+        state: Bring Back In
+      sequence:
+      - service: light.turn_on
+        target:
+          entity_id: light.trash_light
+        data:
+          rgb_color:
+          - 0
+          - 255
+          - 255
+    default: []
   mode: single
 - alias: Trash State Handler
-  id: "1643347287312"
-  description: ""
+  id: '1643347287312'
+  description: ''
   trigger:
-    - platform: numeric_state
-      entity_id: sensor.garbage_collection
-      below: "2"
-    - platform: state
-      entity_id: binary_sensor.trash_button
-      to: "on"
+  - platform: numeric_state
+    entity_id: sensor.garbage_collection
+    below: '2'
+  - platform: state
+    entity_id: binary_sensor.trash_button
+    to: 'on'
   condition: []
   action:
-    - choose:
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: binary_sensor.trash_button
+        state: 'on'
+      sequence:
+      - choose:
         - conditions:
-            - condition: state
-              entity_id: binary_sensor.trash_button
-              state: "on"
+          - condition: state
+            entity_id: input_select.trash_state
+            state: Bring Out
           sequence:
-            - choose:
-                - conditions:
-                    - condition: state
-                      entity_id: input_select.trash_state
-                      state: Bring Out
-                  sequence:
-                    - service: garbage_collection.collect_garbage
-                      target:
-                        entity_id: sensor.garbage_collection
-              default: []
-            - service: input_select.select_next
-              target:
-                entity_id: input_select.trash_state
-        - conditions:
-            - condition: numeric_state
+          - service: garbage_collection.collect_garbage
+            target:
               entity_id: sensor.garbage_collection
-              below: "2"
-          sequence:
-            - service: input_select.select_option
-              target:
-                entity_id: input_select.trash_state
-              data:
-                option: Bring Out
-      default: []
+        default: []
+      - service: input_select.select_next
+        target:
+          entity_id: input_select.trash_state
+    - conditions:
+      - condition: numeric_state
+        entity_id: sensor.garbage_collection
+        below: '2'
+      sequence:
+      - service: input_select.select_option
+        target:
+          entity_id: input_select.trash_state
+        data:
+          option: Bring Out
+    default: []
   mode: single
 - alias: Recycle Light Update
-  id: "1643347730280"
-  description: ""
+  id: '1643347730280'
+  description: ''
   trigger:
-    - platform: state
-      entity_id: input_select.recycle_state
-    - platform: numeric_state
-      entity_id: sensor.recycling
-      below: "2"
+  - platform: state
+    entity_id: input_select.recycle_state
+  - platform: numeric_state
+    entity_id: sensor.recycling
+    below: '2'
   condition: []
   action:
-    - choose:
-        - conditions:
-            - condition: state
-              entity_id: input_select.recycle_state
-              state: Brought In
-          sequence:
-            - service: light.turn_off
-              target:
-                entity_id: light.recycle_light
-        - conditions:
-            - condition: state
-              entity_id: input_select.recycle_state
-              state: Bring Out
-            - condition: numeric_state
-              entity_id: sensor.recycling
-              below: "1"
-          sequence:
-            - service: light.turn_on
-              target:
-                entity_id: light.recycle_light
-              data:
-                rgb_color:
-                  - 255
-                  - 0
-                  - 0
-        - conditions:
-            - condition: state
-              entity_id: input_select.recycle_state
-              state: Bring Out
-            - condition: numeric_state
-              entity_id: sensor.recycling
-              below: "2"
-          sequence:
-            - service: light.turn_on
-              target:
-                entity_id: light.recycle_light
-              data:
-                rgb_color:
-                  - 255
-                  - 208
-                  - 159
-        - conditions:
-            - condition: state
-              entity_id: input_select.recycle_state
-              state: Bring Back In
-          sequence:
-            - service: light.turn_on
-              target:
-                entity_id: light.recycle_light
-              data:
-                rgb_color:
-                  - 0
-                  - 255
-                  - 255
-      default: []
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: input_select.recycle_state
+        state: Brought In
+      sequence:
+      - service: light.turn_off
+        target:
+          entity_id: light.recycle_light
+    - conditions:
+      - condition: state
+        entity_id: input_select.recycle_state
+        state: Bring Out
+      - condition: numeric_state
+        entity_id: sensor.recycling
+        below: '1'
+      sequence:
+      - service: light.turn_on
+        target:
+          entity_id: light.recycle_light
+        data:
+          rgb_color:
+          - 255
+          - 0
+          - 0
+    - conditions:
+      - condition: state
+        entity_id: input_select.recycle_state
+        state: Bring Out
+      - condition: numeric_state
+        entity_id: sensor.recycling
+        below: '2'
+      sequence:
+      - service: light.turn_on
+        target:
+          entity_id: light.recycle_light
+        data:
+          rgb_color:
+          - 255
+          - 208
+          - 159
+    - conditions:
+      - condition: state
+        entity_id: input_select.recycle_state
+        state: Bring Back In
+      sequence:
+      - service: light.turn_on
+        target:
+          entity_id: light.recycle_light
+        data:
+          rgb_color:
+          - 0
+          - 255
+          - 255
+    default: []
   mode: single
 - alias: Recycle State Handler
-  id: "1643348123383"
-  description: ""
+  id: '1643348123383'
+  description: ''
   trigger:
-    - platform: numeric_state
-      entity_id: sensor.recycling
-      below: "2"
-    - platform: state
-      entity_id: binary_sensor.recycle_button
-      to: "on"
+  - platform: numeric_state
+    entity_id: sensor.recycling
+    below: '2'
+  - platform: state
+    entity_id: binary_sensor.recycle_button
+    to: 'on'
   condition: []
   action:
-    - choose:
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: binary_sensor.recycle_button
+        state: 'on'
+      sequence:
+      - choose:
         - conditions:
-            - condition: state
-              entity_id: binary_sensor.recycle_button
-              state: "on"
+          - condition: state
+            entity_id: input_select.recycle_state
+            state: Bring Out
           sequence:
-            - choose:
-                - conditions:
-                    - condition: state
-                      entity_id: input_select.recycle_state
-                      state: Bring Out
-                  sequence:
-                    - service: garbage_collection.collect_garbage
-                      target:
-                        entity_id: sensor.recycling
-              default: []
-            - service: input_select.select_next
-              target:
-                entity_id: input_select.recycle_state
-        - conditions:
-            - condition: numeric_state
+          - service: garbage_collection.collect_garbage
+            target:
               entity_id: sensor.recycling
-              below: "2"
-          sequence:
-            - service: input_select.select_option
-              target:
-                entity_id: input_select.recycle_state
-              data:
-                option: Bring Out
-      default: []
+        default: []
+      - service: input_select.select_next
+        target:
+          entity_id: input_select.recycle_state
+    - conditions:
+      - condition: numeric_state
+        entity_id: sensor.recycling
+        below: '2'
+      sequence:
+      - service: input_select.select_option
+        target:
+          entity_id: input_select.recycle_state
+        data:
+          option: Bring Out
+    default: []
   mode: single
 - alias: Turn On Lab TV with WakeOnLan
-  id: "1644253838913"
-  description: ""
+  id: '1644253838913'
+  description: ''
   trigger:
-    - platform: webostv.turn_on
-      entity_id: media_player.lab_tv
+  - platform: webostv.turn_on
+    entity_id: media_player.lab_tv
   condition: []
   action:
-    - service: wake_on_lan.send_magic_packet
-      data:
-        mac: 20:17:42:D9:6D:4E
+  - service: wake_on_lan.send_magic_packet
+    data:
+      mac: 20:17:42:D9:6D:4E
   mode: single
 - alias: Turn On Living Room TV with WakeOnLan
-  id: "1644253912444"
-  description: ""
+  id: '1644253912444'
+  description: ''
   trigger:
-    - platform: webostv.turn_on
-      entity_id: media_player.living_room_tv
+  - platform: webostv.turn_on
+    entity_id: media_player.living_room_tv
   condition: []
   action:
-    - service: wake_on_lan.send_magic_packet
-      data:
-        mac: 74:40:BE:88:4F:80
+  - service: wake_on_lan.send_magic_packet
+    data:
+      mac: 74:40:BE:88:4F:80
   mode: single
-- id: "1650324443680"
+- id: '1650324443680'
   alias: Doorbell
-  description: ""
+  description: ''
   trigger:
-    - type: occupied
-      platform: device
-      device_id: 9ac2e56d16554b6e839f0feab4c5a479
-      entity_id: binary_sensor.front_door_ring_ding
-      domain: binary_sensor
+  - type: occupied
+    platform: device
+    device_id: 9ac2e56d16554b6e839f0feab4c5a479
+    entity_id: binary_sensor.front_door_ring_ding
+    domain: binary_sensor
   condition: []
   action:
+  - service: script.status_annc
+    data:
+      who: everywhere
+      call_doorbell_chime: 1
+      call_snark_doorbell: 1
+  mode: single
+- id: '1650326437602'
+  alias: Doorbell Motion Detected
+  description: ''
+  trigger:
+  - type: motion
+    platform: device
+    device_id: 9ac2e56d16554b6e839f0feab4c5a479
+    entity_id: binary_sensor.front_door_ring_motion
+    domain: binary_sensor
+    id: motion
+  condition:
+  - condition: state
+    entity_id: input_boolean.do_not_disturb
+    state: 'off'
+  action:
+  - condition: state
+    entity_id: binary_sensor.front_door_recent_activity
+    state: 'off'
+  - wait_for_trigger:
+    - platform: state
+      entity_id:
+      - binary_sensor.front_door_recent_activity
+      to: 'on'
+      from: 'off'
+      id: door_activity
+    timeout: 00:00:05
+  - choose:
+    - conditions:
+      - condition: template
+        value_template: '{{ wait.trigger.id is defined }}'
+      sequence:
+      - stop: '{{ wait.trigger.id }}'
+    default:
     - service: script.status_annc
       data:
         who: everywhere
-        call_doorbell_chime: 1
-        call_snark_doorbell: 1
+        call_snark_door_motion: 1
   mode: single
-- id: "1650326437602"
-  alias: Doorbell Motion Detected
-  description: ""
-  trigger:
-    - type: motion
-      platform: device
-      device_id: 9ac2e56d16554b6e839f0feab4c5a479
-      entity_id: binary_sensor.front_door_ring_motion
-      domain: binary_sensor
-      id: motion
-  condition:
-    - condition: state
-      entity_id: input_boolean.do_not_disturb
-      state: "off"
-  action:
-    - condition: state
-      entity_id: binary_sensor.front_door_recent_activity
-      state: "off"
-    - wait_for_trigger:
-        - platform: state
-          entity_id:
-            - binary_sensor.front_door_recent_activity
-          to: "on"
-          from: "off"
-          id: door_activity
-      timeout: 00:00:05
-    - choose:
-        - conditions:
-            - condition: template
-              value_template: "{{ wait.trigger.id is defined }}"
-          sequence:
-            - stop: "{{ wait.trigger.id }}"
-      default:
-        - service: script.status_annc
-          data:
-            who: everywhere
-            call_snark_door_motion: 1
-  mode: single
-- id: "1651617197832"
+- id: '1651617197832'
   alias: Lab Bathroom Fan Controller
-  description: ""
+  description: ''
   trigger:
-    - type: humidity
-      platform: device
-      device_id: 92463da5daafb2dda4f417ae7f643aa9
-      entity_id: sensor.lab_bathroom_humidity
-      domain: sensor
-      above: 80
-      id: high
-    - type: humidity
-      platform: device
-      device_id: 92463da5daafb2dda4f417ae7f643aa9
-      entity_id: sensor.lab_bathroom_humidity
-      domain: sensor
-      id: low
-      below: 60
+  - type: humidity
+    platform: device
+    device_id: 92463da5daafb2dda4f417ae7f643aa9
+    entity_id: sensor.lab_bathroom_humidity
+    domain: sensor
+    above: 80
+    id: high
+  - type: humidity
+    platform: device
+    device_id: 92463da5daafb2dda4f417ae7f643aa9
+    entity_id: sensor.lab_bathroom_humidity
+    domain: sensor
+    id: low
+    below: 60
   condition: []
   action:
-    - choose:
-        - conditions:
-            - condition: trigger
-              id: high
-          sequence:
-            - service: switch.turn_on
-              data: {}
-              target:
-                entity_id: switch.lab_bathroom_fan
-        - conditions:
-            - condition: trigger
-              id: low
-          sequence:
-            - service: switch.turn_off
-              data: {}
-              target:
-                entity_id: switch.lab_bathroom_fan
-      default: []
+  - choose:
+    - conditions:
+      - condition: trigger
+        id: high
+      sequence:
+      - service: switch.turn_on
+        data: {}
+        target:
+          entity_id: switch.lab_bathroom_fan
+    - conditions:
+      - condition: trigger
+        id: low
+      sequence:
+      - service: switch.turn_off
+        data: {}
+        target:
+          entity_id: switch.lab_bathroom_fan
+    default: []
   mode: single
-- id: "1651635402480"
+- id: '1651635402480'
   alias: Friend Arrival
-  description: ""
+  description: ''
   trigger:
-    - platform: state
-      entity_id: person.kaitlyn
-      to: home
-    - platform: state
-      entity_id: person.ronald
-      to: home
-    - platform: state
-      entity_id: person.rheena
-      to: home
-    - platform: state
-      entity_id: person.danielle
-      to: home
-    - platform: state
-      entity_id: person.brian
-      to: home
-    - platform: state
-      entity_id: person.rathnam
-      to: home
-    - platform: state
-      entity_id: person.nico
-      to: home
-    - platform: state
-      entity_id:
-        - person.mari
-      to: home
+  - platform: state
+    entity_id: person.kaitlyn
+    to: home
+  - platform: state
+    entity_id: person.ronald
+    to: home
+  - platform: state
+    entity_id: person.rheena
+    to: home
+  - platform: state
+    entity_id: person.danielle
+    to: home
+  - platform: state
+    entity_id: person.brian
+    to: home
+  - platform: state
+    entity_id: person.rathnam
+    to: home
+  - platform: state
+    entity_id: person.nico
+    to: home
+  - platform: state
+    entity_id:
+    - person.mari
+    to: home
   condition: []
   action:
-    - service: script.text_notify_everyone
-      data:
-        title: Guest Arrival
-        message: "{{ trigger.to_state.attributes.friendly_name }} has arrived"
+  - service: script.text_notify_everyone
+    data:
+      title: Guest Arrival
+      message: '{{ trigger.to_state.attributes.friendly_name }} has arrived'
   mode: parallel
   max: 10
-- id: "1653577962938"
+- id: '1653577962938'
   alias: Western Electric Cabinet Lights Controller
-  description: ""
+  description: ''
   trigger:
-    - platform: device
-      domain: tasmota
-      device_id: f51e5de9797e5949aa2cacb1b5bbfb8f
-      type: button_double_press
-      subtype: button_2
-      discovery_id: 9C9C1F47AE83_button_2_DOUBLE
-      id: button
-    - platform: state
-      entity_id:
-        - switch.western_electric_rectifier
-      from: "off"
-      to: "on"
-      id: rectifier_on
+  - platform: device
+    domain: tasmota
+    device_id: f51e5de9797e5949aa2cacb1b5bbfb8f
+    type: button_double_press
+    subtype: button_2
+    discovery_id: 9C9C1F47AE83_button_2_DOUBLE
+    id: button
+  - platform: state
+    entity_id:
+    - switch.western_electric_rectifier
+    from: 'off'
+    to: 'on'
+    id: rectifier_on
   condition: []
   action:
-    - choose:
-        - conditions:
-            - condition: trigger
-              id: button
-          sequence:
-            - service: light.toggle
-              data:
-                color_temp: 380
-                effect: Wake up
-                brightness_pct: 100
-              target:
-                entity_id: light.western_electric_cabinet_lights
-        - conditions:
-            - condition: trigger
-              id: rectifier_on
-          sequence:
-            - service: light.turn_on
-              data:
-                brightness_pct: 100
-                color_temp: 380
-                effect: Wake up
-              target:
-                entity_id: light.western_electric_cabinet_lights
-      default: []
+  - choose:
+    - conditions:
+      - condition: trigger
+        id: button
+      sequence:
+      - service: light.toggle
+        data:
+          color_temp: 380
+          effect: Wake up
+          brightness_pct: 100
+        target:
+          entity_id: light.western_electric_cabinet_lights
+    - conditions:
+      - condition: trigger
+        id: rectifier_on
+      sequence:
+      - service: light.turn_on
+        data:
+          brightness_pct: 100
+          color_temp: 380
+          effect: Wake up
+        target:
+          entity_id: light.western_electric_cabinet_lights
+    default: []
   mode: single
-- id: "1656455659129"
+- id: '1656455659129'
   alias: Living Room Magic Cube
-  description: ""
+  description: ''
   use_blueprint:
     path: rvaidya/aqara_magic_cube.yaml
     input:
@@ -1317,36 +1304,55 @@
       active_face: input_number.living_room_magic_cube_side
       flip_90: true
       cube_flip_90:
-        - service: light.toggle
-          data: {}
-          target:
-            entity_id: light.living_room_fan_light
+      - service: light.toggle
+        data: {}
+        target:
+          entity_id: light.living_room_fan_light
       flip_180: true
       cube_flip_180: []
       slide_any_side: true
       cube_slide_any:
-        - service: media_player.media_play_pause
-          data: {}
-          target:
-            entity_id: media_player.living_room_apple_tv
+      - service: media_player.media_play_pause
+        data: {}
+        target:
+          entity_id: media_player.living_room_apple_tv
       knock_any_side: true
       cube_knock_any:
-        - service: media_player.toggle
-          data: {}
-          target:
-            entity_id:
-              - media_player.living_room_tv
+      - service: media_player.toggle
+        data: {}
+        target:
+          entity_id:
+          - media_player.living_room_tv
       rotate_right:
-        - service: media_player.volume_up
-          data: {}
-          target:
-            entity_id: media_player.living_room_pioneer
+      - service: media_player.volume_up
+        data: {}
+        target:
+          entity_id: media_player.living_room_pioneer
       rotate_left:
-        - service: media_player.volume_down
-          data: {}
-          target:
-            entity_id: media_player.living_room_pioneer
+      - service: media_player.volume_down
+        data: {}
+        target:
+          entity_id: media_player.living_room_pioneer
       rotate_any_side: true
       cube_shake:
-        - service: script.downstairs_chill
-          data: {}
+      - service: script.downstairs_chill
+        data: {}
+- id: '1657676381882'
+  alias: ZHA - Aqara Wireless Mini Switch
+  description: ''
+  use_blueprint:
+    path: SeanM/zha-aqara-wireless-mini-switch.yaml
+    input:
+      aqara_mini_switch: dbac350dab9bcea6d7548327a20cefee
+      button_single_press:
+      - service: script.text_notify_chris
+        data:
+          message: Single
+      button_double_press:
+      - service: script.text_notify_chris
+        data:
+          message: Double
+      button_long_press:
+      - service: script.text_notify_chris
+        data:
+          message: Long
