@@ -4,36 +4,89 @@
     light.living_room_fan_light:
       supported_color_modes:
       - onoff
+      icon: mdi:ceiling-fan-light
       friendly_name: Living Room Light
       supported_features: 0
       state: 'off'
     light.dining_room_light:
       supported_color_modes:
       - onoff
+      icon: mdi:chandelier
       friendly_name: Dining Room Light
       supported_features: 0
       state: 'off'
     light.kitchen_light:
       supported_color_modes:
       - onoff
+      icon: mdi:ceiling-fan-light
       friendly_name: Kitchen Light
       supported_features: 0
       state: 'off'
     light.front_hall_light:
       supported_color_modes:
       - onoff
+      icon: mdi:ceiling-light
       friendly_name: Front Hall Light
       supported_features: 0
       state: 'off'
     light.kitchen_leds:
       supported_color_modes:
       - brightness
-      color_mode: brightness
-      brightness: 178
+      icon: mdi:led-strip-variant
       friendly_name: Kitchen LEDs
       supported_features: 32
+      color_mode: brightness
+      brightness: 178
       state: 'on'
-    light.living_room_leds:
+    light.francis_s_light:
+      supported_color_modes:
+      - rgb
+      icon: mdi:lightbulb-spot
+      friendly_name: Francis's Light
+      supported_features: 40
+      color_mode: rgb
+      brightness: 255
+      hs_color:
+      - 284.706
+      - 100
+      rgb_color:
+      - 190
+      - 0
+      - 255
+      xy_color:
+      - 0.299
+      - 0.115
+      state: 'on'
+    light.fish_tank_leds:
+      min_mireds: 153
+      max_mireds: 500
+      effect_list:
+      - None
+      - Wake up
+      - Cycle up
+      - Cycle down
+      - Random
+      supported_color_modes:
+      - color_temp
+      - hs
+      icon: mdi:fishbowl
+      friendly_name: Fish Tank LEDs
+      supported_features: 36
+      color_mode: hs
+      brightness: 255
+      hs_color:
+      - 285
+      - 100
+      rgb_color:
+      - 191
+      - 0
+      - 255
+      xy_color:
+      - 0.301
+      - 0.116
+      effect: None
+      state: 'on'
+    light.curtain_leds:
       effect_list:
       - Android
       - Aurora
@@ -47,12 +100,13 @@
       - Candle Multi
       - Candy Cane
       - Chase
+      - Chase 2
+      - Chase 3
       - Chase Flash
       - Chase Flash Rnd
       - Chase Rainbow
       - Chase Random
       - Chunchun
-      - Circus
       - Colorful
       - Colorloop
       - Colortwinkles
@@ -64,6 +118,8 @@
       - Dynamic
       - Dynamic Smooth
       - Fade
+      - Fairy
+      - Fairytwinkle
       - Fill Noise
       - Fire 2012
       - Fire Flicker
@@ -98,7 +154,6 @@
       - Phased Noise
       - Plasma
       - Police
-      - Police All
       - Popcorn
       - Pride 2015
       - Railway
@@ -109,7 +164,7 @@
       - Ripple
       - Ripple Rainbow
       - Running
-      - Running 2
+      - Running Dual
       - Saw
       - Scan
       - Scan Dual
@@ -141,22 +196,23 @@
       - Theater
       - Theater Rainbow
       - Traffic Light
-      - Tri Chase
       - Tri Fade
       - Tri Wipe
       - Twinkle
       - Twinklecat
       - Twinklefox
       - Twinkleup
-      - Two Areas
       - Two Dots
       - Washing Machine
       - Wipe
       - Wipe Random
       supported_color_modes:
-      - rgb
-      color_mode: rgb
-      brightness: 59
+      - rgbw
+      icon: mdi:led-strip-variant
+      friendly_name: Curtain LEDs
+      supported_features: 36
+      color_mode: rgbw
+      brightness: 102
       hs_color:
       - 29.882
       - 100
@@ -164,72 +220,171 @@
       - 255
       - 127
       - 0
+      rgbw_color:
+      - 255
+      - 127
+      - 0
+      - 0
       xy_color:
       - 0.612
       - 0.374
-      effect: Candle Multi
-      intensity: 205
-      palette: Default
-      reverse: false
-      speed: 68
-      friendly_name: Living Room LEDs
-      icon: mdi:led-strip-variant
-      supported_features: 36
+      effect: Twinkleup
       state: 'on'
-    light.francis_s_light:
-      supported_color_modes:
-      - rgb
-      color_mode: rgb
-      brightness: 255
-      hs_color:
-      - 284.706
-      - 100
-      rgb_color:
-      - 190
-      - 0
-      - 255
-      xy_color:
-      - 0.299
-      - 0.115
-      friendly_name: Francis's Light
-      supported_features: 40
-      state: 'on'
-    light.fish_tank_leds:
-      min_mireds: 153
-      max_mireds: 500
+    light.couch_leds:
       effect_list:
-      - None
-      - Wake up
-      - Cycle up
-      - Cycle down
-      - Random
+      - Android
+      - Aurora
+      - Blends
+      - Blink
+      - Blink Rainbow
+      - Bouncing Balls
+      - Bpm
+      - Breathe
+      - Candle
+      - Candle Multi
+      - Candy Cane
+      - Chase
+      - Chase 2
+      - Chase 3
+      - Chase Flash
+      - Chase Flash Rnd
+      - Chase Rainbow
+      - Chase Random
+      - Chunchun
+      - Colorful
+      - Colorloop
+      - Colortwinkles
+      - Colorwaves
+      - Dancing Shadows
+      - Dissolve
+      - Dissolve Rnd
+      - Drip
+      - Dynamic
+      - Dynamic Smooth
+      - Fade
+      - Fairy
+      - Fairytwinkle
+      - Fill Noise
+      - Fire 2012
+      - Fire Flicker
+      - Fireworks
+      - Fireworks 1D
+      - Fireworks Starburst
+      - Flow
+      - Glitter
+      - Gradient
+      - Halloween
+      - Halloween Eyes
+      - Heartbeat
+      - ICU
+      - Juggle
+      - Lake
+      - Lighthouse
+      - Lightning
+      - Loading
+      - Meteor
+      - Meteor Smooth
+      - Multi Comet
+      - Noise 1
+      - Noise 2
+      - Noise 3
+      - Noise 4
+      - Noise Pal
+      - Oscillate
+      - Pacifica
+      - Palette
+      - Percent
+      - Phased
+      - Phased Noise
+      - Plasma
+      - Police
+      - Popcorn
+      - Pride 2015
+      - Railway
+      - Rain
+      - Rainbow
+      - Rainbow Runner
+      - Random Colors
+      - Ripple
+      - Ripple Rainbow
+      - Running
+      - Running Dual
+      - Saw
+      - Scan
+      - Scan Dual
+      - Scanner
+      - Scanner Dual
+      - Sine
+      - Sinelon
+      - Sinelon Dual
+      - Sinelon Rainbow
+      - Solid
+      - Solid Glitter
+      - Solid Pattern
+      - Solid Pattern Tri
+      - Sparkle
+      - Sparkle Dark
+      - Sparkle+
+      - Spots
+      - Spots Fade
+      - Stream
+      - Stream 2
+      - Strobe
+      - Strobe Mega
+      - Strobe Rainbow
+      - Sunrise
+      - Sweep
+      - Sweep Random
+      - TV Simulator
+      - Tetrix
+      - Theater
+      - Theater Rainbow
+      - Traffic Light
+      - Tri Fade
+      - Tri Wipe
+      - Twinkle
+      - Twinklecat
+      - Twinklefox
+      - Twinkleup
+      - Two Dots
+      - Washing Machine
+      - Wipe
+      - Wipe Random
       supported_color_modes:
-      - color_temp
-      - hs
-      color_mode: hs
-      brightness: 255
+      - rgbw
+      icon: mdi:led-strip-variant
+      friendly_name: Couch LEDs
+      supported_features: 36
+      color_mode: rgbw
+      brightness: 26
       hs_color:
-      - 285
+      - 180
       - 100
       rgb_color:
-      - 191
       - 0
       - 255
+      - 255
+      rgbw_color:
+      - 0
+      - 255
+      - 255
+      - 0
       xy_color:
-      - 0.301
-      - 0.116
-      effect: None
-      friendly_name: Fish Tank LEDs
-      icon: mdi:fishbowl
-      supported_features: 36
+      - 0.151
+      - 0.343
+      effect: Twinkleup
       state: 'on'
-    light.fiber_optic_decoration:
-      supported_color_modes:
-      - onoff
-      color_mode: onoff
-      friendly_name: Fiber Optic Decoration
-      supported_features: 0
-      state: 'on'
+    select.couch_leds_playlist_2:
+      options: []
+      icon: mdi:play-speed
+      friendly_name: Couch LEDs Playlist
+      state: unavailable
+    select.couch_leds_preset_2:
+      options: []
+      icon: mdi:playlist-play
+      friendly_name: Couch LEDs Preset
+      state: unavailable
+  metadata: {}
 - id: '1617936340805'
   name: Time For Bed
   entities:
@@ -900,184 +1055,34 @@
     light.kitchen_light:
       supported_color_modes:
       - onoff
-      color_mode: onoff
+      icon: mdi:ceiling-fan-light
       friendly_name: Kitchen Light
       supported_features: 0
+      color_mode: onoff
       state: 'on'
     light.kitchen_leds:
       supported_color_modes:
       - brightness
-      color_mode: brightness
-      brightness: 255
+      icon: mdi:led-strip-variant
       friendly_name: Kitchen LEDs
       supported_features: 32
+      color_mode: brightness
+      brightness: 255
       state: 'on'
-    light.front_hall_light:
-      supported_color_modes:
-      - onoff
-      friendly_name: Front Hall Light
-      supported_features: 0
-      state: 'off'
     light.dining_room_light:
       supported_color_modes:
       - onoff
-      color_mode: onoff
+      icon: mdi:chandelier
       friendly_name: Dining Room Light
       supported_features: 0
-      state: 'on'
-    light.living_room_fan_light:
-      supported_color_modes:
-      - onoff
       color_mode: onoff
-      friendly_name: Living Room Light
-      supported_features: 0
-      state: 'on'
-    light.living_room_leds:
-      effect_list:
-      - Android
-      - Aurora
-      - Blends
-      - Blink
-      - Blink Rainbow
-      - Bouncing Balls
-      - Bpm
-      - Breathe
-      - Candle
-      - Candle Multi
-      - Candy Cane
-      - Chase
-      - Chase Flash
-      - Chase Flash Rnd
-      - Chase Rainbow
-      - Chase Random
-      - Chunchun
-      - Circus
-      - Colorful
-      - Colorloop
-      - Colortwinkles
-      - Colorwaves
-      - Dancing Shadows
-      - Dissolve
-      - Dissolve Rnd
-      - Drip
-      - Dynamic
-      - Dynamic Smooth
-      - Fade
-      - Fill Noise
-      - Fire 2012
-      - Fire Flicker
-      - Fireworks
-      - Fireworks 1D
-      - Fireworks Starburst
-      - Flow
-      - Glitter
-      - Gradient
-      - Halloween
-      - Halloween Eyes
-      - Heartbeat
-      - ICU
-      - Juggle
-      - Lake
-      - Lighthouse
-      - Lightning
-      - Loading
-      - Meteor
-      - Meteor Smooth
-      - Multi Comet
-      - Noise 1
-      - Noise 2
-      - Noise 3
-      - Noise 4
-      - Noise Pal
-      - Oscillate
-      - Pacifica
-      - Palette
-      - Percent
-      - Phased
-      - Phased Noise
-      - Plasma
-      - Police
-      - Police All
-      - Popcorn
-      - Pride 2015
-      - Railway
-      - Rain
-      - Rainbow
-      - Rainbow Runner
-      - Random Colors
-      - Ripple
-      - Ripple Rainbow
-      - Running
-      - Running 2
-      - Saw
-      - Scan
-      - Scan Dual
-      - Scanner
-      - Scanner Dual
-      - Sine
-      - Sinelon
-      - Sinelon Dual
-      - Sinelon Rainbow
-      - Solid
-      - Solid Glitter
-      - Solid Pattern
-      - Solid Pattern Tri
-      - Sparkle
-      - Sparkle Dark
-      - Sparkle+
-      - Spots
-      - Spots Fade
-      - Stream
-      - Stream 2
-      - Strobe
-      - Strobe Mega
-      - Strobe Rainbow
-      - Sunrise
-      - Sweep
-      - Sweep Random
-      - TV Simulator
-      - Tetrix
-      - Theater
-      - Theater Rainbow
-      - Traffic Light
-      - Tri Chase
-      - Tri Fade
-      - Tri Wipe
-      - Twinkle
-      - Twinklecat
-      - Twinklefox
-      - Twinkleup
-      - Two Areas
-      - Two Dots
-      - Washing Machine
-      - Wipe
-      - Wipe Random
-      supported_color_modes:
-      - rgb
-      color_mode: rgb
-      brightness: 128
-      hs_color:
-      - 180
-      - 100
-      rgb_color:
-      - 0
-      - 255
-      - 255
-      xy_color:
-      - 0.151
-      - 0.343
-      effect: Solid
-      intensity: 205
-      palette: Default
-      reverse: false
-      speed: 68
-      friendly_name: Living Room LEDs
-      icon: mdi:led-strip-variant
-      supported_features: 36
       state: 'on'
     light.francis_s_light:
       supported_color_modes:
       - rgb
+      icon: mdi:lightbulb-spot
+      friendly_name: Francis's Light
+      supported_features: 40
       color_mode: rgb
       brightness: 255
       hs_color:
@@ -1090,8 +1095,6 @@
       xy_color:
       - 0.323
       - 0.329
-      friendly_name: Francis's Light
-      supported_features: 40
       state: 'on'
     media_player.living_room_tv:
       source_list:
@@ -1106,6 +1109,7 @@
       - HDMI 2
       - HDMI 3
       - HDMI 4
+      - Hulu
       - LG Channels
       - LG Content Store
       - Live TV
@@ -1116,13 +1120,15 @@
       - Sling TV
       - Web Browser
       - YouTube
+      assumed_state: true
+      device_class: tv
+      icon: mdi:television
+      friendly_name: Living Room TV
+      supported_features: 24509
       volume_level: -0.01
       is_volume_muted: false
       source: HDMI 1
       sound_output: external_optical
-      friendly_name: Living Room TV
-      supported_features: 20413
-      device_class: tv
       state: 'on'
     light.fish_tank_leds:
       min_mireds: 153
@@ -1136,9 +1142,11 @@
       supported_color_modes:
       - color_temp
       - hs
+      icon: mdi:fishbowl
+      friendly_name: Fish Tank LEDs
+      supported_features: 36
       color_mode: color_temp
       brightness: 255
-      color_temp: 341
       hs_color:
       - 27.941
       - 58.774
@@ -1150,68 +1158,17 @@
       - 0.503
       - 0.383
       effect: None
-      friendly_name: Fish Tank LEDs
-      icon: mdi:fishbowl
-      supported_features: 36
+      color_temp: 341
       state: 'on'
-    light.fiber_optic_decoration:
-      supported_color_modes:
-      - onoff
-      color_mode: onoff
-      friendly_name: Fiber Optic Decoration
-      icon: mdi:snowman
-      supported_features: 0
-      state: 'on'
-    light.christmas_tree:
-      supported_color_modes:
-      - onoff
-      color_mode: onoff
-      friendly_name: Christmas Tree
-      icon: mdi:pine-tree
-      supported_features: 0
-      state: 'on'
-    light.village:
-      supported_color_modes:
-      - onoff
-      color_mode: onoff
-      friendly_name: Village
-      icon: mdi:home-city-outline
-      supported_features: 0
-      state: 'on'
-- id: '1618252997165'
-  name: Downstairs All Off
-  entities:
-    light.front_hall_light:
-      supported_color_modes:
-      - onoff
-      friendly_name: Front Hall Light
-      supported_features: 0
-      state: 'off'
-    light.kitchen_light:
-      supported_color_modes:
-      - onoff
-      friendly_name: Kitchen Light
-      supported_features: 0
-      state: 'off'
-    light.kitchen_leds:
-      supported_color_modes:
-      - brightness
-      friendly_name: Kitchen LEDs
-      supported_features: 32
-      state: 'off'
-    light.dining_room_light:
-      supported_color_modes:
-      - onoff
-      friendly_name: Dining Room Light
-      supported_features: 0
-      state: 'off'
     light.living_room_fan_light:
       supported_color_modes:
       - onoff
+      icon: mdi:ceiling-fan-light
       friendly_name: Living Room Light
       supported_features: 0
-      state: 'off'
-    light.living_room_leds:
+      color_mode: onoff
+      state: 'on'
+    light.curtain_leds:
       effect_list:
       - Android
       - Aurora
@@ -1225,12 +1182,13 @@
       - Candle Multi
       - Candy Cane
       - Chase
+      - Chase 2
+      - Chase 3
       - Chase Flash
       - Chase Flash Rnd
       - Chase Rainbow
       - Chase Random
       - Chunchun
-      - Circus
       - Colorful
       - Colorloop
       - Colortwinkles
@@ -1242,6 +1200,8 @@
       - Dynamic
       - Dynamic Smooth
       - Fade
+      - Fairy
+      - Fairytwinkle
       - Fill Noise
       - Fire 2012
       - Fire Flicker
@@ -1276,7 +1236,6 @@
       - Phased Noise
       - Plasma
       - Police
-      - Police All
       - Popcorn
       - Pride 2015
       - Railway
@@ -1287,7 +1246,7 @@
       - Ripple
       - Ripple Rainbow
       - Running
-      - Running 2
+      - Running Dual
       - Saw
       - Scan
       - Scan Dual
@@ -1319,43 +1278,261 @@
       - Theater
       - Theater Rainbow
       - Traffic Light
-      - Tri Chase
       - Tri Fade
       - Tri Wipe
       - Twinkle
       - Twinklecat
       - Twinklefox
       - Twinkleup
-      - Two Areas
       - Two Dots
       - Washing Machine
       - Wipe
       - Wipe Random
       supported_color_modes:
-      - rgb
-      intensity: 205
-      palette: Default
-      reverse: false
-      speed: 68
-      friendly_name: Living Room LEDs
+      - rgbw
       icon: mdi:led-strip-variant
+      friendly_name: Curtain LEDs
       supported_features: 36
+      color_mode: rgbw
+      brightness: 255
+      hs_color:
+      - 0
+      - 0
+      rgb_color:
+      - 255
+      - 255
+      - 255
+      rgbw_color:
+      - 0
+      - 0
+      - 0
+      - 255
+      xy_color:
+      - 0.323
+      - 0.329
+      effect: Twinkleup
+      state: 'on'
+    light.couch_leds:
+      effect_list:
+      - Android
+      - Aurora
+      - Blends
+      - Blink
+      - Blink Rainbow
+      - Bouncing Balls
+      - Bpm
+      - Breathe
+      - Candle
+      - Candle Multi
+      - Candy Cane
+      - Chase
+      - Chase 2
+      - Chase 3
+      - Chase Flash
+      - Chase Flash Rnd
+      - Chase Rainbow
+      - Chase Random
+      - Chunchun
+      - Colorful
+      - Colorloop
+      - Colortwinkles
+      - Colorwaves
+      - Dancing Shadows
+      - Dissolve
+      - Dissolve Rnd
+      - Drip
+      - Dynamic
+      - Dynamic Smooth
+      - Fade
+      - Fairy
+      - Fairytwinkle
+      - Fill Noise
+      - Fire 2012
+      - Fire Flicker
+      - Fireworks
+      - Fireworks 1D
+      - Fireworks Starburst
+      - Flow
+      - Glitter
+      - Gradient
+      - Halloween
+      - Halloween Eyes
+      - Heartbeat
+      - ICU
+      - Juggle
+      - Lake
+      - Lighthouse
+      - Lightning
+      - Loading
+      - Meteor
+      - Meteor Smooth
+      - Multi Comet
+      - Noise 1
+      - Noise 2
+      - Noise 3
+      - Noise 4
+      - Noise Pal
+      - Oscillate
+      - Pacifica
+      - Palette
+      - Percent
+      - Phased
+      - Phased Noise
+      - Plasma
+      - Police
+      - Popcorn
+      - Pride 2015
+      - Railway
+      - Rain
+      - Rainbow
+      - Rainbow Runner
+      - Random Colors
+      - Ripple
+      - Ripple Rainbow
+      - Running
+      - Running Dual
+      - Saw
+      - Scan
+      - Scan Dual
+      - Scanner
+      - Scanner Dual
+      - Sine
+      - Sinelon
+      - Sinelon Dual
+      - Sinelon Rainbow
+      - Solid
+      - Solid Glitter
+      - Solid Pattern
+      - Solid Pattern Tri
+      - Sparkle
+      - Sparkle Dark
+      - Sparkle+
+      - Spots
+      - Spots Fade
+      - Stream
+      - Stream 2
+      - Strobe
+      - Strobe Mega
+      - Strobe Rainbow
+      - Sunrise
+      - Sweep
+      - Sweep Random
+      - TV Simulator
+      - Tetrix
+      - Theater
+      - Theater Rainbow
+      - Traffic Light
+      - Tri Fade
+      - Tri Wipe
+      - Twinkle
+      - Twinklecat
+      - Twinklefox
+      - Twinkleup
+      - Two Dots
+      - Washing Machine
+      - Wipe
+      - Wipe Random
+      supported_color_modes:
+      - rgbw
+      icon: mdi:led-strip-variant
+      friendly_name: Couch LEDs
+      supported_features: 36
+      color_mode: rgbw
+      brightness: 128
+      hs_color:
+      - 0
+      - 0
+      rgb_color:
+      - 255
+      - 255
+      - 255
+      rgbw_color:
+      - 0
+      - 0
+      - 0
+      - 255
+      xy_color:
+      - 0.323
+      - 0.329
+      effect: Twinkleup
+      state: 'on'
+    select.couch_leds_playlist_2:
+      options: []
+      icon: mdi:play-speed
+      friendly_name: Couch LEDs Playlist
+      state: unavailable
+    select.couch_leds_preset_2:
+      options: []
+      icon: mdi:playlist-play
+      friendly_name: Couch LEDs Preset
+      state: unavailable
+    light.front_hall_light:
+      supported_color_modes:
+      - onoff
+      icon: mdi:ceiling-light
+      friendly_name: Front Hall Light
+      supported_features: 0
+      color_mode: onoff
+      state: 'on'
+  metadata:
+    light.living_room_fan_light:
+      entity_only: true
+- id: '1618252997165'
+  name: Downstairs All Off
+  entities:
+    light.front_hall_light:
+      supported_color_modes:
+      - onoff
+      icon: mdi:ceiling-light
+      friendly_name: Front Hall Light
+      supported_features: 0
+      state: 'off'
+    light.kitchen_light:
+      supported_color_modes:
+      - onoff
+      icon: mdi:ceiling-fan-light
+      friendly_name: Kitchen Light
+      supported_features: 0
+      state: 'off'
+    light.kitchen_leds:
+      supported_color_modes:
+      - brightness
+      icon: mdi:led-strip-variant
+      friendly_name: Kitchen LEDs
+      supported_features: 32
+      state: 'off'
+    light.dining_room_light:
+      supported_color_modes:
+      - onoff
+      icon: mdi:chandelier
+      friendly_name: Dining Room Light
+      supported_features: 0
+      state: 'off'
+    light.living_room_fan_light:
+      supported_color_modes:
+      - onoff
+      icon: mdi:ceiling-fan-light
+      friendly_name: Living Room Light
+      supported_features: 0
       state: 'off'
     light.patio_light:
       supported_color_modes:
       - onoff
+      icon: mdi:wall-sconce-round-variant
       friendly_name: Patio Light
       supported_features: 0
       state: 'off'
     light.patio_string_lights:
       supported_color_modes:
       - onoff
+      icon: mdi:string-lights
       friendly_name: Patio String Lights
       supported_features: 0
       state: 'off'
     light.francis_s_light:
       supported_color_modes:
       - rgb
+      icon: mdi:lightbulb-spot
       friendly_name: Francis's Light
       supported_features: 40
       state: 'off'
@@ -1371,82 +1548,50 @@
       supported_color_modes:
       - color_temp
       - hs
-      friendly_name: Fish Tank LEDs
       icon: mdi:fishbowl
+      friendly_name: Fish Tank LEDs
       supported_features: 36
       state: 'off'
     media_player.living_room_tv:
       source_list:
+      - AV
+      - Amazon Alexa
+      - Amazon Prime Video
+      - Apple TV
+      - Component
+      - Disney+
+      - HBO Max
+      - HDMI 1
+      - HDMI 2
+      - HDMI 3
+      - HDMI 4
+      - Hulu
+      - LG Channels
+      - LG Content Store
       - Live TV
-      friendly_name: Living Room TV
-      supported_features: 20413
+      - Music
+      - Netflix
+      - Photo & Video
+      - Shop Time
+      - Sling TV
+      - Web Browser
+      - YouTube
+      sound_output: external_optical
+      assumed_state: true
       device_class: tv
+      icon: mdi:television
+      friendly_name: Living Room TV
+      supported_features: 24509
       state: 'off'
     media_player.playstation_4:
       source_list:
-      - GRAND THEFT AUTO V
+      - Grand Theft Auto V (PS4™)
       - Red Dead Redemption 2
-      friendly_name: PlayStation 4
       icon: mdi:sony-playstation
+      friendly_name: PlayStation 4
       supported_features: 6529
       state: standby
-    light.fiber_optic_decoration:
-      supported_color_modes:
-      - onoff
-      friendly_name: Fiber Optic Decoration
-      icon: mdi:snowman
-      supported_features: 0
-      state: 'off'
-    light.christmas_tree:
-      supported_color_modes:
-      - onoff
-      friendly_name: Christmas Tree
-      icon: mdi:pine-tree
-      supported_features: 0
-      state: 'off'
-    light.village:
-      supported_color_modes:
-      - onoff
-      friendly_name: Village
-      icon: mdi:home-city-outline
-      supported_features: 0
-      state: 'off'
-- id: '1618333461589'
-  name: Downstairs Ambient
-  entities:
-    light.front_hall_light:
-      supported_color_modes:
-      - onoff
-      friendly_name: Front Hall Light
-      supported_features: 0
-      state: 'off'
-    light.kitchen_light:
-      supported_color_modes:
-      - onoff
-      friendly_name: Kitchen Light
-      supported_features: 0
-      state: 'off'
-    light.kitchen_leds:
-      supported_color_modes:
-      - brightness
-      color_mode: brightness
-      brightness: 255
-      friendly_name: Kitchen LEDs
-      supported_features: 32
-      state: 'on'
-    light.dining_room_light:
-      supported_color_modes:
-      - onoff
-      friendly_name: Dining Room Light
-      supported_features: 0
-      state: 'off'
-    light.living_room_fan_light:
-      supported_color_modes:
-      - onoff
-      friendly_name: Living Room Light
-      supported_features: 0
-      state: 'off'
-    light.living_room_leds:
+    light.curtain_leds:
       effect_list:
       - Android
       - Aurora
@@ -1460,12 +1605,13 @@
       - Candle Multi
       - Candy Cane
       - Chase
+      - Chase 2
+      - Chase 3
       - Chase Flash
       - Chase Flash Rnd
       - Chase Rainbow
       - Chase Random
       - Chunchun
-      - Circus
       - Colorful
       - Colorloop
       - Colortwinkles
@@ -1477,6 +1623,8 @@
       - Dynamic
       - Dynamic Smooth
       - Fade
+      - Fairy
+      - Fairytwinkle
       - Fill Noise
       - Fire 2012
       - Fire Flicker
@@ -1511,7 +1659,6 @@
       - Phased Noise
       - Plasma
       - Police
-      - Police All
       - Popcorn
       - Pride 2015
       - Railway
@@ -1522,7 +1669,7 @@
       - Ripple
       - Ripple Rainbow
       - Running
-      - Running 2
+      - Running Dual
       - Saw
       - Scan
       - Scan Dual
@@ -1554,31 +1701,198 @@
       - Theater
       - Theater Rainbow
       - Traffic Light
-      - Tri Chase
       - Tri Fade
       - Tri Wipe
       - Twinkle
       - Twinklecat
       - Twinklefox
       - Twinkleup
-      - Two Areas
       - Two Dots
       - Washing Machine
       - Wipe
       - Wipe Random
       supported_color_modes:
-      - rgb
-      intensity: 205
-      palette: Default
-      reverse: false
-      speed: 68
-      friendly_name: Living Room LEDs
+      - rgbw
       icon: mdi:led-strip-variant
+      friendly_name: Curtain LEDs
       supported_features: 36
+      state: 'off'
+    light.couch_leds:
+      effect_list:
+      - Android
+      - Aurora
+      - Blends
+      - Blink
+      - Blink Rainbow
+      - Bouncing Balls
+      - Bpm
+      - Breathe
+      - Candle
+      - Candle Multi
+      - Candy Cane
+      - Chase
+      - Chase 2
+      - Chase 3
+      - Chase Flash
+      - Chase Flash Rnd
+      - Chase Rainbow
+      - Chase Random
+      - Chunchun
+      - Colorful
+      - Colorloop
+      - Colortwinkles
+      - Colorwaves
+      - Dancing Shadows
+      - Dissolve
+      - Dissolve Rnd
+      - Drip
+      - Dynamic
+      - Dynamic Smooth
+      - Fade
+      - Fairy
+      - Fairytwinkle
+      - Fill Noise
+      - Fire 2012
+      - Fire Flicker
+      - Fireworks
+      - Fireworks 1D
+      - Fireworks Starburst
+      - Flow
+      - Glitter
+      - Gradient
+      - Halloween
+      - Halloween Eyes
+      - Heartbeat
+      - ICU
+      - Juggle
+      - Lake
+      - Lighthouse
+      - Lightning
+      - Loading
+      - Meteor
+      - Meteor Smooth
+      - Multi Comet
+      - Noise 1
+      - Noise 2
+      - Noise 3
+      - Noise 4
+      - Noise Pal
+      - Oscillate
+      - Pacifica
+      - Palette
+      - Percent
+      - Phased
+      - Phased Noise
+      - Plasma
+      - Police
+      - Popcorn
+      - Pride 2015
+      - Railway
+      - Rain
+      - Rainbow
+      - Rainbow Runner
+      - Random Colors
+      - Ripple
+      - Ripple Rainbow
+      - Running
+      - Running Dual
+      - Saw
+      - Scan
+      - Scan Dual
+      - Scanner
+      - Scanner Dual
+      - Sine
+      - Sinelon
+      - Sinelon Dual
+      - Sinelon Rainbow
+      - Solid
+      - Solid Glitter
+      - Solid Pattern
+      - Solid Pattern Tri
+      - Sparkle
+      - Sparkle Dark
+      - Sparkle+
+      - Spots
+      - Spots Fade
+      - Stream
+      - Stream 2
+      - Strobe
+      - Strobe Mega
+      - Strobe Rainbow
+      - Sunrise
+      - Sweep
+      - Sweep Random
+      - TV Simulator
+      - Tetrix
+      - Theater
+      - Theater Rainbow
+      - Traffic Light
+      - Tri Fade
+      - Tri Wipe
+      - Twinkle
+      - Twinklecat
+      - Twinklefox
+      - Twinkleup
+      - Two Dots
+      - Washing Machine
+      - Wipe
+      - Wipe Random
+      supported_color_modes:
+      - rgbw
+      icon: mdi:led-strip-variant
+      friendly_name: Couch LEDs
+      supported_features: 36
+      state: 'off'
+    select.couch_leds_playlist_2:
+      options: []
+      icon: mdi:play-speed
+      friendly_name: Couch LEDs Playlist
+      state: unavailable
+    select.couch_leds_preset_2:
+      options: []
+      icon: mdi:playlist-play
+      friendly_name: Couch LEDs Preset
+      state: unavailable
+  metadata: {}
+- id: '1618333461589'
+  name: Downstairs Ambient
+  entities:
+    light.front_hall_light:
+      supported_color_modes:
+      - onoff
+      icon: mdi:ceiling-light
+      friendly_name: Front Hall Light
+      supported_features: 0
+      state: 'off'
+    light.kitchen_light:
+      supported_color_modes:
+      - onoff
+      icon: mdi:ceiling-fan-light
+      friendly_name: Kitchen Light
+      supported_features: 0
+      state: 'off'
+    light.kitchen_leds:
+      supported_color_modes:
+      - brightness
+      icon: mdi:led-strip-variant
+      friendly_name: Kitchen LEDs
+      supported_features: 32
+      color_mode: brightness
+      brightness: 255
+      state: 'on'
+    light.dining_room_light:
+      supported_color_modes:
+      - onoff
+      icon: mdi:chandelier
+      friendly_name: Dining Room Light
+      supported_features: 0
       state: 'off'
     light.francis_s_light:
       supported_color_modes:
       - rgb
+      icon: mdi:lightbulb-spot
+      friendly_name: Francis's Light
+      supported_features: 40
       color_mode: rgb
       brightness: 212
       hs_color:
@@ -1591,18 +1905,18 @@
       xy_color:
       - 0.151
       - 0.343
-      friendly_name: Francis's Light
-      supported_features: 40
       state: 'on'
     light.patio_light:
       supported_color_modes:
       - onoff
+      icon: mdi:wall-sconce-round-variant
       friendly_name: Patio Light
       supported_features: 0
       state: 'off'
     light.patio_string_lights:
       supported_color_modes:
       - onoff
+      icon: mdi:string-lights
       friendly_name: Patio String Lights
       supported_features: 0
       state: 'off'
@@ -1618,9 +1932,11 @@
       supported_color_modes:
       - color_temp
       - hs
+      icon: mdi:fishbowl
+      friendly_name: Fish Tank LEDs
+      supported_features: 36
       color_mode: color_temp
       brightness: 255
-      color_temp: 289
       hs_color:
       - 27.214
       - 45.65
@@ -1632,30 +1948,16 @@
       - 0.457
       - 0.375
       effect: None
-      friendly_name: Fish Tank LEDs
-      icon: mdi:fishbowl
-      supported_features: 36
+      color_temp: 289
       state: 'on'
-    light.christmas_tree:
+    light.living_room_fan_light:
       supported_color_modes:
       - onoff
-      color_mode: onoff
-      friendly_name: Christmas Tree
-      icon: mdi:pine-tree
+      icon: mdi:ceiling-fan-light
+      friendly_name: Living Room Light
       supported_features: 0
-      state: 'on'
-    light.village:
-      supported_color_modes:
-      - onoff
-      color_mode: onoff
-      friendly_name: Village
-      icon: mdi:home-city-outline
-      supported_features: 0
-      state: 'on'
-- id: '1632450613069'
-  name: Downstairs Night Light
-  entities:
-    light.living_room_leds:
+      state: 'off'
+    light.curtain_leds:
       effect_list:
       - Android
       - Aurora
@@ -1669,12 +1971,13 @@
       - Candle Multi
       - Candy Cane
       - Chase
+      - Chase 2
+      - Chase 3
       - Chase Flash
       - Chase Flash Rnd
       - Chase Rainbow
       - Chase Random
       - Chunchun
-      - Circus
       - Colorful
       - Colorloop
       - Colortwinkles
@@ -1686,6 +1989,8 @@
       - Dynamic
       - Dynamic Smooth
       - Fade
+      - Fairy
+      - Fairytwinkle
       - Fill Noise
       - Fire 2012
       - Fire Flicker
@@ -1720,7 +2025,6 @@
       - Phased Noise
       - Plasma
       - Police
-      - Police All
       - Popcorn
       - Pride 2015
       - Railway
@@ -1731,7 +2035,7 @@
       - Ripple
       - Ripple Rainbow
       - Running
-      - Running 2
+      - Running Dual
       - Saw
       - Scan
       - Scan Dual
@@ -1763,75 +2067,208 @@
       - Theater
       - Theater Rainbow
       - Traffic Light
-      - Tri Chase
       - Tri Fade
       - Tri Wipe
       - Twinkle
       - Twinklecat
       - Twinklefox
       - Twinkleup
-      - Two Areas
       - Two Dots
       - Washing Machine
       - Wipe
       - Wipe Random
       supported_color_modes:
-      - rgb
-      color_mode: rgb
-      brightness: 5
-      hs_color:
-      - 30
-      - 62.205
-      rgb_color:
-      - 254
-      - 175
-      - 96
-      xy_color:
-      - 0.508
-      - 0.392
-      effect: Solid
-      intensity: 128
-      palette: Default
-      reverse: false
-      speed: 128
-      friendly_name: Living Room LEDs
+      - rgbw
       icon: mdi:led-strip-variant
+      friendly_name: Curtain LEDs
       supported_features: 36
+      color_mode: rgbw
+      brightness: 153
+      hs_color:
+      - 0
+      - 0
+      rgb_color:
+      - 255
+      - 255
+      - 255
+      rgbw_color:
+      - 0
+      - 0
+      - 0
+      - 255
+      xy_color:
+      - 0.323
+      - 0.329
+      effect: Twinkleup
       state: 'on'
-    switch.living_room_leds_nightlight:
-      duration: 60
-      fade: true
-      target_brightness: 0
-      friendly_name: Living Room LEDs Nightlight
-      icon: mdi:weather-night
-      state: 'off'
-    switch.living_room_leds_sync_receive:
-      udp_port: 21324
-      friendly_name: Living Room LEDs Sync Receive
-      icon: mdi:download-network-outline
+    light.couch_leds:
+      effect_list:
+      - Android
+      - Aurora
+      - Blends
+      - Blink
+      - Blink Rainbow
+      - Bouncing Balls
+      - Bpm
+      - Breathe
+      - Candle
+      - Candle Multi
+      - Candy Cane
+      - Chase
+      - Chase 2
+      - Chase 3
+      - Chase Flash
+      - Chase Flash Rnd
+      - Chase Rainbow
+      - Chase Random
+      - Chunchun
+      - Colorful
+      - Colorloop
+      - Colortwinkles
+      - Colorwaves
+      - Dancing Shadows
+      - Dissolve
+      - Dissolve Rnd
+      - Drip
+      - Dynamic
+      - Dynamic Smooth
+      - Fade
+      - Fairy
+      - Fairytwinkle
+      - Fill Noise
+      - Fire 2012
+      - Fire Flicker
+      - Fireworks
+      - Fireworks 1D
+      - Fireworks Starburst
+      - Flow
+      - Glitter
+      - Gradient
+      - Halloween
+      - Halloween Eyes
+      - Heartbeat
+      - ICU
+      - Juggle
+      - Lake
+      - Lighthouse
+      - Lightning
+      - Loading
+      - Meteor
+      - Meteor Smooth
+      - Multi Comet
+      - Noise 1
+      - Noise 2
+      - Noise 3
+      - Noise 4
+      - Noise Pal
+      - Oscillate
+      - Pacifica
+      - Palette
+      - Percent
+      - Phased
+      - Phased Noise
+      - Plasma
+      - Police
+      - Popcorn
+      - Pride 2015
+      - Railway
+      - Rain
+      - Rainbow
+      - Rainbow Runner
+      - Random Colors
+      - Ripple
+      - Ripple Rainbow
+      - Running
+      - Running Dual
+      - Saw
+      - Scan
+      - Scan Dual
+      - Scanner
+      - Scanner Dual
+      - Sine
+      - Sinelon
+      - Sinelon Dual
+      - Sinelon Rainbow
+      - Solid
+      - Solid Glitter
+      - Solid Pattern
+      - Solid Pattern Tri
+      - Sparkle
+      - Sparkle Dark
+      - Sparkle+
+      - Spots
+      - Spots Fade
+      - Stream
+      - Stream 2
+      - Strobe
+      - Strobe Mega
+      - Strobe Rainbow
+      - Sunrise
+      - Sweep
+      - Sweep Random
+      - TV Simulator
+      - Tetrix
+      - Theater
+      - Theater Rainbow
+      - Traffic Light
+      - Tri Fade
+      - Tri Wipe
+      - Twinkle
+      - Twinklecat
+      - Twinklefox
+      - Twinkleup
+      - Two Dots
+      - Washing Machine
+      - Wipe
+      - Wipe Random
+      supported_color_modes:
+      - rgbw
+      icon: mdi:led-strip-variant
+      friendly_name: Couch LEDs
+      supported_features: 36
+      color_mode: rgbw
+      brightness: 38
+      hs_color:
+      - 0
+      - 0
+      rgb_color:
+      - 255
+      - 255
+      - 255
+      rgbw_color:
+      - 0
+      - 0
+      - 0
+      - 255
+      xy_color:
+      - 0.323
+      - 0.329
+      effect: Twinkleup
       state: 'on'
-    switch.living_room_leds_sync_send:
-      udp_port: 21324
-      friendly_name: Living Room LEDs Sync Send
-      icon: mdi:upload-network-outline
-      state: 'off'
-    select.wled_preset:
+    select.couch_leds_playlist_2:
       options: []
-      friendly_name: WLED Preset
-      icon: mdi:playlist-play
-      state: unavailable
-    select.wled_playlist:
-      options: []
-      friendly_name: WLED Playlist
       icon: mdi:play-speed
+      friendly_name: Couch LEDs Playlist
       state: unavailable
+    select.couch_leds_preset_2:
+      options: []
+      icon: mdi:playlist-play
+      friendly_name: Couch LEDs Preset
+      state: unavailable
+  metadata:
+    light.living_room_fan_light:
+      entity_only: true
+- id: '1632450613069'
+  name: Downstairs Night Light
+  entities:
     light.kitchen_leds:
       supported_color_modes:
       - brightness
-      color_mode: brightness
-      brightness: 64
+      icon: mdi:led-strip-variant
       friendly_name: Kitchen LEDs
       supported_features: 32
+      color_mode: brightness
+      brightness: 64
       state: 'on'
     light.fish_tank_leds:
       min_mireds: 153
@@ -1845,9 +2282,11 @@
       supported_color_modes:
       - color_temp
       - hs
+      icon: mdi:fishbowl
+      friendly_name: Fish Tank LEDs
+      supported_features: 36
       color_mode: color_temp
       brightness: 76
-      color_temp: 500
       hs_color:
       - 30.601
       - 94.547
@@ -1859,79 +2298,37 @@
       - 0.599
       - 0.382
       effect: None
-      friendly_name: Fish Tank LEDs
-      icon: mdi:fishbowl
-      supported_features: 36
+      color_temp: 500
       state: 'on'
-    fan.living_room_fan:
-      speed_list:
-      - 'off'
-      - low
-      - medium
-      - high
-      preset_modes: []
-      speed: low
-      percentage: 33
-      percentage_step: 33.333333333333336
-      preset_mode:
-      friendly_name: Living Room Fan
-      supported_features: 1
-      state: 'on'
+    light.dining_room_light:
+      supported_color_modes:
+      - onoff
+      icon: mdi:chandelier
+      friendly_name: Dining Room Light
+      supported_features: 0
+      state: 'off'
+    light.kitchen_light:
+      supported_color_modes:
+      - onoff
+      icon: mdi:ceiling-fan-light
+      friendly_name: Kitchen Light
+      supported_features: 0
+      state: 'off'
+    light.front_hall_light:
+      supported_color_modes:
+      - onoff
+      icon: mdi:ceiling-light
+      friendly_name: Front Hall Light
+      supported_features: 0
+      state: 'off'
     light.living_room_fan_light:
       supported_color_modes:
       - onoff
+      icon: mdi:ceiling-fan-light
       friendly_name: Living Room Light
       supported_features: 0
       state: 'off'
-    light.dining_room_light:
-      supported_color_modes:
-      - onoff
-      friendly_name: Dining Room Light
-      supported_features: 0
-      state: 'off'
-    light.kitchen_light:
-      supported_color_modes:
-      - onoff
-      friendly_name: Kitchen Light
-      supported_features: 0
-      state: 'off'
-    light.front_hall_light:
-      supported_color_modes:
-      - onoff
-      friendly_name: Front Hall Light
-      supported_features: 0
-      state: 'off'
-  icon: mdi:weather-night
-- id: '1638334410720'
-  name: Downstairs Chill Christmas
-  entities:
-    light.dining_room_light:
-      supported_color_modes:
-      - onoff
-      friendly_name: Dining Room Light
-      supported_features: 0
-      state: 'off'
-    light.kitchen_light:
-      supported_color_modes:
-      - onoff
-      friendly_name: Kitchen Light
-      supported_features: 0
-      state: 'off'
-    light.front_hall_light:
-      supported_color_modes:
-      - onoff
-      friendly_name: Front Hall Light
-      supported_features: 0
-      state: 'off'
-    light.kitchen_leds:
-      supported_color_modes:
-      - brightness
-      color_mode: brightness
-      brightness: 178
-      friendly_name: Kitchen LEDs
-      supported_features: 32
-      state: 'on'
-    light.living_room_leds:
+    light.couch_leds:
       effect_list:
       - Android
       - Aurora
@@ -1945,12 +2342,13 @@
       - Candle Multi
       - Candy Cane
       - Chase
+      - Chase 2
+      - Chase 3
       - Chase Flash
       - Chase Flash Rnd
       - Chase Rainbow
       - Chase Random
       - Chunchun
-      - Circus
       - Colorful
       - Colorloop
       - Colortwinkles
@@ -1962,6 +2360,8 @@
       - Dynamic
       - Dynamic Smooth
       - Fade
+      - Fairy
+      - Fairytwinkle
       - Fill Noise
       - Fire 2012
       - Fire Flicker
@@ -1996,7 +2396,6 @@
       - Phased Noise
       - Plasma
       - Police
-      - Police All
       - Popcorn
       - Pride 2015
       - Railway
@@ -2007,7 +2406,7 @@
       - Ripple
       - Ripple Rainbow
       - Running
-      - Running 2
+      - Running Dual
       - Saw
       - Scan
       - Scan Dual
@@ -2039,44 +2438,93 @@
       - Theater
       - Theater Rainbow
       - Traffic Light
-      - Tri Chase
       - Tri Fade
       - Tri Wipe
       - Twinkle
       - Twinklecat
       - Twinklefox
       - Twinkleup
-      - Two Areas
       - Two Dots
       - Washing Machine
       - Wipe
       - Wipe Random
       supported_color_modes:
-      - rgb
-      color_mode: rgb
-      brightness: 59
+      - rgbw
+      icon: mdi:led-strip-variant
+      friendly_name: Couch LEDs
+      supported_features: 36
+      color_mode: rgbw
+      brightness: 5
       hs_color:
-      - 181.176
-      - 100
-      rgb_color:
       - 0
-      - 250
+      - 0
+      rgb_color:
+      - 255
+      - 255
+      - 255
+      rgbw_color:
+      - 0
+      - 0
+      - 0
       - 255
       xy_color:
-      - 0.151
-      - 0.335
-      effect: Candle Multi
-      intensity: 205
-      palette: Default
-      reverse: false
-      speed: 68
-      friendly_name: Living Room LEDs
+      - 0.323
+      - 0.329
+      effect: Solid
+      state: 'on'
+    select.couch_leds_playlist_2:
+      options: []
+      icon: mdi:play-speed
+      friendly_name: Couch LEDs Playlist
+      state: unavailable
+    select.couch_leds_preset_2:
+      options: []
+      icon: mdi:playlist-play
+      friendly_name: Couch LEDs Preset
+      state: unavailable
+  icon: mdi:weather-night
+  metadata:
+    light.living_room_fan_light:
+      entity_only: true
+- id: '1638334410720'
+  name: Downstairs Chill Christmas
+  entities:
+    light.dining_room_light:
+      supported_color_modes:
+      - onoff
+      icon: mdi:chandelier
+      friendly_name: Dining Room Light
+      supported_features: 0
+      state: 'off'
+    light.kitchen_light:
+      supported_color_modes:
+      - onoff
+      icon: mdi:ceiling-fan-light
+      friendly_name: Kitchen Light
+      supported_features: 0
+      state: 'off'
+    light.front_hall_light:
+      supported_color_modes:
+      - onoff
+      icon: mdi:ceiling-light
+      friendly_name: Front Hall Light
+      supported_features: 0
+      state: 'off'
+    light.kitchen_leds:
+      supported_color_modes:
+      - brightness
       icon: mdi:led-strip-variant
-      supported_features: 36
+      friendly_name: Kitchen LEDs
+      supported_features: 32
+      color_mode: brightness
+      brightness: 178
       state: 'on'
     light.francis_s_light:
       supported_color_modes:
       - rgb
+      icon: mdi:lightbulb-spot
+      friendly_name: Francis's Light
+      supported_features: 40
       color_mode: rgb
       brightness: 255
       hs_color:
@@ -2089,8 +2537,6 @@
       xy_color:
       - 0.701
       - 0.299
-      friendly_name: Francis's Light
-      supported_features: 40
       state: 'on'
     light.fish_tank_leds:
       min_mireds: 153
@@ -2104,6 +2550,9 @@
       supported_color_modes:
       - color_temp
       - hs
+      icon: mdi:fishbowl
+      friendly_name: Fish Tank LEDs
+      supported_features: 36
       color_mode: hs
       brightness: 255
       hs_color:
@@ -2117,45 +2566,315 @@
       - 0.187
       - 0.34
       effect: None
-      friendly_name: Fish Tank LEDs
-      icon: mdi:fishbowl
-      supported_features: 36
       state: 'on'
-    light.fiber_optic_decoration:
-      supported_color_modes:
-      - onoff
-      color_mode: onoff
-      friendly_name: Fiber Optic Decoration
-      supported_features: 0
-      state: 'on'
-    fan.living_room_fan:
-      speed_list:
-      - 'off'
-      - low
-      - medium
-      - high
-      preset_modes: []
-      speed: 'off'
-      percentage: 0
-      percentage_step: 33.333333333333336
-      preset_mode:
-      friendly_name: Living Room Fan
-      supported_features: 1
-      state: 'off'
     light.living_room_fan_light:
       supported_color_modes:
       - onoff
+      icon: mdi:ceiling-fan-light
       friendly_name: Living Room Light
       supported_features: 0
       state: 'off'
-    light.christmas_tree:
+    light.curtain_leds:
+      effect_list:
+      - Android
+      - Aurora
+      - Blends
+      - Blink
+      - Blink Rainbow
+      - Bouncing Balls
+      - Bpm
+      - Breathe
+      - Candle
+      - Candle Multi
+      - Candy Cane
+      - Chase
+      - Chase 2
+      - Chase 3
+      - Chase Flash
+      - Chase Flash Rnd
+      - Chase Rainbow
+      - Chase Random
+      - Chunchun
+      - Colorful
+      - Colorloop
+      - Colortwinkles
+      - Colorwaves
+      - Dancing Shadows
+      - Dissolve
+      - Dissolve Rnd
+      - Drip
+      - Dynamic
+      - Dynamic Smooth
+      - Fade
+      - Fairy
+      - Fairytwinkle
+      - Fill Noise
+      - Fire 2012
+      - Fire Flicker
+      - Fireworks
+      - Fireworks 1D
+      - Fireworks Starburst
+      - Flow
+      - Glitter
+      - Gradient
+      - Halloween
+      - Halloween Eyes
+      - Heartbeat
+      - ICU
+      - Juggle
+      - Lake
+      - Lighthouse
+      - Lightning
+      - Loading
+      - Meteor
+      - Meteor Smooth
+      - Multi Comet
+      - Noise 1
+      - Noise 2
+      - Noise 3
+      - Noise 4
+      - Noise Pal
+      - Oscillate
+      - Pacifica
+      - Palette
+      - Percent
+      - Phased
+      - Phased Noise
+      - Plasma
+      - Police
+      - Popcorn
+      - Pride 2015
+      - Railway
+      - Rain
+      - Rainbow
+      - Rainbow Runner
+      - Random Colors
+      - Ripple
+      - Ripple Rainbow
+      - Running
+      - Running Dual
+      - Saw
+      - Scan
+      - Scan Dual
+      - Scanner
+      - Scanner Dual
+      - Sine
+      - Sinelon
+      - Sinelon Dual
+      - Sinelon Rainbow
+      - Solid
+      - Solid Glitter
+      - Solid Pattern
+      - Solid Pattern Tri
+      - Sparkle
+      - Sparkle Dark
+      - Sparkle+
+      - Spots
+      - Spots Fade
+      - Stream
+      - Stream 2
+      - Strobe
+      - Strobe Mega
+      - Strobe Rainbow
+      - Sunrise
+      - Sweep
+      - Sweep Random
+      - TV Simulator
+      - Tetrix
+      - Theater
+      - Theater Rainbow
+      - Traffic Light
+      - Tri Fade
+      - Tri Wipe
+      - Twinkle
+      - Twinklecat
+      - Twinklefox
+      - Twinkleup
+      - Two Dots
+      - Washing Machine
+      - Wipe
+      - Wipe Random
       supported_color_modes:
-      - onoff
-      color_mode: onoff
-      friendly_name: Christmas Tree
-      icon: mdi:pine-tree
-      supported_features: 0
+      - rgbw
+      icon: mdi:led-strip-variant
+      friendly_name: Curtain LEDs
+      supported_features: 36
+      color_mode: rgbw
+      brightness: 102
+      hs_color:
+      - 180
+      - 100
+      rgb_color:
+      - 0
+      - 255
+      - 255
+      rgbw_color:
+      - 0
+      - 255
+      - 255
+      - 0
+      xy_color:
+      - 0.151
+      - 0.343
+      effect: Twinkleup
       state: 'on'
+    light.couch_leds:
+      effect_list:
+      - Android
+      - Aurora
+      - Blends
+      - Blink
+      - Blink Rainbow
+      - Bouncing Balls
+      - Bpm
+      - Breathe
+      - Candle
+      - Candle Multi
+      - Candy Cane
+      - Chase
+      - Chase 2
+      - Chase 3
+      - Chase Flash
+      - Chase Flash Rnd
+      - Chase Rainbow
+      - Chase Random
+      - Chunchun
+      - Colorful
+      - Colorloop
+      - Colortwinkles
+      - Colorwaves
+      - Dancing Shadows
+      - Dissolve
+      - Dissolve Rnd
+      - Drip
+      - Dynamic
+      - Dynamic Smooth
+      - Fade
+      - Fairy
+      - Fairytwinkle
+      - Fill Noise
+      - Fire 2012
+      - Fire Flicker
+      - Fireworks
+      - Fireworks 1D
+      - Fireworks Starburst
+      - Flow
+      - Glitter
+      - Gradient
+      - Halloween
+      - Halloween Eyes
+      - Heartbeat
+      - ICU
+      - Juggle
+      - Lake
+      - Lighthouse
+      - Lightning
+      - Loading
+      - Meteor
+      - Meteor Smooth
+      - Multi Comet
+      - Noise 1
+      - Noise 2
+      - Noise 3
+      - Noise 4
+      - Noise Pal
+      - Oscillate
+      - Pacifica
+      - Palette
+      - Percent
+      - Phased
+      - Phased Noise
+      - Plasma
+      - Police
+      - Popcorn
+      - Pride 2015
+      - Railway
+      - Rain
+      - Rainbow
+      - Rainbow Runner
+      - Random Colors
+      - Ripple
+      - Ripple Rainbow
+      - Running
+      - Running Dual
+      - Saw
+      - Scan
+      - Scan Dual
+      - Scanner
+      - Scanner Dual
+      - Sine
+      - Sinelon
+      - Sinelon Dual
+      - Sinelon Rainbow
+      - Solid
+      - Solid Glitter
+      - Solid Pattern
+      - Solid Pattern Tri
+      - Sparkle
+      - Sparkle Dark
+      - Sparkle+
+      - Spots
+      - Spots Fade
+      - Stream
+      - Stream 2
+      - Strobe
+      - Strobe Mega
+      - Strobe Rainbow
+      - Sunrise
+      - Sweep
+      - Sweep Random
+      - TV Simulator
+      - Tetrix
+      - Theater
+      - Theater Rainbow
+      - Traffic Light
+      - Tri Fade
+      - Tri Wipe
+      - Twinkle
+      - Twinklecat
+      - Twinklefox
+      - Twinkleup
+      - Two Dots
+      - Washing Machine
+      - Wipe
+      - Wipe Random
+      supported_color_modes:
+      - rgbw
+      icon: mdi:led-strip-variant
+      friendly_name: Couch LEDs
+      supported_features: 36
+      color_mode: rgbw
+      brightness: 26
+      hs_color:
+      - 120
+      - 100
+      rgb_color:
+      - 0
+      - 255
+      - 0
+      rgbw_color:
+      - 0
+      - 255
+      - 0
+      - 0
+      xy_color:
+      - 0.172
+      - 0.747
+      effect: Twinkleup
+      state: 'on'
+    select.couch_leds_playlist_2:
+      options: []
+      icon: mdi:play-speed
+      friendly_name: Couch LEDs Playlist
+      state: unavailable
+    select.couch_leds_preset_2:
+      options: []
+      icon: mdi:playlist-play
+      friendly_name: Couch LEDs Preset
+      state: unavailable
+  metadata:
+    light.living_room_fan_light:
+      entity_only: true
 - id: '1642299813224'
   name: Windows Open
   entities:
@@ -3037,14 +3756,55 @@
 - id: '1649956628187'
   name: Living Room Ambient
   entities:
-    fan.living_room_fan:
-      preset_modes:
-      percentage: 0
-      percentage_step: 33.333333333333336
-      preset_mode:
-      friendly_name: Living Room Fan
-      supported_features: 1
-      state: 'off'
+    light.francis_s_light:
+      supported_color_modes:
+      - rgb
+      icon: mdi:lightbulb-spot
+      friendly_name: Francis's Light
+      supported_features: 40
+      color_mode: rgb
+      brightness: 255
+      hs_color:
+      - 180
+      - 100
+      rgb_color:
+      - 0
+      - 255
+      - 255
+      xy_color:
+      - 0.151
+      - 0.343
+      state: 'on'
+    light.fish_tank_leds:
+      min_mireds: 153
+      max_mireds: 500
+      effect_list:
+      - None
+      - Wake up
+      - Cycle up
+      - Cycle down
+      - Random
+      supported_color_modes:
+      - color_temp
+      - hs
+      icon: mdi:fishbowl
+      friendly_name: Fish Tank LEDs
+      supported_features: 36
+      color_mode: color_temp
+      brightness: 255
+      hs_color:
+      - 27.214
+      - 45.65
+      rgb_color:
+      - 255
+      - 191
+      - 138
+      xy_color:
+      - 0.457
+      - 0.375
+      effect: None
+      color_temp: 289
+      state: 'on'
     light.living_room_fan_light:
       supported_color_modes:
       - onoff
@@ -3052,7 +3812,7 @@
       friendly_name: Living Room Light
       supported_features: 0
       state: 'off'
-    light.living_room_leds:
+    light.couch_leds:
       effect_list:
       - Android
       - Aurora
@@ -3173,93 +3933,45 @@
       - Wipe
       - Wipe Random
       supported_color_modes:
-      - rgb
+      - rgbw
       icon: mdi:led-strip-variant
-      friendly_name: Living Room LEDs
+      friendly_name: Couch LEDs
       supported_features: 36
-      color_mode: rgb
-      brightness: 128
+      color_mode: rgbw
+      brightness: 38
       hs_color:
-      - 45.474
-      - 37.402
+      - 0
+      - 0
       rgb_color:
-      - 254
-      - 231
-      - 159
+      - 255
+      - 255
+      - 255
+      rgbw_color:
+      - 0
+      - 0
+      - 0
+      - 255
       xy_color:
-      - 0.405
-      - 0.402
-      effect: Candle Multi
+      - 0.323
+      - 0.329
+      effect: Twinkleup
       state: 'on'
-    switch.living_room_leds_nightlight:
-      duration: 60
-      fade: true
-      target_brightness: 0
-      icon: mdi:weather-night
-      friendly_name: Living Room LEDs Nightlight
-      state: 'off'
-    switch.living_room_leds_sync_receive:
-      udp_port: 21324
-      icon: mdi:download-network-outline
-      friendly_name: Living Room LEDs Sync Receive
-      state: 'on'
-    switch.living_room_leds_sync_send:
-      udp_port: 21324
-      icon: mdi:upload-network-outline
-      friendly_name: Living Room LEDs Sync Send
-      state: 'off'
-    select.wled_preset:
-      options: []
-      icon: mdi:playlist-play
-      friendly_name: WLED Preset
-      state: unavailable
-    select.wled_playlist:
+    select.couch_leds_playlist_2:
       options: []
       icon: mdi:play-speed
-      friendly_name: WLED Playlist
+      friendly_name: Couch LEDs Playlist
       state: unavailable
-    number.wled_speed:
-      min: 0
-      max: 255
-      step: 1
-      mode: auto
-      icon: mdi:speedometer
-      friendly_name: WLED Speed
-      state: '128'
-    number.wled_intensity:
-      min: 0
-      max: 255
-      step: 1
-      mode: auto
-      friendly_name: WLED Intensity
-      state: '128'
-    switch.wled_reverse:
-      icon: mdi:swap-horizontal-bold
-      friendly_name: WLED Reverse
-      state: 'off'
-    select.wled_live_override:
-      options:
-      - '0'
-      - '1'
-      - '2'
-      device_class: wled__live_override
-      icon: mdi:theater
-      friendly_name: WLED Live Override
-      state: '0'
-    update.wled_firmware:
-      auto_update: false
-      installed_version: 0.13.1
-      in_progress: false
-      latest_version: 0.13.1
-      release_summary:
-      release_url: https://github.com/Aircoookie/WLED/releases/tag/v0.13.1
-      skipped_version:
-      title: WLED
-      device_class: firmware
-      entity_picture: https://brands.home-assistant.io/_/wled/icon.png
-      friendly_name: WLED Firmware
-      supported_features: 3
-      state: 'off'
+    select.couch_leds_preset_2:
+      options: []
+      icon: mdi:playlist-play
+      friendly_name: Couch LEDs Preset
+      state: unavailable
+  metadata:
+    light.living_room_fan_light:
+      entity_only: true
+- id: '1649956939469'
+  name: Living Room Lights On
+  entities:
     light.francis_s_light:
       supported_color_modes:
       - rgb
@@ -3291,9 +4003,11 @@
       supported_color_modes:
       - color_temp
       - hs
+      icon: mdi:fishbowl
+      friendly_name: Fish Tank LEDs
+      supported_features: 36
       color_mode: color_temp
       brightness: 255
-      color_temp: 289
       hs_color:
       - 27.214
       - 45.65
@@ -3305,21 +4019,8 @@
       - 0.457
       - 0.375
       effect: None
-      icon: mdi:fishbowl
-      friendly_name: Fish Tank LEDs
-      supported_features: 36
+      color_temp: 289
       state: 'on'
-- id: '1649956939469'
-  name: Living Room Lights On
-  entities:
-    fan.living_room_fan:
-      preset_modes:
-      percentage: 0
-      percentage_step: 33.333333333333336
-      preset_mode:
-      friendly_name: Living Room Fan
-      supported_features: 1
-      state: 'off'
     light.living_room_fan_light:
       supported_color_modes:
       - onoff
@@ -3328,7 +4029,7 @@
       supported_features: 0
       color_mode: onoff
       state: 'on'
-    light.living_room_leds:
+    light.couch_leds:
       effect_list:
       - Android
       - Aurora
@@ -3449,112 +4150,52 @@
       - Wipe
       - Wipe Random
       supported_color_modes:
-      - rgb
+      - rgbw
       icon: mdi:led-strip-variant
-      friendly_name: Living Room LEDs
+      friendly_name: Couch LEDs
       supported_features: 36
-      color_mode: rgb
-      brightness: 128
+      color_mode: rgbw
+      brightness: 89
       hs_color:
-      - 45.474
-      - 37.402
+      - 0
+      - 0
       rgb_color:
-      - 254
-      - 231
-      - 159
+      - 255
+      - 255
+      - 255
+      rgbw_color:
+      - 0
+      - 0
+      - 0
+      - 255
       xy_color:
-      - 0.405
-      - 0.402
-      effect: Candle Multi
+      - 0.323
+      - 0.329
+      effect: Twinkleup
       state: 'on'
-    switch.living_room_leds_nightlight:
-      duration: 60
-      fade: true
-      target_brightness: 0
-      icon: mdi:weather-night
-      friendly_name: Living Room LEDs Nightlight
-      state: 'off'
-    switch.living_room_leds_sync_receive:
-      udp_port: 21324
-      icon: mdi:download-network-outline
-      friendly_name: Living Room LEDs Sync Receive
-      state: 'on'
-    switch.living_room_leds_sync_send:
-      udp_port: 21324
-      icon: mdi:upload-network-outline
-      friendly_name: Living Room LEDs Sync Send
-      state: 'off'
-    select.wled_preset:
-      options: []
-      icon: mdi:playlist-play
-      friendly_name: WLED Preset
-      state: unavailable
-    select.wled_playlist:
+    select.couch_leds_playlist_2:
       options: []
       icon: mdi:play-speed
-      friendly_name: WLED Playlist
+      friendly_name: Couch LEDs Playlist
       state: unavailable
-    number.wled_speed:
-      min: 0
-      max: 255
-      step: 1
-      mode: auto
-      icon: mdi:speedometer
-      friendly_name: WLED Speed
-      state: '128'
-    number.wled_intensity:
-      min: 0
-      max: 255
-      step: 1
-      mode: auto
-      friendly_name: WLED Intensity
-      state: '128'
-    switch.wled_reverse:
-      icon: mdi:swap-horizontal-bold
-      friendly_name: WLED Reverse
-      state: 'off'
-    select.wled_live_override:
-      options:
-      - '0'
-      - '1'
-      - '2'
-      device_class: wled__live_override
-      icon: mdi:theater
-      friendly_name: WLED Live Override
-      state: '0'
-    update.wled_firmware:
-      auto_update: false
-      installed_version: 0.13.1
-      in_progress: false
-      latest_version: 0.13.1
-      release_summary:
-      release_url: https://github.com/Aircoookie/WLED/releases/tag/v0.13.1
-      skipped_version:
-      title: WLED
-      device_class: firmware
-      entity_picture: https://brands.home-assistant.io/_/wled/icon.png
-      friendly_name: WLED Firmware
-      supported_features: 3
-      state: 'off'
+    select.couch_leds_preset_2:
+      options: []
+      icon: mdi:playlist-play
+      friendly_name: Couch LEDs Preset
+      state: unavailable
+  metadata:
+    light.living_room_fan_light:
+      entity_only: true
+- id: '1649956979511'
+  name: Living Room Lights Off
+  entities:
     light.francis_s_light:
       supported_color_modes:
       - rgb
       icon: mdi:lightbulb-spot
       friendly_name: Francis's Light
       supported_features: 40
-      color_mode: rgb
-      brightness: 255
-      hs_color:
-      - 180
-      - 100
-      rgb_color:
-      - 0
-      - 255
-      - 255
-      xy_color:
-      - 0.151
-      - 0.343
-      state: 'on'
+      state: 'off'
     light.fish_tank_leds:
       min_mireds: 153
       max_mireds: 500
@@ -3567,34 +4208,9 @@
       supported_color_modes:
       - color_temp
       - hs
-      color_mode: color_temp
-      brightness: 255
-      color_temp: 289
-      hs_color:
-      - 27.214
-      - 45.65
-      rgb_color:
-      - 255
-      - 191
-      - 138
-      xy_color:
-      - 0.457
-      - 0.375
-      effect: None
       icon: mdi:fishbowl
       friendly_name: Fish Tank LEDs
       supported_features: 36
-      state: 'on'
-- id: '1649956979511'
-  name: Living Room Lights Off
-  entities:
-    fan.living_room_fan:
-      preset_modes:
-      percentage: 0
-      percentage_step: 33.333333333333336
-      preset_mode:
-      friendly_name: Living Room Fan
-      supported_features: 1
       state: 'off'
     light.living_room_fan_light:
       supported_color_modes:
@@ -3603,7 +4219,7 @@
       friendly_name: Living Room Light
       supported_features: 0
       state: 'off'
-    light.living_room_leds:
+    light.couch_leds:
       effect_list:
       - Android
       - Aurora
@@ -3724,103 +4340,24 @@
       - Wipe
       - Wipe Random
       supported_color_modes:
-      - rgb
+      - rgbw
       icon: mdi:led-strip-variant
-      friendly_name: Living Room LEDs
+      friendly_name: Couch LEDs
       supported_features: 36
       state: 'off'
-    switch.living_room_leds_nightlight:
-      duration: 60
-      fade: true
-      target_brightness: 0
-      icon: mdi:weather-night
-      friendly_name: Living Room LEDs Nightlight
-      state: 'off'
-    switch.living_room_leds_sync_receive:
-      udp_port: 21324
-      icon: mdi:download-network-outline
-      friendly_name: Living Room LEDs Sync Receive
-      state: 'on'
-    switch.living_room_leds_sync_send:
-      udp_port: 21324
-      icon: mdi:upload-network-outline
-      friendly_name: Living Room LEDs Sync Send
-      state: 'off'
-    select.wled_preset:
-      options: []
-      icon: mdi:playlist-play
-      friendly_name: WLED Preset
-      state: unavailable
-    select.wled_playlist:
+    select.couch_leds_playlist_2:
       options: []
       icon: mdi:play-speed
-      friendly_name: WLED Playlist
+      friendly_name: Couch LEDs Playlist
       state: unavailable
-    number.wled_speed:
-      min: 0
-      max: 255
-      step: 1
-      mode: auto
-      icon: mdi:speedometer
-      friendly_name: WLED Speed
-      state: '128'
-    number.wled_intensity:
-      min: 0
-      max: 255
-      step: 1
-      mode: auto
-      friendly_name: WLED Intensity
-      state: '128'
-    switch.wled_reverse:
-      icon: mdi:swap-horizontal-bold
-      friendly_name: WLED Reverse
-      state: 'off'
-    select.wled_live_override:
-      options:
-      - '0'
-      - '1'
-      - '2'
-      device_class: wled__live_override
-      icon: mdi:theater
-      friendly_name: WLED Live Override
-      state: '0'
-    update.wled_firmware:
-      auto_update: false
-      installed_version: 0.13.1
-      in_progress: false
-      latest_version: 0.13.1
-      release_summary:
-      release_url: https://github.com/Aircoookie/WLED/releases/tag/v0.13.1
-      skipped_version:
-      title: WLED
-      device_class: firmware
-      entity_picture: https://brands.home-assistant.io/_/wled/icon.png
-      friendly_name: WLED Firmware
-      supported_features: 3
-      state: 'off'
-    light.francis_s_light:
-      supported_color_modes:
-      - rgb
-      icon: mdi:lightbulb-spot
-      friendly_name: Francis's Light
-      supported_features: 40
-      state: 'off'
-    light.fish_tank_leds:
-      min_mireds: 153
-      max_mireds: 500
-      effect_list:
-      - None
-      - Wake up
-      - Cycle up
-      - Cycle down
-      - Random
-      supported_color_modes:
-      - color_temp
-      - hs
-      icon: mdi:fishbowl
-      friendly_name: Fish Tank LEDs
-      supported_features: 36
-      state: 'off'
+    select.couch_leds_preset_2:
+      options: []
+      icon: mdi:playlist-play
+      friendly_name: Couch LEDs Preset
+      state: unavailable
+  metadata:
+    light.living_room_fan_light:
+      entity_only: true
 - id: '1650489480651'
   name: Kitchen Dim
   entities:
@@ -3840,3 +4377,787 @@
       friendly_name: Kitchen Light
       supported_features: 0
       state: 'off'
+- id: '1658460767604'
+  name: Downstairs Ambient Bright
+  entities:
+    light.front_hall_light:
+      supported_color_modes:
+      - onoff
+      icon: mdi:ceiling-light
+      friendly_name: Front Hall Light
+      supported_features: 0
+      state: 'off'
+    light.kitchen_light:
+      supported_color_modes:
+      - onoff
+      icon: mdi:ceiling-fan-light
+      friendly_name: Kitchen Light
+      supported_features: 0
+      state: 'off'
+    light.kitchen_leds:
+      supported_color_modes:
+      - brightness
+      icon: mdi:led-strip-variant
+      friendly_name: Kitchen LEDs
+      supported_features: 32
+      color_mode: brightness
+      brightness: 255
+      state: 'on'
+    light.dining_room_light:
+      supported_color_modes:
+      - onoff
+      icon: mdi:chandelier
+      friendly_name: Dining Room Light
+      supported_features: 0
+      state: 'off'
+    light.francis_s_light:
+      supported_color_modes:
+      - rgb
+      icon: mdi:lightbulb-spot
+      friendly_name: Francis's Light
+      supported_features: 40
+      color_mode: rgb
+      brightness: 212
+      hs_color:
+      - 180
+      - 100
+      rgb_color:
+      - 0
+      - 255
+      - 255
+      xy_color:
+      - 0.151
+      - 0.343
+      state: 'on'
+    light.fish_tank_leds:
+      min_mireds: 153
+      max_mireds: 500
+      effect_list:
+      - None
+      - Wake up
+      - Cycle up
+      - Cycle down
+      - Random
+      supported_color_modes:
+      - color_temp
+      - hs
+      icon: mdi:fishbowl
+      friendly_name: Fish Tank LEDs
+      supported_features: 36
+      color_mode: color_temp
+      brightness: 255
+      hs_color:
+      - 27.214
+      - 45.65
+      rgb_color:
+      - 255
+      - 191
+      - 138
+      xy_color:
+      - 0.457
+      - 0.375
+      effect: None
+      color_temp: 289
+      state: 'on'
+    light.living_room_fan_light:
+      supported_color_modes:
+      - onoff
+      icon: mdi:ceiling-fan-light
+      friendly_name: Living Room Light
+      supported_features: 0
+      state: 'off'
+    light.curtain_leds:
+      effect_list:
+      - Android
+      - Aurora
+      - Blends
+      - Blink
+      - Blink Rainbow
+      - Bouncing Balls
+      - Bpm
+      - Breathe
+      - Candle
+      - Candle Multi
+      - Candy Cane
+      - Chase
+      - Chase 2
+      - Chase 3
+      - Chase Flash
+      - Chase Flash Rnd
+      - Chase Rainbow
+      - Chase Random
+      - Chunchun
+      - Colorful
+      - Colorloop
+      - Colortwinkles
+      - Colorwaves
+      - Dancing Shadows
+      - Dissolve
+      - Dissolve Rnd
+      - Drip
+      - Dynamic
+      - Dynamic Smooth
+      - Fade
+      - Fairy
+      - Fairytwinkle
+      - Fill Noise
+      - Fire 2012
+      - Fire Flicker
+      - Fireworks
+      - Fireworks 1D
+      - Fireworks Starburst
+      - Flow
+      - Glitter
+      - Gradient
+      - Halloween
+      - Halloween Eyes
+      - Heartbeat
+      - ICU
+      - Juggle
+      - Lake
+      - Lighthouse
+      - Lightning
+      - Loading
+      - Meteor
+      - Meteor Smooth
+      - Multi Comet
+      - Noise 1
+      - Noise 2
+      - Noise 3
+      - Noise 4
+      - Noise Pal
+      - Oscillate
+      - Pacifica
+      - Palette
+      - Percent
+      - Phased
+      - Phased Noise
+      - Plasma
+      - Police
+      - Popcorn
+      - Pride 2015
+      - Railway
+      - Rain
+      - Rainbow
+      - Rainbow Runner
+      - Random Colors
+      - Ripple
+      - Ripple Rainbow
+      - Running
+      - Running Dual
+      - Saw
+      - Scan
+      - Scan Dual
+      - Scanner
+      - Scanner Dual
+      - Sine
+      - Sinelon
+      - Sinelon Dual
+      - Sinelon Rainbow
+      - Solid
+      - Solid Glitter
+      - Solid Pattern
+      - Solid Pattern Tri
+      - Sparkle
+      - Sparkle Dark
+      - Sparkle+
+      - Spots
+      - Spots Fade
+      - Stream
+      - Stream 2
+      - Strobe
+      - Strobe Mega
+      - Strobe Rainbow
+      - Sunrise
+      - Sweep
+      - Sweep Random
+      - TV Simulator
+      - Tetrix
+      - Theater
+      - Theater Rainbow
+      - Traffic Light
+      - Tri Fade
+      - Tri Wipe
+      - Twinkle
+      - Twinklecat
+      - Twinklefox
+      - Twinkleup
+      - Two Dots
+      - Washing Machine
+      - Wipe
+      - Wipe Random
+      supported_color_modes:
+      - rgbw
+      icon: mdi:led-strip-variant
+      friendly_name: Curtain LEDs
+      supported_features: 36
+      color_mode: rgbw
+      brightness: 255
+      hs_color:
+      - 0
+      - 0
+      rgb_color:
+      - 255
+      - 255
+      - 255
+      rgbw_color:
+      - 0
+      - 0
+      - 0
+      - 255
+      xy_color:
+      - 0.323
+      - 0.329
+      effect: Solid
+      state: 'on'
+    light.couch_leds:
+      effect_list:
+      - Android
+      - Aurora
+      - Blends
+      - Blink
+      - Blink Rainbow
+      - Bouncing Balls
+      - Bpm
+      - Breathe
+      - Candle
+      - Candle Multi
+      - Candy Cane
+      - Chase
+      - Chase 2
+      - Chase 3
+      - Chase Flash
+      - Chase Flash Rnd
+      - Chase Rainbow
+      - Chase Random
+      - Chunchun
+      - Colorful
+      - Colorloop
+      - Colortwinkles
+      - Colorwaves
+      - Dancing Shadows
+      - Dissolve
+      - Dissolve Rnd
+      - Drip
+      - Dynamic
+      - Dynamic Smooth
+      - Fade
+      - Fairy
+      - Fairytwinkle
+      - Fill Noise
+      - Fire 2012
+      - Fire Flicker
+      - Fireworks
+      - Fireworks 1D
+      - Fireworks Starburst
+      - Flow
+      - Glitter
+      - Gradient
+      - Halloween
+      - Halloween Eyes
+      - Heartbeat
+      - ICU
+      - Juggle
+      - Lake
+      - Lighthouse
+      - Lightning
+      - Loading
+      - Meteor
+      - Meteor Smooth
+      - Multi Comet
+      - Noise 1
+      - Noise 2
+      - Noise 3
+      - Noise 4
+      - Noise Pal
+      - Oscillate
+      - Pacifica
+      - Palette
+      - Percent
+      - Phased
+      - Phased Noise
+      - Plasma
+      - Police
+      - Popcorn
+      - Pride 2015
+      - Railway
+      - Rain
+      - Rainbow
+      - Rainbow Runner
+      - Random Colors
+      - Ripple
+      - Ripple Rainbow
+      - Running
+      - Running Dual
+      - Saw
+      - Scan
+      - Scan Dual
+      - Scanner
+      - Scanner Dual
+      - Sine
+      - Sinelon
+      - Sinelon Dual
+      - Sinelon Rainbow
+      - Solid
+      - Solid Glitter
+      - Solid Pattern
+      - Solid Pattern Tri
+      - Sparkle
+      - Sparkle Dark
+      - Sparkle+
+      - Spots
+      - Spots Fade
+      - Stream
+      - Stream 2
+      - Strobe
+      - Strobe Mega
+      - Strobe Rainbow
+      - Sunrise
+      - Sweep
+      - Sweep Random
+      - TV Simulator
+      - Tetrix
+      - Theater
+      - Theater Rainbow
+      - Traffic Light
+      - Tri Fade
+      - Tri Wipe
+      - Twinkle
+      - Twinklecat
+      - Twinklefox
+      - Twinkleup
+      - Two Dots
+      - Washing Machine
+      - Wipe
+      - Wipe Random
+      supported_color_modes:
+      - rgbw
+      icon: mdi:led-strip-variant
+      friendly_name: Couch LEDs
+      supported_features: 36
+      color_mode: rgbw
+      brightness: 255
+      hs_color:
+      - 0
+      - 0
+      rgb_color:
+      - 255
+      - 255
+      - 255
+      rgbw_color:
+      - 0
+      - 0
+      - 0
+      - 255
+      xy_color:
+      - 0.323
+      - 0.329
+      effect: Twinkleup
+      state: 'on'
+    select.couch_leds_playlist_2:
+      options: []
+      icon: mdi:play-speed
+      friendly_name: Couch LEDs Playlist
+      state: unavailable
+    select.couch_leds_preset_2:
+      options: []
+      icon: mdi:playlist-play
+      friendly_name: Couch LEDs Preset
+      state: unavailable
+  metadata:
+    light.living_room_fan_light:
+      entity_only: true
+- id: '1658460869945'
+  name: Downstairs Bright
+  entities:
+    light.kitchen_light:
+      supported_color_modes:
+      - onoff
+      icon: mdi:ceiling-fan-light
+      friendly_name: Kitchen Light
+      supported_features: 0
+      color_mode: onoff
+      state: 'on'
+    light.kitchen_leds:
+      supported_color_modes:
+      - brightness
+      icon: mdi:led-strip-variant
+      friendly_name: Kitchen LEDs
+      supported_features: 32
+      color_mode: brightness
+      brightness: 255
+      state: 'on'
+    light.front_hall_light:
+      supported_color_modes:
+      - onoff
+      icon: mdi:ceiling-light
+      friendly_name: Front Hall Light
+      supported_features: 0
+      color_mode: onoff
+      state: 'on'
+    light.dining_room_light:
+      supported_color_modes:
+      - onoff
+      icon: mdi:chandelier
+      friendly_name: Dining Room Light
+      supported_features: 0
+      color_mode: onoff
+      state: 'on'
+    light.francis_s_light:
+      supported_color_modes:
+      - rgb
+      icon: mdi:lightbulb-spot
+      friendly_name: Francis's Light
+      supported_features: 40
+      color_mode: rgb
+      brightness: 255
+      hs_color:
+      - 180
+      - 100
+      rgb_color:
+      - 0
+      - 255
+      - 255
+      xy_color:
+      - 0.151
+      - 0.343
+      state: 'on'
+    light.fish_tank_leds:
+      min_mireds: 153
+      max_mireds: 500
+      effect_list:
+      - None
+      - Wake up
+      - Cycle up
+      - Cycle down
+      - Random
+      supported_color_modes:
+      - color_temp
+      - hs
+      icon: mdi:fishbowl
+      friendly_name: Fish Tank LEDs
+      supported_features: 36
+      color_mode: color_temp
+      brightness: 255
+      hs_color:
+      - 27.941
+      - 58.774
+      rgb_color:
+      - 255
+      - 174
+      - 105
+      xy_color:
+      - 0.503
+      - 0.383
+      effect: None
+      color_temp: 341
+      state: 'on'
+    light.living_room_fan_light:
+      supported_color_modes:
+      - onoff
+      icon: mdi:ceiling-fan-light
+      friendly_name: Living Room Light
+      supported_features: 0
+      color_mode: onoff
+      state: 'on'
+    light.curtain_leds:
+      effect_list:
+      - Android
+      - Aurora
+      - Blends
+      - Blink
+      - Blink Rainbow
+      - Bouncing Balls
+      - Bpm
+      - Breathe
+      - Candle
+      - Candle Multi
+      - Candy Cane
+      - Chase
+      - Chase 2
+      - Chase 3
+      - Chase Flash
+      - Chase Flash Rnd
+      - Chase Rainbow
+      - Chase Random
+      - Chunchun
+      - Colorful
+      - Colorloop
+      - Colortwinkles
+      - Colorwaves
+      - Dancing Shadows
+      - Dissolve
+      - Dissolve Rnd
+      - Drip
+      - Dynamic
+      - Dynamic Smooth
+      - Fade
+      - Fairy
+      - Fairytwinkle
+      - Fill Noise
+      - Fire 2012
+      - Fire Flicker
+      - Fireworks
+      - Fireworks 1D
+      - Fireworks Starburst
+      - Flow
+      - Glitter
+      - Gradient
+      - Halloween
+      - Halloween Eyes
+      - Heartbeat
+      - ICU
+      - Juggle
+      - Lake
+      - Lighthouse
+      - Lightning
+      - Loading
+      - Meteor
+      - Meteor Smooth
+      - Multi Comet
+      - Noise 1
+      - Noise 2
+      - Noise 3
+      - Noise 4
+      - Noise Pal
+      - Oscillate
+      - Pacifica
+      - Palette
+      - Percent
+      - Phased
+      - Phased Noise
+      - Plasma
+      - Police
+      - Popcorn
+      - Pride 2015
+      - Railway
+      - Rain
+      - Rainbow
+      - Rainbow Runner
+      - Random Colors
+      - Ripple
+      - Ripple Rainbow
+      - Running
+      - Running Dual
+      - Saw
+      - Scan
+      - Scan Dual
+      - Scanner
+      - Scanner Dual
+      - Sine
+      - Sinelon
+      - Sinelon Dual
+      - Sinelon Rainbow
+      - Solid
+      - Solid Glitter
+      - Solid Pattern
+      - Solid Pattern Tri
+      - Sparkle
+      - Sparkle Dark
+      - Sparkle+
+      - Spots
+      - Spots Fade
+      - Stream
+      - Stream 2
+      - Strobe
+      - Strobe Mega
+      - Strobe Rainbow
+      - Sunrise
+      - Sweep
+      - Sweep Random
+      - TV Simulator
+      - Tetrix
+      - Theater
+      - Theater Rainbow
+      - Traffic Light
+      - Tri Fade
+      - Tri Wipe
+      - Twinkle
+      - Twinklecat
+      - Twinklefox
+      - Twinkleup
+      - Two Dots
+      - Washing Machine
+      - Wipe
+      - Wipe Random
+      supported_color_modes:
+      - rgbw
+      icon: mdi:led-strip-variant
+      friendly_name: Curtain LEDs
+      supported_features: 36
+      color_mode: rgbw
+      brightness: 255
+      hs_color:
+      - 0
+      - 0
+      rgb_color:
+      - 255
+      - 255
+      - 255
+      rgbw_color:
+      - 0
+      - 0
+      - 0
+      - 255
+      xy_color:
+      - 0.323
+      - 0.329
+      effect: Solid
+      state: 'on'
+    light.couch_leds:
+      effect_list:
+      - Android
+      - Aurora
+      - Blends
+      - Blink
+      - Blink Rainbow
+      - Bouncing Balls
+      - Bpm
+      - Breathe
+      - Candle
+      - Candle Multi
+      - Candy Cane
+      - Chase
+      - Chase 2
+      - Chase 3
+      - Chase Flash
+      - Chase Flash Rnd
+      - Chase Rainbow
+      - Chase Random
+      - Chunchun
+      - Colorful
+      - Colorloop
+      - Colortwinkles
+      - Colorwaves
+      - Dancing Shadows
+      - Dissolve
+      - Dissolve Rnd
+      - Drip
+      - Dynamic
+      - Dynamic Smooth
+      - Fade
+      - Fairy
+      - Fairytwinkle
+      - Fill Noise
+      - Fire 2012
+      - Fire Flicker
+      - Fireworks
+      - Fireworks 1D
+      - Fireworks Starburst
+      - Flow
+      - Glitter
+      - Gradient
+      - Halloween
+      - Halloween Eyes
+      - Heartbeat
+      - ICU
+      - Juggle
+      - Lake
+      - Lighthouse
+      - Lightning
+      - Loading
+      - Meteor
+      - Meteor Smooth
+      - Multi Comet
+      - Noise 1
+      - Noise 2
+      - Noise 3
+      - Noise 4
+      - Noise Pal
+      - Oscillate
+      - Pacifica
+      - Palette
+      - Percent
+      - Phased
+      - Phased Noise
+      - Plasma
+      - Police
+      - Popcorn
+      - Pride 2015
+      - Railway
+      - Rain
+      - Rainbow
+      - Rainbow Runner
+      - Random Colors
+      - Ripple
+      - Ripple Rainbow
+      - Running
+      - Running Dual
+      - Saw
+      - Scan
+      - Scan Dual
+      - Scanner
+      - Scanner Dual
+      - Sine
+      - Sinelon
+      - Sinelon Dual
+      - Sinelon Rainbow
+      - Solid
+      - Solid Glitter
+      - Solid Pattern
+      - Solid Pattern Tri
+      - Sparkle
+      - Sparkle Dark
+      - Sparkle+
+      - Spots
+      - Spots Fade
+      - Stream
+      - Stream 2
+      - Strobe
+      - Strobe Mega
+      - Strobe Rainbow
+      - Sunrise
+      - Sweep
+      - Sweep Random
+      - TV Simulator
+      - Tetrix
+      - Theater
+      - Theater Rainbow
+      - Traffic Light
+      - Tri Fade
+      - Tri Wipe
+      - Twinkle
+      - Twinklecat
+      - Twinklefox
+      - Twinkleup
+      - Two Dots
+      - Washing Machine
+      - Wipe
+      - Wipe Random
+      supported_color_modes:
+      - rgbw
+      icon: mdi:led-strip-variant
+      friendly_name: Couch LEDs
+      supported_features: 36
+      color_mode: rgbw
+      brightness: 255
+      hs_color:
+      - 0
+      - 0
+      rgb_color:
+      - 255
+      - 255
+      - 255
+      rgbw_color:
+      - 0
+      - 0
+      - 0
+      - 255
+      xy_color:
+      - 0.323
+      - 0.329
+      effect: Twinkleup
+      state: 'on'
+    select.couch_leds_playlist_2:
+      options: []
+      icon: mdi:play-speed
+      friendly_name: Couch LEDs Playlist
+      state: unavailable
+    select.couch_leds_preset_2:
+      options: []
+      icon: mdi:playlist-play
+      friendly_name: Couch LEDs Preset
+      state: unavailable
+  metadata:
+    light.living_room_fan_light:
+      entity_only: true
