@@ -35,6 +35,7 @@ group:
       - binary_sensor.front_door
       - binary_sensor.sliding_glass_door
       - binary_sensor.garage_door
+      - binary_sensor.patio_screen_door
   windows:
     name: Windows
     entities:
@@ -60,6 +61,7 @@ group:
     entities:
       - binary_sensor.sliding_glass_door
       - binary_sensor.garage_door
+      - binary_sensor.patio_screen_door
       - group.windows
 
 input_boolean:
@@ -139,6 +141,13 @@ template:
       - name: Front Door Recent Activity
         state: >
           {{ true if trigger.id == "activity" or states("binary_sensor.front_door") == "on" else false }}
+  - trigger:
+      - platform: state
+        entity_id: lock.touchscreen_deadbolt_z_wave_plus_frontdoor
+    binary_sensor:
+      - name: Exiting Front Door
+        state: >
+          {{ true if trigger.to_state.state == "unlocked" and states("binary_sensor.front_hall_motion_sensor") == "on" else false }}
 
 automation:
   #############################################
@@ -475,8 +484,13 @@ automation:
             entity_id: alarm_control_panel.sentry_network
             state: armed_vacation
     action:
-      - service: alarm_control_panel.alarm_trigger
-        entity_id: alarm_control_panel.sentry_network
+      - if:
+          - condition: template
+            value_template: "{{ states('alarm_control_panel.sentry_network') in ['armed_home', 'armed_night'] and trigger.to_state.entity_id == 'binary_sensor.front_door' and states('binary_sensor.exiting_front_door') == 'on' }}"
+        then: []
+        else:
+          - service: alarm_control_panel.alarm_trigger
+            entity_id: alarm_control_panel.sentry_network
 
   - alias: Alarm Disarm On Door Unlock
     id: alarm_disarm_on_door_unlock
@@ -912,6 +926,10 @@ script:
         entity_id: script.clear_security_issue
       - service: input_boolean.turn_on
         entity_id: input_boolean.motion_lights_master
+      - service: alarm_control_panel.alarm_disarm
+        data:
+          entity_id: alarm_control_panel.sentry_network
+          code: !secret alarm_code
 
   # If vacation mode is on, turn it off
   vacation_canceled:
