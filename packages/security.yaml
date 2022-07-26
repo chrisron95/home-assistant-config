@@ -951,9 +951,14 @@ script:
       # Disarm the alarm
       - service: script.turn_on
         entity_id: script.disarm_security
-      # End any vacation
-      - service: script.turn_on
-        entity_id: script.vacation_canceled
+      # End any vacation if family is back home
+      - if:
+          - condition: state
+            entity_id: group.family
+            state: "home"
+        then:
+          - service: script.turn_on
+            entity_id: script.vacation_canceled
       # Turn off the security alarm
       - service: script.turn_on
         entity_id: script.cancel_security_alarm
@@ -1006,14 +1011,6 @@ script:
       - service: input_boolean.turn_off
         entity_id: input_boolean.security_alarm
 
-  # clear_security_issue:
-  #   sequence:
-  #     - condition: state
-  #       entity_id: input_boolean.security_issue
-  #       state: "on"
-  #     - service: input_boolean.turn_off
-  #       entity_id: input_boolean.security_issue
-
   # if there are lockdown issues, turn them off
   cancel_lockdown_issue:
     sequence:
@@ -1036,12 +1033,43 @@ script:
   # Turn off guest mode
   visitors_gone:
     sequence:
-      - condition: state
-        entity_id: input_boolean.guest_mode
-        state: "on"
-      - service: input_boolean.turn_off
-        data:
-          entity_id: input_boolean.guest_mode
+      - if:
+          - condition: state
+            entity_id: input_boolean.guest_mode
+            state: "on"
+        then:
+          - service: input_boolean.turn_off
+            data:
+              entity_id: input_boolean.guest_mode
+      - choose:
+          # Family's on vacation
+          - conditions:
+              - condition: and
+                conditions:
+                  - condition: state
+                    entity_id: input_boolean.vacation_mode
+                    state: "on"
+                  - condition: not
+                    conditions:
+                      - condition: state
+                        entity_id: group.family
+                        state: "home"
+            sequence:
+              - service: alarm_control_panel.alarm_arm_vacation
+                entity_id: alarm_control_panel.sentry_network
+          # Family's just not home
+          - conditions:
+              - condition: not
+                conditions:
+                  - condition: state
+                    entity_id: group.family
+                    state: "home"
+            sequence:
+              - service: alarm_control_panel.alarm_arm_away
+                entity_id: alarm_control_panel.sentry_network
+        default:
+          - service: script.turn_on
+            entity_id: script.arm_stay
 
   reset_front_door_motion_count:
     sequence:
