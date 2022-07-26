@@ -89,15 +89,11 @@ input_boolean:
   fire_alarm:
     name: Fire Alarm
     icon: mdi:speaker-wireless
-  # This switch turns on of the security system checks that fire when someone tries to arm the system
+  # This switch turns on if the security system checks that fire when someone tries to arm the system
   # finds a door open, or another condition that would prevent the system from being able to monitor properly.
   lockdown_issue:
     name: Lockdown Issue
     icon: mdi:lock-reset
-  # This switch is turned on if there is a security breach. Turning on this switch starts the countdown to the alarm.
-  # security_issue:
-  #   name: Security Issue
-  #   icon: mdi:alert-circle-outline
   # This switch is for whether or not unlocking the front door with a code should disarm the alarm
   alarm_disarm_on_unlock:
     name: Alarm Disarm On Unlock
@@ -109,6 +105,10 @@ input_boolean:
     icon: mdi:shield-search
 
 input_datetime:
+  morning_standby:
+    name: Morning Standby
+    has_date: false
+    has_time: true
   nightly_lockdown:
     name: Nightly Lockdown
     has_date: false
@@ -266,7 +266,7 @@ automation:
     initial_state: true
     trigger:
       - platform: time
-        at: 09:00:00
+        at: input_datetime.morning_standby
     condition:
       condition: or
       conditions:
@@ -648,6 +648,12 @@ automation:
         to: armed_away
       - platform: state
         entity_id: alarm_control_panel.sentry_network
+        to: armed_away
+        for:
+          minutes: 10
+        id: armed_10_mins
+      - platform: state
+        entity_id: alarm_control_panel.sentry_network
         to: armed_night
       - platform: state
         entity_id: alarm_control_panel.sentry_network
@@ -729,6 +735,32 @@ automation:
                 data:
                   ios: true
                   message: "Alarm has been armed in vacation mode at {{ states('sensor.time_date') }}. Enjoy your trip!"
+          # If armed away for 10 minutes, check if anyone's still home and set armed_home
+          - alias: Armed Away 10 Mins Check For Presence
+            conditions:
+              - condition: trigger
+                id: "armed_10_mins"
+            sequence:
+              - if:
+                  - condition: state
+                    entity_id: group.people
+                    state: "home"
+                then:
+                  - service: script.turn_on
+                    entity_id: script.arm_stay
+                  - service: script.alarm_alert_engine
+                    data:
+                      vocal: true
+                      who: presence
+                      voice_message: >
+                        {{ [
+                            "Well I see you're not going anywhere. I'll just monitor the house in stay mode.",
+                            "Oh, you're still here? Let me just cancel that party real quick.",
+                            "Still home, I see. Shocker. Well I guess I'll just adjust the sentry mode.",
+                            "I see you got very far. I'll just set the sentry mode to stay."
+                            ] | random }}
+                      ios: true
+                      message: "The alarm has been in away mode for 10 minutes but there's still people here. I'm arming in stay mode."
         default:
           # If not in a state already specified (so pretty much only armed_away), just alert with the state
           - service: script.alarm_alert_engine
@@ -916,20 +948,21 @@ script:
   # Called when security is to be disarmed, clears any alarms or issues as well
   standby:
     sequence:
+      # Disarm the alarm
+      - service: script.turn_on
+        entity_id: script.disarm_security
+      # End any vacation
       - service: script.turn_on
         entity_id: script.vacation_canceled
+      # Turn off the security alarm
       - service: script.turn_on
         entity_id: script.cancel_security_alarm
+      # Clear any issues
       - service: script.turn_on
         entity_id: script.cancel_lockdown_issue
-      - service: script.turn_on
-        entity_id: script.clear_security_issue
+      # Activate indoor motion lights
       - service: input_boolean.turn_on
         entity_id: input_boolean.motion_lights_master
-      - service: alarm_control_panel.alarm_disarm
-        data:
-          entity_id: alarm_control_panel.sentry_network
-          code: !secret alarm_code
 
   # If vacation mode is on, turn it off
   vacation_canceled:
@@ -941,14 +974,28 @@ script:
           entity_id: input_boolean.vacation_mode
         service: input_boolean.turn_off
 
+  # Arm home or night depending on time of day
+  arm_stay:
+    sequence:
+      - if:
+          # If overnight
+          - condition: time
+            after: input_datetime.nightly_lockdown
+            before: input_datetime.morning_standby
+        then:
+          - service: alarm_control_panel.alarm_arm_night
+            entity_id: alarm_control_panel.sentry_network
+        else:
+          - service: alarm_control_panel.alarm_arm_home
+            entity_id: alarm_control_panel.sentry_network
+
   # If security is armed, disarm it
-  # disarm_security:
-  #   sequence:
-  #     - condition: state
-  #       entity_id: input_boolean.sentry_mode
-  #       state: "on"
-  #     - service: input_boolean.turn_off
-  #       entity_id: input_boolean.sentry_mode
+  disarm_security:
+    sequence:
+      - service: alarm_control_panel.alarm_disarm
+        data:
+          entity_id: alarm_control_panel.sentry_network
+          code: !secret alarm_code
 
   # If alarm is on, turn it off
   cancel_security_alarm:
@@ -959,13 +1006,13 @@ script:
       - service: input_boolean.turn_off
         entity_id: input_boolean.security_alarm
 
-  clear_security_issue:
-    sequence:
-      - condition: state
-        entity_id: input_boolean.security_issue
-        state: "on"
-      - service: input_boolean.turn_off
-        entity_id: input_boolean.security_issue
+  # clear_security_issue:
+  #   sequence:
+  #     - condition: state
+  #       entity_id: input_boolean.security_issue
+  #       state: "on"
+  #     - service: input_boolean.turn_off
+  #       entity_id: input_boolean.security_issue
 
   # if there are lockdown issues, turn them off
   cancel_lockdown_issue:
@@ -1012,28 +1059,49 @@ script:
           payload_template: "{{ states('sensor.front_door_motion_away_count') | int + 1 }}"
           retain: true
 
+  goodbye:
+    alias: Goodbye
+    sequence:
+      - if: []
+        then: []
+      - service: scene.turn_on
+        target:
+          entity_id: scene.all_off
+        metadata: {}
+      - service: script.status_annc
+        data:
+          who: kitchen
+          call_goodbye: 1
+    mode: single
+    icon: mdi:exit-run
+
   # Called via Alexa routine...adds a little interaction
   activate_barn_door_protocol:
     sequence:
       - choose:
           - conditions:
-              - condition: state
-                entity_id: input_boolean.sentry_mode
-                state: "on"
+              - condition: or
+                conditions:
+                  - condition: state
+                    entity_id: alarm_control_panel.sentry_network
+                    state: armed_home
+                  - condition: state
+                    entity_id: alarm_control_panel.sentry_network
+                    state: armed_night
             sequence:
               - service: script.speech_engine
                 data:
-                  who: "{{ states('sensor.room_audio') }}"
+                  who: presence
                   message: !include ../templates/speech/already_done.yaml
         default:
           - service: script.speech_engine
             data:
-              who: "{{ states('sensor.room_audio') }}"
+              who: presence
               message: !include ../templates/speech/interjections.yaml
           - delay:
               seconds: 2
-          - service: alarm_control_panel.alarm_arm_home
-            entity_id: alarm_control_panel.sentry_network
+          - service: script.turn_on
+            entity_id: script.arm_stay
 
   # Called via secret Alexa routine...adds a little interaction
   deactivate_barn_door_protocol:
@@ -1041,24 +1109,16 @@ script:
       - choose:
           - conditions:
               - condition: state
-                entity_id: input_boolean.sentry_mode
-                state: "off"
+                entity_id: alarm_control_panel.sentry_network
+                state: disarmed
             sequence:
               - service: script.speech_engine
                 data:
                   who: "{{ states('sensor.room_audio') }}"
                   message: !include ../templates/speech/already_done.yaml
         default:
-          - service: script.speech_engine
-            data:
-              who: "{{ states('sensor.room_audio') }}"
-              message: !include ../templates/speech/interjections.yaml
-          - delay:
-              seconds: 2
-          - service: alarm_control_panel.alarm_disarm
-            data:
-              code: !secret alarm_code
-              entity_id: alarm_control_panel.sentry_network
+          - service: script.turn_on
+            entity_id: script.disarm_security
 
   were_home:
     sequence:
