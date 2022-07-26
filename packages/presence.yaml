@@ -374,7 +374,7 @@ automation:
         from: "not_home"
         to: "home"
     action:
-      - service: script.standby
+      # - service: script.standby
       - service: script.family_is_home
       - service: script.visitors_here
     initial_state: true
