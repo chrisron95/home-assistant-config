@@ -25,6 +25,30 @@ binary_sensor:
             '11-24',
             '12-26'] %}
           {{ now().isoweekday() in [6, 7] or (now().date()|string)[-5:] in holidays }}
+  - platform: tod
+    name: Morning
+    after: "06:00"
+    before: "11:30"
+  - platform: tod
+    name: Noon
+    after: "11:30"
+    before: "13:00"
+  - platform: tod
+    name: Afternoon
+    after: "13:00"
+    before: "20:00"
+  - platform: tod
+    name: Evening
+    after: "20:00"
+    before: "23:00"
+  - platform: tod
+    name: Night
+    after: "23:00"
+    before: "06:00"
+  - platform: tod
+    name: Early Morning
+    after: "04:00"
+    before: "09:00"
 
 input_boolean:
   wakeup_alarm:
