@@ -411,16 +411,3 @@ time_for_bed:
       call_goodnight: 1
   mode: single
   icon: mdi:bed-empty
-goodbye:
-  alias: Goodbye
-  sequence:
-  - service: scene.turn_on
-    target:
-      entity_id: scene.all_off
-    metadata: {}
-  - service: script.status_annc
-    data:
-      who: kitchen
-      call_goodbye: 1
-  mode: single
-  icon: mdi:exit-run
