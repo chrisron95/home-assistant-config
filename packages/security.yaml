@@ -1071,15 +1071,17 @@ script:
             target:
               entity_id: scene.downstairs_all_off
             metadata: {}
+          - service: script.status_annc
+            data:
+              who: kitchen
+              call_goodbye: 1
         else:
           - service: scene.turn_on
             target:
               entity_id: scene.all_off
             metadata: {}
-      - service: script.status_annc
-        data:
-          who: kitchen
-          call_goodbye: 1
+          - service: alarm_control_panel.alarm_arm_away
+            entity_id: alarm_control_panel.sentry_network
     mode: single
     icon: mdi:exit-run
 
