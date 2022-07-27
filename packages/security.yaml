@@ -63,6 +63,16 @@ group:
       - binary_sensor.garage_door
       - binary_sensor.patio_screen_door
       - group.windows
+  alarm_bypasses:
+    name: Alarm Bypasses
+    entities:
+      - input_boolean.alarm_bypass_front_door
+      - input_boolean.alarm_bypass_sliding_glass_door
+      - input_boolean.alarm_bypass_screen_door
+      - input_boolean.alarm_bypass_garage_door
+      - input_boolean.alarm_bypass_kitchen_window
+      - input_boolean.alarm_bypass_bedroom_windows
+      - input_boolean.alarm_bypass_lab_window
 
 input_boolean:
   # Main security switch. If this is on, the security is armed.
@@ -103,6 +113,29 @@ input_boolean:
   alarm_alert_on_all_activity:
     name: Alarm Alert On All Activity
     icon: mdi:shield-search
+
+  #### Alarm Bypasses ####
+  alarm_bypass_front_door:
+    name: Alarm Bypass Front Door
+    icon: mdi:shield-lock-open
+  alarm_bypass_sliding_glass_door:
+    name: Alarm Bypass Sliding Glass Door
+    icon: mdi:shield-lock-open
+  alarm_bypass_screen_door:
+    name: Alarm Bypass Screen Door
+    icon: mdi:shield-lock-open
+  alarm_bypass_garage_door:
+    name: Alarm Bypass Garage Door
+    icon: mdi:shield-lock-open
+  alarm_bypass_kitchen_window:
+    name: Alarm Bypass Kitchen Window
+    icon: mdi:shield-lock-open
+  alarm_bypass_bedroom_windows:
+    name: Alarm Bypass Bedroom Windows
+    icon: mdi:shield-lock-open
+  alarm_bypass_lab_window:
+    name: Alarm Bypass Lab Window
+    icon: mdi:shield-lock-open
 
 input_datetime:
   morning_standby:
@@ -148,6 +181,36 @@ template:
       - name: Exiting Front Door
         state: >
           {{ true if trigger.to_state.state == "unlocked" and states("binary_sensor.front_hall_motion_sensor") == "on" else false }}
+  - sensor:
+      - name: Alarm Triggers
+        state: >
+          {%- set open_entities = expand('group.alarm_exit_triggers') | selectattr('state','eq','on') | map(attribute='name') | list -%}
+          {%- set bypasses = expand('group.alarm_bypasses') | selectattr('state','eq','on') | map(attribute='name') | list -%}
+          {%- set active = namespace(triggers=[]) -%}
+          {%- for item in open_entities -%}
+            {%- set search = bypasses | select("search", (item | replace("binary_sensor.", ""))) | list -%}
+            {%- set active.triggers = active.triggers + [item] if search | count == 0 else active.triggers -%}
+          {%- endfor -%}
+          {%- set count = active.triggers | count -%}
+          {%- if count > 1 -%}
+            {{- active.triggers[0:count - 1] | join(", ") -}}
+            {{- (' and ' ~ active.triggers[count - 1]) }} are open
+          {%- elif count > 0 -%}
+            {{- active.triggers[0] }} is open
+          {%- else -%}
+            Ready
+          {%- endif -%}
+        attributes:
+          active_triggers: >
+            {%- set open_entities = expand('group.alarm_exit_triggers') | selectattr('state','eq','on') | map(attribute='name') | list -%}
+            {%- set bypasses = expand('group.alarm_bypasses') | selectattr('state','eq','on') | map(attribute='name') | list -%}
+            {%- set active = namespace(triggers=[]) -%}
+            {%- for item in open_entities -%}
+              {%- set search = bypasses | select("search", (item | replace("binary_sensor.", ""))) | list -%}
+              {%- set active.triggers = active.triggers + [item] if search | count == 0 else active.triggers -%}
+            {%- endfor -%}
+            {{ active.triggers }}
+          open_count: "{{ state_attr('sensor.alarm_triggers', 'active_triggers') | count }}"
 
 automation:
   #############################################
@@ -484,11 +547,44 @@ automation:
             entity_id: alarm_control_panel.sentry_network
             state: armed_vacation
     action:
-      - if:
-          - condition: template
-            value_template: "{{ states('alarm_control_panel.sentry_network') in ['armed_home', 'armed_night'] and trigger.to_state.entity_id == 'binary_sensor.front_door' and states('binary_sensor.exiting_front_door') == 'on' }}"
-        then: []
-        else:
+      - choose:
+          # Exiting front door when armed in a stay mode
+          - conditions:
+              - condition: template
+                value_template: "{{ states('alarm_control_panel.sentry_network') in ['armed_home', 'armed_night'] and trigger.to_state.entity_id == 'binary_sensor.front_door' and states('binary_sensor.exiting_front_door') == 'on' }}"
+            sequence: []
+          #### Bypass checks ####
+          # Front Door
+          - conditions:
+              - condition: template
+                value_template: "{{ trigger.to_state.entity_id == 'binary_sensor.front_door' and is_state('input_boolean.alarm_bypass_front_door', 'on') }}"
+            sequence: []
+          # Sliding Glass Door
+          - conditions:
+              - condition: template
+                value_template: "{{ trigger.to_state.entity_id == 'binary_sensor.sliding_glass_door' and is_state('input_boolean.alarm_bypass_sliding_glass_door', 'on') }}"
+            sequence: []
+          # Garage Door
+          - conditions:
+              - condition: template
+                value_template: "{{ trigger.to_state.entity_id == 'binary_sensor.garage_door' and is_state('input_boolean.alarm_bypass_garage_door', 'on') }}"
+            sequence: []
+          # Kitchen Window
+          - conditions:
+              - condition: template
+                value_template: "{{ trigger.to_state.entity_id == 'binary_sensor.kitchen_window' and is_state('input_boolean.alarm_bypass_kitchen_window', 'on') }}"
+            sequence: []
+          # Bedroom Windows
+          - conditions:
+              - condition: template
+                value_template: "{{ trigger.to_state.entity_id == 'binary_sensor.bedroom_windows' and is_state('input_boolean.alarm_bypass_bedroom_windows', 'on') }}"
+            sequence: []
+          # Lab Windows
+          - conditions:
+              - condition: template
+                value_template: "{{ trigger.to_state.entity_id == 'binary_sensor.lab_windows' and is_state('input_boolean.alarm_bypass_lab_window', 'on') }}"
+            sequence: []
+        default:
           - service: alarm_control_panel.alarm_trigger
             entity_id: alarm_control_panel.sentry_network
 
@@ -579,16 +675,8 @@ automation:
         to: arming
     action:
       - variables:
-          open_entities: >
-            {%- set open_arr = expand('group.alarm_exit_triggers') | selectattr('state','eq','on') | map(attribute='name') | list -%}
-            {%- set count = open_arr | count -%}
-            {%- if count > 1 -%}
-              {{- open_arr[0:count - 1] | join(", ") -}}
-              {{- (' and ' ~ open_arr[count - 1]) -}}
-            {%- elif count > 0 -%}
-              {{- open_arr[0] -}}
-            {%- endif -%}
-          open_count: "{{ expand('group.alarm_exit_triggers') | selectattr('state','eq','on') | map(attribute='name') | list | count }}"
+          open_entities: "{{ states('sensor.alarm_triggers') }}"
+          open_count: "{{ state_attr('sensor.alarm_triggers', 'open_count') }}"
           is_are: "{{ ' are ' if open_count | int > 1 or open_entities[-1] == 's' else ' is ' }}"
           it_them: "{{ ' them ' if open_count | int > 1 or open_entities[-1] == 's' else ' it ' }}"
       - if:
