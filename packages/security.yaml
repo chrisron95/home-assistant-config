@@ -1,11 +1,10 @@
 ###############################################################################
-#   @author         :   Jeffrey Stone
-#   @date           :   03/13/2019
+#   @author         :   Chris Heder (@chrisron95)
+#   @date           :   7/26/2022
 #   @package        :   Security
 #   @description    :   Everything related to security functions.
 #
-#   @modified by    :   Chris Heder (@chrisron95)
-#   @date           :   05/12/2022
+#   @special thanks :   Jeffrey Stone
 ###############################################################################
 
 alarm_control_panel:
