@@ -109,7 +109,10 @@ downstairs_chill:
         entity_id: input_select.front_yard_light_mode
         state: Normal
       sequence:
-      - scene: scene.downstairs_chill_halloween
+      - service: scene.turn_on
+        target:
+          entity_id: scene.downstairs_chill_normal
+        metadata: {}
     - conditions:
       - condition: state
         entity_id: input_select.front_yard_light_mode
@@ -128,6 +131,7 @@ downstairs_chill:
     target:
       entity_id: input_boolean.downstairs_chill
   mode: single
+  icon: mdi:emoticon-cool
 goodnight:
   alias: Goodnight
   sequence:
@@ -357,19 +361,18 @@ play_alert_sound:
     data:
       message: <audio src='https://heder-homeassistant.s3.amazonaws.com/{{ states('input_select.alexa_alert_sound')
         }}.mp3'/> {{ states('input_text.alexa_alert_message') }}
-      target: "{%- if states('input_select.alexa_devices') == \"Living Room Echo\"\
-        \ -%}\n  media_player.living_room_echo\n{%- elif states('input_select.alexa_devices')\
-        \ == \"Kitchen Echo Dot\" -%}\n  media_player.kitchen_echo_dot\n{%- elif states('input_select.alexa_devices')\
-        \ == \"Bedroom Echo Show\" -%}\n  media_player.chris_s_echo_show\n{%- elif\
-        \ states('input_select.alexa_devices') == \"Lab Echo Dot\" -%}\n  media_player.lab_echo_dot\n\
-        {%- elif states('input_select.alexa_devices') == \"Garage Echo Flex\" -%}\n\
-        \  media_player.chris_s_echo_flex\n{%- elif states('input_select.alexa_devices')\
-        \ == \"Everywhere\" -%}\n  [\"media_player.living_room_echo\", \"media_player.kitchen_echo_dot\"\
-        , \"media_player.chris_s_echo_show\", \"media_player.lab_echo_dot\"]\n{%-\
-        \ elif states('input_select.alexa_devices') == \"Downstairs\" -%}\n  [\"media_player.living_room_echo\"\
-        , \"media_player.kitchen_echo_dot\"\n{%- elif states('input_select.alexa_devices')\
-        \ == \"Upstairs\" -%}\n  [\"media_player.chris_s_echo_show\", \"media_player.lab_echo_dot\"\
-        \n{% endif %}\n"
+      target: "{%- if states('input_select.alexa_devices') == \"Living Room Echo\"
+        -%}\n  media_player.living_room_echo\n{%- elif states('input_select.alexa_devices')
+        == \"Kitchen Echo Dot\" -%}\n  media_player.kitchen_echo_dot\n{%- elif states('input_select.alexa_devices')
+        == \"Bedroom Echo Show\" -%}\n  media_player.chris_s_echo_show\n{%- elif states('input_select.alexa_devices')
+        == \"Lab Echo Dot\" -%}\n  media_player.lab_echo_dot\n{%- elif states('input_select.alexa_devices')
+        == \"Garage Echo Flex\" -%}\n  media_player.chris_s_echo_flex\n{%- elif states('input_select.alexa_devices')
+        == \"Everywhere\" -%}\n  [\"media_player.living_room_echo\", \"media_player.kitchen_echo_dot\",
+        \"media_player.chris_s_echo_show\", \"media_player.lab_echo_dot\"]\n{%- elif
+        states('input_select.alexa_devices') == \"Downstairs\" -%}\n  [\"media_player.living_room_echo\",
+        \"media_player.kitchen_echo_dot\"\n{%- elif states('input_select.alexa_devices')
+        == \"Upstairs\" -%}\n  [\"media_player.chris_s_echo_show\", \"media_player.lab_echo_dot\"\n{%
+        endif %}\n"
       data:
         type: tts
   mode: single
@@ -386,15 +389,14 @@ play_alert_sound:
         ''s'' if int(time_left[0]) != 1 }},  {% endif %} {{ int(time_left[1]) }} minute{{
         ''s'' if int(time_left[1]) != 1 }}, and {{ int(time_left[2]) }} second{{ ''s''
         if float(time_left[2]) != 1 }} left'
-      target: "{%- if state_attr('media_player.living_room_echo', 'last_called') ==\
-        \ true -%}\n  media_player.living_room_echo\n{%- elif state_attr('media_player.kitchen_echo_dot',\
-        \ 'last_called') == true -%}\n  media_player.kitchen_echo_dot\n{%- elif state_attr('media_player.chris_s_echo_show',\
-        \ 'last_called') == true -%}\n  media_player.chris_s_echo_show\n{%- elif state_attr('media_player.lab_echo_dot',\
-        \ 'last_called') == true -%}\n  media_player.lab_echo_dot\n{%- elif state_attr('media_player.chris_s_echo_flex',\
-        \ 'last_called') == true -%}\n  media_player.chris_s_echo_flex\n{%- else -%}\n\
-        \  [\"media_player.living_room_echo\", \"media_player.kitchen_echo_dot\",\
-        \ \"media_player.chris_s_echo_show\", \"media_player.lab_echo_dot\"]\n{% endif\
-        \ %}\n"
+      target: "{%- if state_attr('media_player.living_room_echo', 'last_called') ==
+        true -%}\n  media_player.living_room_echo\n{%- elif state_attr('media_player.kitchen_echo_dot',
+        'last_called') == true -%}\n  media_player.kitchen_echo_dot\n{%- elif state_attr('media_player.chris_s_echo_show',
+        'last_called') == true -%}\n  media_player.chris_s_echo_show\n{%- elif state_attr('media_player.lab_echo_dot',
+        'last_called') == true -%}\n  media_player.lab_echo_dot\n{%- elif state_attr('media_player.chris_s_echo_flex',
+        'last_called') == true -%}\n  media_player.chris_s_echo_flex\n{%- else -%}\n
+        \ [\"media_player.living_room_echo\", \"media_player.kitchen_echo_dot\", \"media_player.chris_s_echo_show\",
+        \"media_player.lab_echo_dot\"]\n{% endif %}\n"
       data:
         type: tts
   mode: single
