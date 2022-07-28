@@ -823,6 +823,36 @@ automation:
               - condition: template
                 value_template: "{{ trigger.to_state.state == 'pending' }}"
             sequence:
+              - service: scene.create
+                data:
+                  scene_id: alarm_before
+                  snapshot_entities:
+                    - light.front_hall_light
+                    - light.kitchen_light
+                    - light.kitchen_leds
+                    - light.fish_tank_leds
+                    - light.couch_leds
+                    - select.couch_leds_playlist_2
+                    - select.couch_leds_preset_2
+                    - light.curtain_leds
+                    - light.living_room_tv_backlights
+                    - select.living_room_tv_backlights_playlist
+                    - select.living_room_tv_backlights_preset
+                    - light.fish_tank_backlights
+                    - select.fish_tank_backlights_playlist_2
+                    - select.fish_tank_backlights_preset_2
+                    - light.dining_room_light
+                    - light.francis_s_light
+                    - light.patio_light
+                    - light.patio_string_lights
+                    - light.hallway_light
+                    - light.bedroom_fan_lights
+                    - light.hue_color_lamp_1
+                    - light.lab_fan_light
+                    - light.living_room_fan_light
+                    - light.western_electric_cabinet_lights
+                    - group.floods
+                    - light.patio_ring_light
               - service: scene.turn_on
                 entity_id: scene.alarm_pending
           # When alarm has been TRIGGERED, activate 'alarm_triggered' scene
@@ -837,6 +867,8 @@ automation:
               - condition: template
                 value_template: "{{ trigger.to_state.state == 'disarmed' and trigger.from_state.state in ['triggered','pending','arming'] }}"
             sequence:
+              - service: scene.turn_on
+                entity_id: scene.alarm_before
               - service: scene.turn_on
                 entity_id: scene.arrival
 
