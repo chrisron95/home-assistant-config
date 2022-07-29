@@ -968,6 +968,7 @@ automation:
           message: "{%- if 'motion' in trigger.to_state.entity_id -%}{{ trigger.to_state.name }} detected motion{%- else -%}{{ trigger.to_state.name }} was opened{%- endif -%} at {{ states('sensor.time_date') }}"
 
   - alias: Alexa Barn Door Protocol
+    id: alexa_barn_door_protocol
     trigger:
       - platform: state
         entity_id: input_button.activate_barn_door_protocol
