@@ -967,58 +967,65 @@ automation:
           ios: true
           message: "{%- if 'motion' in trigger.to_state.entity_id -%}{{ trigger.to_state.name }} detected motion{%- else -%}{{ trigger.to_state.name }} was opened{%- endif -%} at {{ states('sensor.time_date') }}"
 
-  - alias: Activate Barn Door Protocol
+  - alias: Alexa Barn Door Protocol
     trigger:
       - platform: state
         entity_id: input_button.activate_barn_door_protocol
-    action:
-      - choose:
-          - conditions:
-              - condition: or
-                conditions:
-                  - condition: state
-                    entity_id: alarm_control_panel.sentry_network
-                    state: armed_home
-                  - condition: state
-                    entity_id: alarm_control_panel.sentry_network
-                    state: armed_night
-            sequence:
-              - service: script.speech_engine
-                data:
-                  who: presence
-                  message: !include ../templates/speech/already_done.yaml
-        default:
-          - service: script.speech_engine
-            data:
-              who: presence
-              message: !include ../templates/speech/interjections.yaml
-          - delay:
-              seconds: 2
-          - service: script.turn_on
-            entity_id: script.arm_stay
-
-  - alias: Dectivate Barn Door Protocol
-    trigger:
+        id: activate
       - platform: state
         entity_id: input_button.deactivate_barn_door_protocol
-    condition:
-      - condition: state
-        entity_id: input_boolean.alarm_disarm_by_alexa
-        state: "on"
+        id: deactivate
     action:
       - choose:
           - conditions:
-              - condition: state
-                entity_id: alarm_control_panel.sentry_network
-                state: disarmed
+              - condition: trigger
+                id: activate
             sequence:
-              - service: script.speech_engine
-                data:
-                  who: "{{ states('sensor.room_audio') }}"
-                  message: !include ../templates/speech/already_done.yaml
-        default:
-          - service: script.turn_on
-            entity_id: script.disarm_security
+              - choose:
+                  - conditions:
+                      - condition: or
+                        conditions:
+                          - condition: state
+                            entity_id: alarm_control_panel.sentry_network
+                            state: armed_home
+                          - condition: state
+                            entity_id: alarm_control_panel.sentry_network
+                            state: armed_night
+                    sequence:
+                      - service: script.speech_engine
+                        data:
+                          who: presence
+                          message: !include ../templates/speech/already_done.yaml
+                default:
+                  - service: script.speech_engine
+                    data:
+                      who: presence
+                      message: !include ../templates/speech/interjections.yaml
+                  - delay:
+                      seconds: 2
+                  - service: script.turn_on
+                    entity_id: script.arm_stay
+          - conditions:
+              - condition: trigger
+                id: deactivate
+              - condition: state
+                entity_id: input_boolean.alarm_disarm_by_alexa
+                state: "on"
+            sequence:
+              - choose:
+                  - conditions:
+                      - condition: state
+                        entity_id: alarm_control_panel.sentry_network
+                        state: disarmed
+                    sequence:
+                      - service: script.speech_engine
+                        data:
+                          who: "{{ states('sensor.room_audio') }}"
+                          message: !include ../templates/speech/already_done.yaml
+                default:
+                  - service: script.turn_on
+                    entity_id: script.disarm_security
+        default: []
 
 script:
   # Called when security is to be disarmed, clears any alarms or issues as well
