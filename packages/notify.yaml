@@ -985,9 +985,7 @@ script:
           - condition: template
             value_template: "{{ ios }}"
         then:
-          # - service: "{{'script.text_urgent_alert' if critical else 'script.alarm_text_actionable_alert'}}"
           - service: "{% if critical %}script.text_urgent_alert{% elif actionable %}script.alarm_text_actionable_alert{% else %}script.text_alert{% endif %}"
             data:
-              who: chris
               title: Sentry Network
               message: "{{ message }}"
