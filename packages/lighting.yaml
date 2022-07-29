@@ -18,26 +18,37 @@ input_number:
 input_boolean:
   motion_lights_master:
     name: Motion Lights Master Control
+    icon: mdi:motion-sensor
   kitchen_motion_lights:
     name: Kitchen Motion Lights
+    icon: mdi:motion-sensor
   dining_room_motion_lights:
     name: Dining Room Motion Lights
+    icon: mdi:motion-sensor
   living_room_motion_lights:
     name: Living Room Motion Lights
+    icon: mdi:motion-sensor
   bedroom_motion_lights:
     name: Bedroom Motion Lights
+    icon: mdi:motion-sensor
   lab_motion_lights:
     name: Lab Motion Lights
+    icon: mdi:motion-sensor
   hallway_smart_lights:
     name: Hallway Smart Lights
+    icon: mdi:motion-sensor
   front_hall_smart_lights:
     name: Front Hall Smart Lights
+    icon: mdi:motion-sensor
   patio_motion_lights:
     name: Patio Motion Lights
+    icon: mdi:motion-sensor
   front_yard_motion_lights:
     name: Front Yard Motion Lights
+    icon: mdi:motion-sensor
   garage_motion_lights:
     name: Garage Motion Lights
+    icon: mdi:motion-sensor
   garage_motion:
     name: Garage Motion
 
