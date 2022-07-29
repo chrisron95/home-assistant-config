@@ -2,14 +2,18 @@ alexa:
   filter:
     include_domains:
       - fan
-      - lock
     include_entities:
+      # Lock
+      - lock.touchscreen_deadbolt_z_wave_plus_frontdoor
       # Lights
       - light.bathroom_light
       - light.bedroom_fan_lights
       # - light.christmas_tree
+      - light.couch_leds
+      - light.curtain_leds
       - light.dining_room_light
       # - light.fiber_optic_decoration
+      - light.fish_tank_backlights
       - light.fish_tank_leds
       - light.francis_s_light
       - light.front_hall_light
@@ -19,7 +23,7 @@ alexa:
       - light.kitchen_light
       - light.lab_fan_light
       - light.living_room_fan_light
-      - light.living_room_leds
+      - light.living_room_tv_backlights
       - light.patio_light
       - light.patio_string_lights
       # - light.village
@@ -76,6 +80,8 @@ alexa:
       - input_button.alexa_snack_for_blaze
       - input_button.alexa_what_to_eat
       - input_button.alexa_introduce_yourself
+      - input_button.activate_barn_door_protocol
+      - input_button.deactivate_barn_door_protocol
   entity_config:
     input_boolean.iphone_wake_up_alarm_activated:
       name: "iPhone Wake Up Alarm Activated"
