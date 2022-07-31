@@ -46,3 +46,5 @@ plex:
   token: !secret plex_token
   media_player:
     use_episode_art: true
+
+python_script:
