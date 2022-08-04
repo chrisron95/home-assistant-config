@@ -2,6 +2,10 @@
 
 Might as well start a changelog for everything I'm doing in here. Starting at v1 where I'm at now.
 
+## v1.1.1 - 2022/08/04
+### Added
+- Added `gas.yaml` with sensors to track gas prices near me using the [Scrape integration](https://www.home-assistant.io/integrations/scrape/) and [GasBuddy](https://www.gasbuddy.com)
+
 ## v1.1.0 - 2022/07/28
 ### Added
 - Added [Manual Alarm Control Panel integration](https://www.home-assistant.io/integrations/manual) as my Sentry Network

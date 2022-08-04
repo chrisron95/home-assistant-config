@@ -1,0 +1,50 @@
+###############################################################################
+#   @author         :   Chris Heder
+#   @date           :   08/04/2022
+#   @package        :   Gas
+#   @description    :   Sensors that tell me the current price of gas near me.
+#                       Inspiration: https://community.home-assistant.io/t/gas-pricing-plus-oil/286286
+#                       Uses Scrape integration: https://www.home-assistant.io/integrations/scrape/
+#                       And GasBuddy: https://www.gasbuddy.com
+###############################################################################
+
+homeassistant:
+  customize:
+    sensor.bj_s_coral_springs:
+      icon: mdi:gas-station
+    sensor.bj_s_fort_lauderdale:
+      icon: mdi:gas-station
+    sensor.shell_sunrise:
+      icon: mdi:gas-station
+    sensor.wawa_sunrise:
+      icon: mdi:gas-station
+    sensor.racetrac_mcnab:
+      icon: mdi:gas-station
+    sensor.7_11_by_dad:
+      icon: mdi:gas-station
+
+sensor:
+  - platform: scrape
+    name: BJ's Coral Springs
+    resource: https://www.gasbuddy.com/station/172838
+    select: "#root > div > div > div.Page-module__content___196kn.Page-module__padded___3hQ0U > div > div > div:nth-child(2) > div.grid__column___nhz7X.grid__desktop10___2T18R > div:nth-child(1) > div.grid__column___nhz7X.grid__desktop8___38Y4U > div.panel__panel___3Q2zW.panel__white___19KTz.colors__bgWhite___1stjL.panel__bordered___1Xe-S.panel__rounded___2etNE.GasPriceCollection-module__collectionContainer___29Ngz > div:nth-child(2) > div:nth-child(1) > span"
+  - platform: scrape
+    name: BJ's Fort Lauderdale
+    resource: https://www.gasbuddy.com/station/120114
+    select: "#root > div > div > div.Page-module__content___196kn.Page-module__padded___3hQ0U > div > div > div:nth-child(2) > div.grid__column___nhz7X.grid__desktop10___2T18R > div:nth-child(1) > div.grid__column___nhz7X.grid__desktop8___38Y4U > div.panel__panel___3Q2zW.panel__white___19KTz.colors__bgWhite___1stjL.panel__bordered___1Xe-S.panel__rounded___2etNE.GasPriceCollection-module__collectionContainer___29Ngz > div:nth-child(2) > div:nth-child(1) > span"
+  - platform: scrape
+    name: Shell Sunrise
+    resource: https://www.gasbuddy.com/station/25528
+    select: "#root > div > div > div.Page-module__content___196kn.Page-module__padded___3hQ0U > div > div > div:nth-child(2) > div.grid__column___nhz7X.grid__desktop10___2T18R > div:nth-child(1) > div.grid__column___nhz7X.grid__desktop8___38Y4U > div.panel__panel___3Q2zW.panel__white___19KTz.colors__bgWhite___1stjL.panel__bordered___1Xe-S.panel__rounded___2etNE.GasPriceCollection-module__collectionContainer___29Ngz > div:nth-child(2) > div:nth-child(1) > span"
+  - platform: scrape
+    name: Wawa Sunrise
+    resource: https://www.gasbuddy.com/station/196288
+    select: "#root > div > div > div.Page-module__content___196kn.Page-module__padded___3hQ0U > div > div > div:nth-child(2) > div.grid__column___nhz7X.grid__desktop10___2T18R > div:nth-child(1) > div.grid__column___nhz7X.grid__desktop8___38Y4U > div.panel__panel___3Q2zW.panel__white___19KTz.colors__bgWhite___1stjL.panel__bordered___1Xe-S.panel__rounded___2etNE.GasPriceCollection-module__collectionContainer___29Ngz > div:nth-child(2) > div:nth-child(1) > span"
+  - platform: scrape
+    name: RaceTrac McNab
+    resource: https://www.gasbuddy.com/station/46042
+    select: "#root > div > div > div.Page-module__content___196kn.Page-module__padded___3hQ0U > div > div > div:nth-child(2) > div.grid__column___nhz7X.grid__desktop10___2T18R > div:nth-child(1) > div.grid__column___nhz7X.grid__desktop8___38Y4U > div.panel__panel___3Q2zW.panel__white___19KTz.colors__bgWhite___1stjL.panel__bordered___1Xe-S.panel__rounded___2etNE.GasPriceCollection-module__collectionContainer___29Ngz > div:nth-child(2) > div:nth-child(1) > span"
+  - platform: scrape
+    name: 7/11 By Dad
+    resource: https://www.gasbuddy.com/station/148917
+    select: "#root > div > div > div.Page-module__content___196kn.Page-module__padded___3hQ0U > div > div > div:nth-child(2) > div.grid__column___nhz7X.grid__desktop10___2T18R > div:nth-child(1) > div.grid__column___nhz7X.grid__desktop8___38Y4U > div.panel__panel___3Q2zW.panel__white___19KTz.colors__bgWhite___1stjL.panel__bordered___1Xe-S.panel__rounded___2etNE.GasPriceCollection-module__collectionContainer___29Ngz > div:nth-child(2) > div:nth-child(1) > span"
