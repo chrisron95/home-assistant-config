@@ -149,24 +149,24 @@ notify:
     services:
       - service: mobile_app_chriss_iphone
       - service: mobile_app_chriss_ipad
-      - service: mobile_app_stevens_iphone
+      - service: mobile_app_stevens_iphone_12
       - service: living_room_tv
       - service: lab_tv
   - name: chris
     platform: group
     services:
-      - service: mobile_app_chriss_iphone
+      - service: mobile_app_chriss_iphone_12_pro
       - service: mobile_app_chriss_ipad
   - name: steven
     platform: group
     services:
-      - service: mobile_app_stevens_iphone
+      - service: mobile_app_stevens_iphone_12
   - name: all_ios
     platform: group
     services:
       - service: mobile_app_chriss_iphone
       - service: mobile_app_chriss_ipad
-      - service: mobile_app_stevens_iphone
+      - service: mobile_app_stevens_iphone_12
   - name: tvs
     platform: group
     services:
