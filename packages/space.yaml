@@ -21,9 +21,6 @@ homeassistant:
       icon: mdi:rocket
       friendly_name: Rocket Launch Window
 
-sensor:
-  - platform: moon
-
 automation:
   - id: iss_alert
     alias: ISS Alert
