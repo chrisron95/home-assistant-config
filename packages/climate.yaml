@@ -1,0 +1,41 @@
+group:
+  interior_temperature_sensors:
+    name: Interior Temperature Sensors
+    entities:
+      - sensor.espresense_kitchen_temperature
+      - sensor.espresense_dining_room_temperature
+      - sensor.espresense_living_room_temperature
+      - sensor.espresense_bedroom_temperature
+      - sensor.espresense_lab_temperature
+      - sensor.bathroom_temperature
+      - sensor.lab_bathroom_temperature
+  interior_humidity_sensors:
+    name: Interior Humidity Sensors
+    entities:
+      - sensor.espresense_kitchen_humidity
+      - sensor.espresense_dining_room_humidity
+      - sensor.espresense_living_room_humidity
+      - sensor.espresense_bedroom_humidity
+      - sensor.espresense_lab_humidity
+      - sensor.bathroom_humidity
+      - sensor.lab_bathroom_humidity
+
+
+template:
+  - sensor:
+      - name: Interior Climate
+        state: >
+          {% set temps = expand('group.interior_temperature_sensors') | rejectattr("state", "eq", "unavailable") | map(attribute="state") | list %}
+          {% set total = namespace(temp=0.0) %}
+          {% for t in temps %}
+            {% set total.temp = total.temp + (t | float) %}
+          {% endfor %}
+          {{ (total.temp / temps | count) | round(1) }}
+        attributes:
+          humidity: >
+            {% set humidity = expand('group.interior_humidity_sensors') | rejectattr("state", "eq", "unavailable") | map(attribute="state") | list %}
+            {% set total = namespace(hum=0.0) %}
+            {% for h in humidity %}
+              {% set total.hum = total.hum + (h | float) %}
+            {% endfor %}
+            {{ (total.hum / humidity | count) | round(1) }}
