@@ -24,6 +24,76 @@ mqtt:
       state_topic: "hassio/falcon/player/FPP/playlist/sequence/status"
     - name: "FPP Sequence Total Seconds"
       state_topic: "hassio/falcon/player/FPP/playlist/sequence/secondsTotal"
+    - name: "Battery LED 1 Voltage"
+      state_topic: "wled/battery-light-1/voltage"
+      device_class: voltage
+      unit_of_measurement: "V"
+    - name: "Battery LED 1 Battery"
+      state_topic: "wled/battery-light-1/battery"
+      device_class: battery
+      unit_of_measurement: "%"
+
+  binary_sensor:
+    - name: Path Light 1 Motion
+      state_topic: "wled/path-light-1/motion"
+      device_class: motion
+      payload_on: "on"
+      payload_off: "off"
+    - name: Path Light 2 Motion
+      state_topic: "wled/path-light-2/motion"
+      device_class: motion
+      payload_on: "on"
+      payload_off: "off"
+    - name: Path Light 3 Motion
+      state_topic: "wled/path-light-3/motion"
+      device_class: motion
+      payload_on: "on"
+      payload_off: "off"
+    - name: Path Light 4 Motion
+      state_topic: "wled/path-light-4/motion"
+      device_class: motion
+      payload_on: "on"
+      payload_off: "off"
+    - name: Path Light 5 Motion
+      state_topic: "wled/path-light-5/motion"
+      device_class: motion
+      payload_on: "on"
+      payload_off: "off"
+    - name: Path Light 6 Motion
+      state_topic: "wled/path-light-6/motion"
+      device_class: motion
+      payload_on: "on"
+      payload_off: "off"
+    - name: Path Light 7 Motion
+      state_topic: "wled/path-light-7/motion"
+      device_class: motion
+      payload_on: "on"
+      payload_off: "off"
+    - name: Path Light 8 Motion
+      state_topic: "wled/path-light-8/motion"
+      device_class: motion
+      payload_on: "on"
+      payload_off: "off"
+    - name: Path Light 9 Motion
+      state_topic: "wled/path-light-9/motion"
+      device_class: motion
+      payload_on: "on"
+      payload_off: "off"
+    - name: Path Light 10 Motion
+      state_topic: "wled/path-light-10/motion"
+      device_class: motion
+      payload_on: "on"
+      payload_off: "off"
+    - name: Path Light 11 Motion
+      state_topic: "wled/path-light-11/motion"
+      device_class: motion
+      payload_on: "on"
+      payload_off: "off"
+    - name: Path Light 12 Motion
+      state_topic: "wled/path-light-12/motion"
+      device_class: motion
+      payload_on: "on"
+      payload_off: "off"
     # - name: "FPP Start Time"
     #   state_topic: "hassio/falcon/player/FPP/startTime"
     # - name: "FPP Next Playlist"
@@ -48,7 +118,6 @@ group:
     entities:
       - light.left_flood
       - light.right_flood
-
   house_lights:
     name: House Lights
     icon: mdi:home-lightbulb
@@ -69,7 +138,6 @@ group:
       - light.house_light_14
       - light.house_light_15
       - light.house_light_16
-
   jack:
     name: Jack
     icon: mdi:halloween
@@ -82,7 +150,6 @@ group:
       - light.jack_wide_mouth
       - light.jack_o_mouth
       - light.jack_small_mouth
-
   yule_ghoul_1:
     name: "Yule Ghoul 1"
     icon: mdi:ghost
@@ -95,7 +162,6 @@ group:
       - light.yule_ghoul_1_wide_mouth
       - light.yule_ghoul_1_o_mouth
       - light.yule_ghoul_1_small_mouth
-
   yule_ghoul_2:
     name: "Yule Ghoul 2"
     icon: mdi:ghost
@@ -108,7 +174,6 @@ group:
       - light.yule_ghoul_2_wide_mouth
       - light.yule_ghoul_2_o_mouth
       - light.yule_ghoul_2_small_mouth
-
   yule_ghoul_3:
     name: "Yule Ghoul 3"
     icon: mdi:ghost
@@ -121,7 +186,6 @@ group:
       - light.yule_ghoul_3_wide_mouth
       - light.yule_ghoul_3_o_mouth
       - light.yule_ghoul_3_small_mouth
-
   yule_ghoul_4:
     name: "Yule Ghoul 4"
     icon: mdi:ghost
@@ -134,48 +198,33 @@ group:
       - light.yule_ghoul_4_wide_mouth
       - light.yule_ghoul_4_o_mouth
       - light.yule_ghoul_4_small_mouth
-
-  ghosts:
-    name: Ghosts
-    icon: mdi:ghost
+  path_lights:
+    name: Path Lights
+    icon: mdi:post-lamp
     entities:
-      - light.ghost1
-      - light.ghost2
-      - light.ghost3
-      - light.ghost4
-      - light.ghost5
-      - light.ghost6
-      - light.ghost7
-      - light.ghost8
+      - light.path_light_1
+      - light.path_light_2
+      - light.path_light_3
+      - light.path_light_4
+      - light.path_light_5
+      - light.path_light_6
+      - light.path_light_7
+      - light.path_light_8
+      - light.path_light_9
+  path_lights_motion:
+    name: Path Lights Motion
+    entities:
+      - binary_sensor.path_light_1_motion
+      - binary_sensor.path_light_2_motion
+      - binary_sensor.path_light_3_motion
+      - binary_sensor.path_light_4_motion
+      - binary_sensor.path_light_5_motion
+      - binary_sensor.path_light_6_motion
+      - binary_sensor.path_light_7_motion
+      - binary_sensor.path_light_8_motion
+      - binary_sensor.path_light_9_motion
 
 automation:
-  - alias: Front lights off at night
-    id: "1599449030138"
-    description: ""
-    trigger:
-      - at: input_datetime.front_lights_off
-        platform: time
-    condition:
-      - condition: state
-        entity_id: input_boolean.guests_over
-        state: "off"
-    action:
-      - service: scene.turn_on
-        target:
-          entity_id: scene.front_lights_all_off
-      - service: input_boolean.turn_on
-        target:
-          entity_id:
-            - input_boolean.front_lights_off_for_the_night
-      - service: light.turn_off
-        target:
-          entity_id:
-            - light.front_columns_button_led
-            - light.front_columns_black_lights
-        data:
-          transition: 2
-      - service: script.fpp_stop_now
-    mode: single
   - alias: Front Lights On At Dusk
     id: "1616533227405"
     description: Trigger when it gets dark
@@ -205,7 +254,44 @@ automation:
         target:
           entity_id: light.front_columns_button_led
     mode: single
-  - alias: Front Lights Reset
+  - alias: Front lights off at night
+    id: "1599449030138"
+    description: ""
+    trigger:
+      - at: input_datetime.front_lights_off
+        platform: time
+    condition:
+      - condition: state
+        entity_id: input_boolean.guests_over
+        state: "off"
+    action:
+      - service: scene.turn_on
+        target:
+          entity_id: scene.front_lights_all_off
+      - service: input_boolean.turn_on
+        target:
+          entity_id:
+            - input_boolean.front_lights_off_for_the_night
+      - service: light.turn_off
+        target:
+          entity_id:
+            - light.front_columns_button_led
+            - light.front_columns_black_lights
+            - light.village
+            - light.fiber_optic_decoration
+      - service: light.turn_off
+        target:
+          entity_id:
+            - light.front_columns_button_led
+        data:
+          transition: 2
+      - service: switch.turn_off
+        target:
+          entity_id:
+            - switch.path_light_power_supply
+      - service: script.fpp_stop_now
+    mode: single
+  - alias: Front Lights Reset at noon
     id: "1617760688958"
     description: ""
     trigger:
@@ -253,6 +339,75 @@ automation:
     condition: []
     action:
       - service: script.fpp_set_volume
+        data:
+          volume: '{{ states("input_number.fpp_volume") }}'
+    mode: single
+  - alias: FPP Status Sync
+    id: "1633371419662"
+    description: ""
+    trigger:
+      - platform: state
+        entity_id: sensor.fpp_status
+    condition: []
+    action:
+      - choose:
+          - alias: playing standby
+            conditions:
+              - condition: state
+                entity_id: sensor.fpp_status
+                state: playing
+              - condition: template
+                value_template: '{{ "standby" in (states("sensor.fpp_current_playlist") | lower) }}'
+            sequence:
+              - service: input_boolean.turn_off
+                target:
+                  entity_id: input_boolean.front_yard_motion_lights
+              - service: light.turn_off
+                target:
+                  entity_id: light.porch_light
+          - alias: playing normal
+            conditions:
+              - condition: state
+                entity_id: sensor.fpp_status
+                state: playing
+            sequence:
+              - service: light.turn_off
+                target:
+                  entity_id: light.front_columns_button_led
+                data:
+                  transition: 2
+              - service: input_boolean.turn_off
+                target:
+                  entity_id: input_boolean.front_yard_motion_lights
+              - service: light.turn_off
+                target:
+                  entity_id: light.porch_light
+          - alias: idle
+            conditions:
+              - condition: state
+                entity_id: sensor.fpp_status
+                state: idle
+            sequence:
+              - service: input_boolean.turn_on
+                target:
+                  entity_id: input_boolean.front_yard_motion_lights
+              - if:
+                  - condition: and
+                    conditions:
+                      - condition: state
+                        entity_id: input_boolean.front_lights_on_for_the_night
+                        state: "on"
+                      - condition: state
+                        entity_id: input_boolean.front_lights_off_for_the_night
+                        state: "off"
+                then:
+                  - service: light.turn_on
+                    target:
+                      entity_id: light.front_columns_button_led
+                    data:
+                      transition: 2
+                  - service: script.front_lights_turn_on
+        default: []
     mode: single
   - alias: Front Columns Button Press
     id: "1633124084367"
@@ -269,47 +424,37 @@ automation:
         state: "on"
         entity_id: light.front_columns_button_led
     action:
-      - service: notify.chris
+      - service: script.text_notify_chris
         data:
-          message: Pressed
-      - service: script.fpp_start_playlist_at_random_song
-    mode: single
-  - alias: FPP Status Sync
-    id: "1633371419662"
-    description: ""
-    trigger:
-      - platform: state
-        entity_id: sensor.fpp_status
-    condition: []
-    action:
-      - choose:
+          title: Front Lights
+          message: Someone pressed the button
+      - alias: Set Volume
+        choose:
           - conditions:
-              - condition: state
-                entity_id: sensor.fpp_status
-                state: playing
+              - condition: time
+                before: "20:30:00"
             sequence:
-              - service: light.turn_off
-                target:
-                  entity_id: light.front_columns_button_led
+              - service: script.fpp_set_volume
                 data:
-                  transition: 2
-              - service: automation.turn_off
-                target:
-                  entity_id: automation.front_door_motion_light
+                  volume: 70
           - conditions:
-              - condition: state
-                entity_id: sensor.fpp_status
-                state: idle
+              - condition: time
+                after: "20:30:00"
+              - condition: time
+                before: "21:30:00"
             sequence:
-              - service: light.turn_on
-                target:
-                  entity_id: light.front_columns_button_led
+              - service: script.fpp_set_volume
                 data:
-                  transition: 2
-              - service: automation.turn_on
-                target:
-                  entity_id: automation.front_door_motion_light
+                  volume: 50
+          - conditions:
+              - condition: time
+                after: "21:30:00"
+            sequence:
+              - service: script.fpp_set_volume
+                data:
+                  volume: 38
         default: []
+      - service: script.fpp_start_playlist_at_random_song
     mode: single
   - alias: Front Columns Force Stop
     id: "1633372254150"
@@ -327,21 +472,6 @@ automation:
         state: playing
     action:
       - service: script.fpp_stop_now
-    mode: single
-  - alias: Front Lights Resume
-    id: "1633386529995"
-    description: ""
-    trigger:
-      - platform: state
-        entity_id: sensor.fpp_status
-        from: playing
-        to: idle
-    condition:
-      - condition: state
-        entity_id: input_boolean.front_lights_on_for_the_night
-        state: "on"
-    action:
-      - service: script.front_lights_turn_on
     mode: single
 
 scene:
@@ -1074,7 +1204,7 @@ scene:
         order: 4
         friendly_name: Yule Ghoul 1
         icon: mdi:ghost
-        state: "on"
+        state: "off"
       group.yule_ghoul_2:
         entity_id:
           - light.yule_ghoul_2_outline
@@ -1117,77 +1247,80 @@ scene:
         friendly_name: Yule Ghoul 4
         icon: mdi:ghost
         state: "off"
-      group.ghosts:
-        entity_id:
-          - light.ghost1
-          - light.ghost2
-          - light.ghost3
-          - light.ghost4
-          - light.ghost5
-          - light.ghost6
-          - light.ghost7
-          - light.ghost8
-        order: 8
-        friendly_name: Ghosts
-        icon: mdi:ghost
-        state: "off"
 
 script:
-  fpp_stop_now:
-    alias: FPP Stop Now
-    sequence:
-      - service: mqtt.publish
-        data:
-          topic: hassio/falcon/player/FPP/set/playlist/ALLPLAYLISTS/stop/now
-    mode: single
-  fpp_stop_gracefully:
-    alias: FPP Stop Gracefully
-    sequence:
-      - service: mqtt.publish
-        data:
-          topic: hassio/falcon/player/FPP/set/playlist/ALLPLAYLISTS/stop/graceful
-    mode: single
-  fpp_stop_after_loop:
-    alias: FPP Stop After Loop
-    sequence:
-      - service: mqtt.publish
-        data:
-          topic: hassio/falcon/player/FPP/set/playlist/ALLPLAYLISTS/stop/afterloop
-    mode: single
-  fpp_start_playlist:
-    alias: FPP Start Playlist
-    sequence:
-      - service: mqtt.publish
-        data:
-          topic: hassio/falcon/player/FPP/set/command/"Start Playlist"
-          payload: '{{ states("input_select.fpp_playlist") }}'
-    mode: single
-  fpp_next_song:
-    alias: FPP Next Song
-    sequence:
-      - service: mqtt.publish
-        data:
-          topic:
-            hassio/falcon/player/FPP/set/playlist/{{ states('input_select.fpp_playlist')
-            }}/next
-    mode: single
-  fpp_previous_song:
-    alias: FPP Previous Song
-    sequence:
-      - service: mqtt.publish
-        data:
-          topic:
-            hassio/falcon/player/FPP/set/playlist/{{ states('input_select.fpp_playlist')
-            }}/prev
-    mode: single
   front_lights_turn_on:
     alias: Front Lights Turn On
     sequence:
       - choose:
-          - conditions:
+          - alias: Halloween
+            conditions:
               - condition: state
                 entity_id: input_select.front_yard_light_mode
                 state: Halloween
+            sequence:
+              # - service: notify.chris
+              #   data:
+              #     message: Halloween Standby
+              - service: light.turn_on
+                target:
+                  entity_id:
+                    - light.village
+                    - light.fiber_optic_decoration
+                    - light.front_columns_black_lights
+              - service: light.turn_on
+                target:
+                  entity_id: light.front_columns_button_led
+                data:
+                  transition: 2
+              - service: switch.turn_on
+                target:
+                  entity_id:
+                    - switch.path_light_power_supply
+              - service: script.fpp_start_playlist
+                data:
+                  playlist: Halloween_Standby
+                  repeat: true
+              # - service: mqtt.publish
+              #   data:
+              #     topic: hassio/falcon/player/FPP/set/command/"Start Playlist"
+              #     payload: Halloween_Standby
+              # - service: mqtt.publish
+              #   data:
+              #     topic: hassio/falcon/player/FPP/set/playlist/Halloween_Standby/repeat
+              #     payload: "1"
+              # - service: input_boolean.turn_on
+              #   target:
+              #     entity_id: input_boolean.fpp_repeat_playlist
+          - alias: Christmas
+            conditions:
+              - condition: state
+                entity_id: input_select.front_yard_light_mode
+                state: Christmas
+            sequence:
+              # - service: notify.chris
+              #   data:
+              #     message: Christmas Standby
+              - service: script.fpp_start_playlist
+                data:
+                  playlist: Christmas_Standby
+                  repeat: true
+              # - service: mqtt.publish
+              #   data:
+              #     topic: hassio/falcon/player/FPP/set/command/"Start Playlist"
+              #     payload: Christmas_Standby
+              # - service: mqtt.publish
+              #   data:
+              #     topic: hassio/falcon/player/FPP/set/playlist/Christmas_Standby/repeat
+              #     payload: "1"
+              # - service: input_boolean.turn_on
+              #   target:
+              #     entity_id: input_boolean.fpp_repeat_playlist
+          - alias: Halloween Old
+            conditions:
+              - condition: state
+                entity_id: input_select.front_yard_light_mode
+                state: Halloween Old
             sequence:
               - scene: scene.small_palms_all_on
               - scene: scene.jack_smile
@@ -1198,28 +1331,17 @@ script:
               - service: light.turn_on
                 target:
                   entity_id:
+                    - light.village
+                    - light.fiber_optic_decoration
                     - light.house_light_3
                     - light.house_light_4
                     - light.house_light_5
                     - light.house_light_6
                     - light.front_columns_black_lights
-              - service: light.turn_on
+              - service: switch.turn_on
                 target:
                   entity_id:
-                    - light.ghost1
-                    - light.ghost2
-                    - light.ghost3
-                    - light.ghost4
-                    - light.ghost5
-                    - light.ghost6
-                    - light.ghost7
-                    - light.ghost8
-                data:
-                  rgb_color:
-                    - 255
-                    - 119
-                    - 0
-                  brightness: 255
+                    - switch.path_light_power_supply
               - service: light.turn_on
                 target:
                   entity_id: light.left_flood
@@ -1243,7 +1365,8 @@ script:
                   entity_id: light.front_columns_button_led
                 data:
                   transition: 2
-          - conditions:
+          - alias: Christmas Old
+            conditions:
               - condition: state
                 entity_id: input_select.front_yard_light_mode
                 state: Christmas old
@@ -1274,25 +1397,6 @@ script:
                     - light.house_light_14
                     - light.house_light_15
                     - light.house_light_16
-          - conditions:
-              - condition: state
-                entity_id: input_select.front_yard_light_mode
-                state: Christmas
-            sequence:
-              - service: notify.chris
-                data:
-                  message: Christmas Standby
-              - service: mqtt.publish
-                data:
-                  topic: hassio/falcon/player/FPP/set/command/"Start Playlist"
-                  payload: Christmas_Standby
-              - service: mqtt.publish
-                data:
-                  topic: hassio/falcon/player/FPP/set/playlist/Christmas_Standby/repeat
-                  payload: "1"
-              - service: input_boolean.turn_on
-                target:
-                  entity_id: input_boolean.fpp_repeat_playlist
         default:
           - service: notify.chris
             data:
@@ -1309,39 +1413,31 @@ script:
                 - 255
               brightness_pct: 100
     mode: single
-  fpp_set_volume:
-    alias: FPP Set Volume
+  fpp_start_playlist:
+    alias: FPP Start Playlist
     sequence:
       - service: mqtt.publish
         data:
-          topic: hassio/falcon/player/FPP/set/command/"Volume Set"
-          payload: '{{ states("input_number.fpp_volume") }}'
+          topic: hassio/falcon/player/FPP/set/command/"Start Playlist"
+          payload: '{{ playlist or states("input_select.fpp_playlist") }}'
+      - if:
+          - condition: template
+            value_template: "{{ repeat }}"
+        then:
+          - service: mqtt.publish
+            data:
+              topic: 'hassio/falcon/player/FPP/set/playlist/{{ playlist or states("input_select.fpp_playlist") }}/repeat'
+              payload: "1"
+          - service: input_boolean.turn_on
+            target:
+              entity_id: input_boolean.fpp_repeat_playlist
     mode: single
   fpp_start_playlist_at_random_song:
     alias: FPP Start Playlist At Random Song
     sequence:
       - scene: scene.front_lights_all_off
-      - choose:
-          - conditions:
-              - condition: time
-                before: "21:00:00"
-            sequence:
-              - service: input_number.set_value
-                target:
-                  entity_id: input_number.fpp_volume
-                data:
-                  value: 75.001
-          - conditions:
-              - condition: time
-                after: "21:01:00"
-            sequence:
-              - service: input_number.set_value
-                target:
-                  entity_id: input_number.fpp_volume
-                data:
-                  value: 55
-        default: []
-      - service: mqtt.publish
+      - alias: Play Random Song From Selected Playlist
+        service: mqtt.publish
         data:
           topic: hassio/falcon/player/FPP/set/command/"Start Playlist At Random Item"
           payload: '{{ states("input_select.fpp_playlist") }}'
@@ -1374,4 +1470,60 @@ script:
                     "{{ state_attr('input_select.fpp_christmas_song','options').index(states('input_select.fpp_christmas_song'))
                     }}"
         default: []
+    mode: single
+  fpp_stop_now:
+    alias: FPP Stop Now
+    sequence:
+      - service: mqtt.publish
+        data:
+          topic: hassio/falcon/player/FPP/set/playlist/ALLPLAYLISTS/stop/now
+    mode: single
+  fpp_stop_gracefully:
+    alias: FPP Stop Gracefully
+    sequence:
+      - service: mqtt.publish
+        data:
+          topic: hassio/falcon/player/FPP/set/playlist/ALLPLAYLISTS/stop/graceful
+    mode: single
+  fpp_stop_after_loop:
+    alias: FPP Stop After Loop
+    sequence:
+      - service: mqtt.publish
+        data:
+          topic: hassio/falcon/player/FPP/set/playlist/ALLPLAYLISTS/stop/afterloop
+    mode: single
+  fpp_next_song:
+    alias: FPP Next Song
+    sequence:
+      - service: mqtt.publish
+        data:
+          topic:
+            hassio/falcon/player/FPP/set/playlist/{{ states('input_select.fpp_playlist')
+            }}/next
+    mode: single
+  fpp_previous_song:
+    alias: FPP Previous Song
+    sequence:
+      - service: mqtt.publish
+        data:
+          topic:
+            hassio/falcon/player/FPP/set/playlist/{{ states('input_select.fpp_playlist')
+            }}/prev
+    mode: single
+  fpp_set_volume:
+    alias: FPP Set Volume
+    sequence:
+      - service: mqtt.publish
+        data:
+          topic: hassio/falcon/player/FPP/set/command/"Volume Set"
+          payload: '{{ volume or states("input_number.fpp_volume") }}'
+      - if:
+          - condition: template
+            value_template: "{{ volume }}"
+        then:
+          - service: input_number.set_value
+            target:
+              entity_id: input_number.fpp_volume
+            data:
+              value: volume
     mode: single
