@@ -144,12 +144,15 @@ group:
       - light.francis_s_light
       - light.fish_tank_leds
 
-  living_room_peripherals:
-    name: Living Room Peripheral Lights
+  downstairs_peripherals:
+    name: Downstairs Peripheral Lights
     entities:
       - light.living_room_leds
+      - light.couch_leds
+      - light.living_room_tv_backlights
       - light.francis_s_light
       - light.fish_tank_leds
+      - light.fish_tank_backlights
 
   dining_room:
     name: Dining Room Lights
@@ -842,6 +845,8 @@ automation:
             entity_id: binary_sensor.hallway_motion_sensor
             from: "on"
             to: "off"
+            for:
+              minutes: 1
       - service: light.turn_off
         target:
           entity_id:
