@@ -37,22 +37,27 @@ sensor:
     entity_id: sensor.bedroom_temperature
     name: "Bedroom Temp Sats"
     state_characteristic: mean
+    sampling_size: 500
   - platform: statistics
     entity_id: sensor.lab_temperature
     name: "Lab Temp Sats"
     state_characteristic: mean
+    sampling_size: 500
   - platform: statistics
     entity_id: sensor.kitchen_temperature
     name: "Kitchen Temp Sats"
     state_characteristic: mean
+    sampling_size: 500
   - platform: statistics
     entity_id: sensor.dining_room_temperature
     name: "Dining Room Temp Sats"
     state_characteristic: mean
+    sampling_size: 500
   - platform: statistics
     entity_id: sensor.living_room_temperature
     name: "Living Room Temp Sats"
     state_characteristic: mean
+    sampling_size: 500
   - platform: min_max
     name: Inside Temp Stats
     entity_ids:
