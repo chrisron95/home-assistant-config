@@ -1,7 +1,49 @@
 clean_up_snapshots_service:
   host: !secret base_url
   token: !secret clean_up_token
-  number_of_snapshots_to_keep: 3
+  number_of_snapshots_to_keep: 10
+
+binary_sensor:
+  - platform: trend
+    sensors:
+      sun_rising:
+        entity_id: sensor.updates
+        attribute: count
+
+template:
+  - sensor:
+      - name: "Updates"
+        state: >
+          {%- set updates = states.update | selectattr('state', 'eq', 'on') | map(attribute='name') | list | sort -%}
+          {%- set count = updates | count -%}
+          {%- if count > 1 -%}
+            {{- updates[0:count - 1] | join(", ") | replace(' Update', '') | replace(' Firmware', '') -}}
+            {{- (' and ' ~ updates[count - 1] | replace(' Update', '') | replace(' Firmware', '')) }} are ready to update.
+          {%- elif count > 0 -%}
+            {{- updates[0] | replace(' Update', '') | replace(' Firmware', '') }} is ready to update.
+          {%- else -%}
+            There are no updates currently.
+          {%- endif -%}
+        attributes:
+          names: >
+            {{ states.update | selectattr('state', 'eq', 'on') | map(attribute='name') | list | sort }}
+          entities: >
+            {{ states.update | selectattr('state', 'eq', 'on') | map(attribute='entity_id') | list | sort }}
+          count: >
+            {{ states.update | selectattr('state', 'eq', 'on') | list | count }}
+  - sensor:
+      - name: "Unavailable Entities"
+        state: >
+          {{ states | selectattr('state', 'eq', 'unavailable') | map(attribute='name') | list | join(', ') }}
+        attributes:
+          list: >
+            {% for d in states | selectattr('state', 'eq', 'unavailable') | list | groupby('domain') %}
+              {% if loop.first %} Domains: {{loop.length}}
+              {% endif %} - {{ d[0] }} ({{ states[d[0]] | selectattr('state', 'eq', 'unavailable') | list | count }})
+                  - {{ states[d[0]] | selectattr('state', 'eq', 'unavailable') | list |map(attribute='entity_id')| list|join('\n      - ') }}
+            {% endfor %}
+          count: >
+            {{ states | selectattr('state', 'eq', 'unavailable') | list | count }}
 
 automation:
   # Using the HACS Daily Snapshot Clean Up Plugin
@@ -151,3 +193,14 @@ automation:
         time_input: "15:00:00"
         certificate_input: sensor.cert_expiry_timestamp_home_chrisheder_com
         notify_device: 8a29ce795dc898ced035043888d04070
+
+  - alias: Nightly Backup
+    id: nightly_backup
+    mode: single
+    trigger:
+      - platform: time
+        at: "02:00:00"
+    action:
+      - service: hassio.backup_full
+        data:
+          name: Full Backup {{ now().strftime('%Y-%m-%d') }}
