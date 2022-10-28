@@ -228,7 +228,6 @@ automation:
         data:
           who: "steven"
           message: "Chris has arrived at work"
-      - service: script.chris_destination_na
     initial_state: true
 
   - id: e1cb15b0-0423-11eb-adc1-0242ac120002
