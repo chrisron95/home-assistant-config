@@ -111,6 +111,14 @@ input_datetime:
     has_date: false
     has_time: true
 
+input_boolean:
+  jack_enabled:
+    name: Jack Enabled
+    icon: mdi:halloween
+  yule_ghouls_enabled:
+    name: Yule Ghouls Enabled
+    icon: mdi:ghost
+
 group:
   floods:
     name: Floods
@@ -211,6 +219,9 @@ group:
       - light.path_light_7
       - light.path_light_8
       - light.path_light_9
+      - light.path_light_10
+      - light.path_light_11
+      - light.path_light_12
   path_lights_motion:
     name: Path Lights Motion
     entities:
@@ -223,6 +234,9 @@ group:
       - binary_sensor.path_light_7_motion
       - binary_sensor.path_light_8_motion
       - binary_sensor.path_light_9_motion
+      - binary_sensor.path_light_10_motion
+      - binary_sensor.path_light_11_motion
+      - binary_sensor.path_light_12_motion
 
 automation:
   - alias: Front Lights On At Dusk
@@ -277,6 +291,7 @@ automation:
           entity_id:
             - light.front_columns_button_led
             - light.front_columns_black_lights
+            - light.columns_garland
             - light.village
             - light.fiber_optic_decoration
       - service: light.turn_off
@@ -1252,6 +1267,10 @@ script:
   front_lights_turn_on:
     alias: Front Lights Turn On
     sequence:
+      - service: switch.turn_on
+        target:
+          entity_id:
+            - switch.path_light_power_supply
       - choose:
           - alias: Halloween
             conditions:
@@ -1273,10 +1292,6 @@ script:
                   entity_id: light.front_columns_button_led
                 data:
                   transition: 2
-              - service: switch.turn_on
-                target:
-                  entity_id:
-                    - switch.path_light_power_supply
               - service: script.fpp_start_playlist
                 data:
                   playlist: Halloween_Standby
@@ -1301,6 +1316,19 @@ script:
               # - service: notify.chris
               #   data:
               #     message: Christmas Standby
+              - service: light.turn_on
+                target:
+                  entity_id:
+                    - light.village
+                    - light.fiber_optic_decoration
+                    - light.christmas_tree
+                    - light.wreath
+              - service: light.turn_on
+                target:
+                  entity_id: light.columns_garland
+                data:
+                  effect: Rainbow
+                  brightness: 70
               - service: script.fpp_start_playlist
                 data:
                   playlist: Christmas_Standby
