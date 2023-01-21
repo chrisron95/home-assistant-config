@@ -700,6 +700,8 @@
     light.bedroom_fan_lights:
       supported_color_modes:
       - brightness
+      color_mode: brightness
+      brightness: 76
       entity_id:
       - light.ceiling_fan_north
       - light.ceiling_fan_south
@@ -708,10 +710,10 @@
       icon: mdi:ceiling-fan-light
       friendly_name: Bedroom Fan Lights
       supported_features: 40
-      color_mode: brightness
-      brightness: 156
       state: 'on'
     light.hue_color_lamp_1:
+      min_color_temp_kelvin: 2000
+      max_color_temp_kelvin: 6535
       min_mireds: 153
       max_mireds: 500
       supported_color_modes:
@@ -724,7 +726,6 @@
       supported_features: 40
       color_mode: color_temp
       brightness: 102
-      color_temp: 454
       hs_color:
       - 29.79
       - 84.553
@@ -735,6 +736,8 @@
       xy_color:
       - 0.579
       - 0.388
+      color_temp_kelvin: 2202
+      color_temp: 454
       state: 'on'
     light.francis_s_light:
       supported_color_modes:
@@ -804,45 +807,24 @@
       - YouTube
       assumed_state: true
       device_class: tv
-      icon: mdi:television
       friendly_name: Living Room TV
       supported_features: 24509
       state: 'off'
     media_player.lab_tv:
       source_list:
-      - AV
-      - Amazon Prime Video
-      - Apple TV
-      - Component
-      - Disney+
-      - HBO Max
-      - HDMI 1
-      - HDMI 2
-      - HDMI 3
-      - Hulu
-      - LG Channels
-      - LG Content Store
       - Live TV
-      - Music
-      - Netflix
-      - Pandora
-      - Paramount+
-      - Photo & Video
-      - Plex
-      - Shop Time
-      - VUDU
-      - Web Browser
-      - YouTube
       assumed_state: true
       device_class: tv
       friendly_name: Lab TV
       supported_features: 24509
       state: 'off'
     light.fish_tank_leds:
+      min_color_temp_kelvin: 2000
+      max_color_temp_kelvin: 6535
       min_mireds: 153
       max_mireds: 500
       effect_list:
-      - None
+      - Solid
       - Wake up
       - Cycle up
       - Cycle down
@@ -855,10 +837,12 @@
       supported_features: 36
       state: 'off'
     light.western_electric_cabinet_lights:
+      min_color_temp_kelvin: 2000
+      max_color_temp_kelvin: 6535
       min_mireds: 153
       max_mireds: 500
       effect_list:
-      - None
+      - Solid
       - Wake up
       - Cycle up
       - Cycle down
@@ -1008,9 +992,6 @@
       - Wipe Random
       supported_color_modes:
       - rgbw
-      icon: mdi:curtains
-      friendly_name: Curtain LEDs
-      supported_features: 36
       color_mode: rgbw
       brightness: 26
       hs_color:
@@ -1029,6 +1010,9 @@
       - 0.323
       - 0.329
       effect: Twinkleup
+      icon: mdi:curtains
+      friendly_name: Curtain LEDs
+      supported_features: 36
       state: 'on'
     light.couch_leds:
       effect_list:
@@ -1288,9 +1272,6 @@
       - Wipe Random
       supported_color_modes:
       - rgbw
-      icon: mdi:led-strip-variant
-      friendly_name: Living Room TV Backlights
-      supported_features: 36
       color_mode: rgbw
       brightness: 13
       hs_color:
@@ -1309,6 +1290,9 @@
       - 0.323
       - 0.329
       effect: Fairy
+      icon: mdi:led-strip-variant
+      friendly_name: Living Room TV Backlights
+      supported_features: 36
       state: 'on'
     select.living_room_tv_backlights_playlist:
       options: []
@@ -1456,10 +1440,48 @@
       icon: mdi:playlist-play
       friendly_name: Fish Tank Backlights Preset
       state: unavailable
+    light.village:
+      supported_color_modes:
+      - onoff
+      icon: mdi:home-city-outline
+      friendly_name: Village
+      supported_features: 0
+      state: 'off'
+    light.fiber_optic_decoration:
+      supported_color_modes:
+      - onoff
+      icon: fas:snowman
+      friendly_name: Fiber Optic Decoration
+      supported_features: 0
+      state: 'off'
+    light.christmas_tree:
+      supported_color_modes:
+      - onoff
+      color_mode: onoff
+      icon: mdi:pine-tree
+      friendly_name: Christmas Tree
+      supported_features: 0
+      state: 'on'
+    light.wreath:
+      supported_color_modes:
+      - onoff
+      color_mode: onoff
+      icon: mdi:string-lights
+      friendly_name: Wreath
+      supported_features: 0
+      state: 'on'
   metadata:
     light.living_room_fan_light:
       entity_only: true
     light.lab_fan_light:
+      entity_only: true
+    light.village:
+      entity_only: true
+    light.fiber_optic_decoration:
+      entity_only: true
+    light.christmas_tree:
+      entity_only: true
+    light.wreath:
       entity_only: true
   icon: mdi:bed-empty
 - id: '1617936340958'
@@ -1478,6 +1500,8 @@
       supported_features: 40
       state: 'off'
     light.hue_color_lamp_1:
+      min_color_temp_kelvin: 2000
+      max_color_temp_kelvin: 6535
       min_mireds: 153
       max_mireds: 500
       supported_color_modes:
@@ -1509,17 +1533,14 @@
       icon: mdi:ceiling-fan-light
       friendly_name: Kitchen Light
       supported_features: 0
-      color_mode: onoff
-      state: 'on'
+      state: 'off'
     light.kitchen_leds:
       supported_color_modes:
       - brightness
       icon: mdi:led-strip-variant
       friendly_name: Kitchen LEDs
       supported_features: 32
-      color_mode: brightness
-      brightness: 255
-      state: 'on'
+      state: 'off'
     light.front_hall_light:
       supported_color_modes:
       - onoff
@@ -1533,61 +1554,9 @@
       friendly_name: Hallway Light
       supported_features: 0
       state: 'off'
-    media_player.living_room_tv:
-      source_list:
-      - AV
-      - Amazon Alexa
-      - Amazon Prime Video
-      - Apple TV
-      - Component
-      - Disney+
-      - HBO Max
-      - HDMI 1
-      - HDMI 2
-      - HDMI 3
-      - HDMI 4
-      - Hulu
-      - LG Channels
-      - LG Content Store
-      - Live TV
-      - Music
-      - Netflix
-      - Photo & Video
-      - Shop Time
-      - Sling TV
-      - Web Browser
-      - YouTube
-      assumed_state: true
-      device_class: tv
-      icon: mdi:television
-      friendly_name: Living Room TV
-      supported_features: 24509
-      state: 'off'
     media_player.lab_tv:
       source_list:
-      - AV
-      - Amazon Prime Video
-      - Apple TV
-      - Component
-      - Disney+
-      - HBO Max
-      - HDMI 1
-      - HDMI 2
-      - HDMI 3
-      - Hulu
-      - LG Channels
-      - LG Content Store
       - Live TV
-      - Music
-      - Netflix
-      - Pandora
-      - Paramount+
-      - Photo & Video
-      - Plex
-      - Shop Time
-      - VUDU
-      - Web Browser
-      - YouTube
       assumed_state: true
       device_class: tv
       friendly_name: Lab TV
@@ -1605,21 +1574,23 @@
       volume_level: 0.3
       is_volume_muted: false
       media_content_type: standby
-      media_position_updated_at: '2022-07-28T09:54:07.517156+00:00'
+      media_position_updated_at: '2022-12-06T05:49:31.662380+00:00'
       available: true
-      last_called: false
-      last_called_timestamp: 1659012309932
-      last_called_summary: ''
+      last_called: true
+      last_called_timestamp: 1670305722832
+      last_called_summary: alexa good night
       connected_bluetooth:
       bluetooth_list: []
       friendly_name: Bedroom Echo Show
       supported_features: 56253
       state: standby
     light.fish_tank_leds:
+      min_color_temp_kelvin: 2000
+      max_color_temp_kelvin: 6535
       min_mireds: 153
       max_mireds: 500
       effect_list:
-      - None
+      - Solid
       - Wake up
       - Cycle up
       - Cycle down
@@ -1637,10 +1608,12 @@
       friendly_name: Do Not Disturb
       state: 'on'
     light.western_electric_cabinet_lights:
+      min_color_temp_kelvin: 2000
+      max_color_temp_kelvin: 6535
       min_mireds: 153
       max_mireds: 500
       effect_list:
-      - None
+      - Solid
       - Wake up
       - Cycle up
       - Cycle down
@@ -2202,10 +2175,75 @@
       icon: mdi:playlist-play
       friendly_name: Couch LEDs Preset
       state: unavailable
+    media_player.living_room_tv:
+      source_list:
+      - AV
+      - Amazon Alexa
+      - Amazon Prime Video
+      - Apple TV
+      - Component
+      - Disney+
+      - HBO Max
+      - HDMI 1
+      - HDMI 2
+      - HDMI 3
+      - HDMI 4
+      - Hulu
+      - LG Channels
+      - LG Content Store
+      - Live TV
+      - Music
+      - Netflix
+      - Photo & Video
+      - Shop Time
+      - Sling TV
+      - Web Browser
+      - YouTube
+      assumed_state: true
+      device_class: tv
+      friendly_name: Living Room TV
+      supported_features: 24509
+      state: 'off'
+    light.christmas_tree:
+      supported_color_modes:
+      - onoff
+      icon: mdi:pine-tree
+      friendly_name: Christmas Tree
+      supported_features: 0
+      state: 'off'
+    light.fiber_optic_decoration:
+      supported_color_modes:
+      - onoff
+      icon: fas:snowman
+      friendly_name: Fiber Optic Decoration
+      supported_features: 0
+      state: 'off'
+    light.village:
+      supported_color_modes:
+      - onoff
+      icon: mdi:home-city-outline
+      friendly_name: Village
+      supported_features: 0
+      state: 'off'
+    light.wreath:
+      supported_color_modes:
+      - onoff
+      icon: mdi:string-lights
+      friendly_name: Wreath
+      supported_features: 0
+      state: 'off'
   metadata:
     light.lab_fan_light:
       entity_only: true
     light.living_room_fan_light:
+      entity_only: true
+    light.christmas_tree:
+      entity_only: true
+    light.fiber_optic_decoration:
+      entity_only: true
+    light.village:
+      entity_only: true
+    light.wreath:
       entity_only: true
   icon: mdi:bed
 - id: '1618020693377'
@@ -3614,11 +3652,11 @@
     light.kitchen_leds:
       supported_color_modes:
       - brightness
+      color_mode: brightness
+      brightness: 255
       icon: mdi:led-strip-variant
       friendly_name: Kitchen LEDs
       supported_features: 32
-      color_mode: brightness
-      brightness: 255
       state: 'on'
     light.dining_room_light:
       supported_color_modes:
@@ -3630,9 +3668,6 @@
     light.francis_s_light:
       supported_color_modes:
       - rgb
-      icon: mdi:lightbulb-spot
-      friendly_name: Francis's Light
-      supported_features: 40
       color_mode: rgb
       brightness: 212
       hs_color:
@@ -3645,12 +3680,17 @@
       xy_color:
       - 0.151
       - 0.343
+      icon: mdi:lightbulb-spot
+      friendly_name: Francis's Light
+      supported_features: 40
       state: 'on'
     light.fish_tank_leds:
+      min_color_temp_kelvin: 2000
+      max_color_temp_kelvin: 6535
       min_mireds: 153
       max_mireds: 500
       effect_list:
-      - None
+      - Solid
       - Wake up
       - Cycle up
       - Cycle down
@@ -3658,11 +3698,9 @@
       supported_color_modes:
       - color_temp
       - hs
-      icon: mdi:fishbowl
-      friendly_name: Fish Tank LEDs
-      supported_features: 36
       color_mode: color_temp
       brightness: 255
+      color_temp_kelvin: 3460
       color_temp: 289
       hs_color:
       - 27.214
@@ -3674,7 +3712,10 @@
       xy_color:
       - 0.457
       - 0.375
-      effect: None
+      effect: Solid
+      icon: mdi:fishbowl
+      friendly_name: Fish Tank LEDs
+      supported_features: 36
       state: 'on'
     light.living_room_fan_light:
       supported_color_modes:
@@ -3805,9 +3846,6 @@
       - Wipe Random
       supported_color_modes:
       - rgbw
-      icon: mdi:curtains
-      friendly_name: Curtain LEDs
-      supported_features: 36
       color_mode: rgbw
       brightness: 191
       hs_color:
@@ -3826,6 +3864,9 @@
       - 0.323
       - 0.329
       effect: Twinkleup
+      icon: mdi:curtains
+      friendly_name: Curtain LEDs
+      supported_features: 36
       state: 'on'
     light.couch_leds:
       effect_list:
@@ -3949,9 +3990,6 @@
       - Wipe Random
       supported_color_modes:
       - rgbw
-      icon: si:apachecouchdb
-      friendly_name: Couch LEDs
-      supported_features: 36
       color_mode: rgbw
       brightness: 64
       hs_color:
@@ -3970,6 +4008,9 @@
       - 0.323
       - 0.329
       effect: Twinkleup
+      icon: si:apachecouchdb
+      friendly_name: Couch LEDs
+      supported_features: 36
       state: 'on'
     select.couch_leds_playlist_2:
       options: []
@@ -4103,9 +4144,6 @@
       - Wipe Random
       supported_color_modes:
       - rgbw
-      icon: mdi:led-strip-variant
-      friendly_name: Living Room TV Backlights
-      supported_features: 36
       color_mode: rgbw
       brightness: 76
       hs_color:
@@ -4124,6 +4162,9 @@
       - 0.323
       - 0.329
       effect: Fairy
+      icon: mdi:led-strip-variant
+      friendly_name: Living Room TV Backlights
+      supported_features: 36
       state: 'on'
     select.living_room_tv_backlights_playlist:
       options: []
@@ -4257,9 +4298,6 @@
       - Wipe Random
       supported_color_modes:
       - rgbw
-      icon: mdi:led-strip-variant
-      friendly_name: Fish Tank Backlights
-      supported_features: 36
       color_mode: rgbw
       brightness: 79
       hs_color:
@@ -4278,6 +4316,9 @@
       - 0.323
       - 0.329
       effect: Fairytwinkle
+      icon: mdi:led-strip-variant
+      friendly_name: Fish Tank Backlights
+      supported_features: 36
       state: 'on'
     select.fish_tank_backlights_playlist_2:
       options: []
@@ -4289,8 +4330,39 @@
       icon: mdi:playlist-play
       friendly_name: Fish Tank Backlights Preset
       state: unavailable
+    light.christmas_tree_lights:
+      min_color_temp_kelvin: 2000
+      max_color_temp_kelvin: 6535
+      min_mireds: 153
+      max_mireds: 500
+      effect_list:
+      - None
+      - Fade Fast
+      - Fade Slow
+      supported_color_modes:
+      - color_temp
+      color_mode: color_temp
+      brightness: 255
+      color_temp_kelvin: 2000
+      color_temp: 500
+      hs_color:
+      - 30.601
+      - 94.547
+      rgb_color:
+      - 255
+      - 136
+      - 13
+      xy_color:
+      - 0.599
+      - 0.382
+      effect: None
+      friendly_name: Christmas Tree Lights
+      supported_features: 44
+      state: 'on'
   metadata:
     light.living_room_fan_light:
+      entity_only: true
+    light.christmas_tree_lights:
       entity_only: true
   icon: mdi:television-ambient-light
 - id: '1632450613069'
@@ -5012,10 +5084,12 @@
       - 0.299
       state: 'on'
     light.fish_tank_leds:
+      min_color_temp_kelvin: 2000
+      max_color_temp_kelvin: 6535
       min_mireds: 153
       max_mireds: 500
       effect_list:
-      - None
+      - Solid
       - Wake up
       - Cycle up
       - Cycle down
@@ -5038,7 +5112,7 @@
       xy_color:
       - 0.187
       - 0.34
-      effect: None
+      effect: Solid
       state: 'on'
     light.living_room_fan_light:
       supported_color_modes:
@@ -5169,9 +5243,6 @@
       - Wipe Random
       supported_color_modes:
       - rgbw
-      icon: mdi:curtains
-      friendly_name: Curtain LEDs
-      supported_features: 36
       color_mode: rgbw
       brightness: 102
       hs_color:
@@ -5190,6 +5261,9 @@
       - 0.164
       - 0.589
       effect: Twinkleup
+      icon: mdi:curtains
+      friendly_name: Curtain LEDs
+      supported_features: 36
       state: 'on'
     light.couch_leds:
       effect_list:
@@ -5313,9 +5387,6 @@
       - Wipe Random
       supported_color_modes:
       - rgbw
-      icon: si:apachecouchdb
-      friendly_name: Couch LEDs
-      supported_features: 36
       color_mode: rgbw
       brightness: 38
       hs_color:
@@ -5334,6 +5405,9 @@
       - 0.323
       - 0.329
       effect: Twinkleup
+      icon: si:apachecouchdb
+      friendly_name: Couch LEDs
+      supported_features: 36
       state: 'on'
     select.couch_leds_playlist_2:
       options: []
@@ -5467,9 +5541,6 @@
       - Wipe Random
       supported_color_modes:
       - rgbw
-      icon: mdi:led-strip-variant
-      friendly_name: Fish Tank Backlights
-      supported_features: 36
       color_mode: rgbw
       brightness: 38
       hs_color:
@@ -5488,6 +5559,9 @@
       - 0.189
       - 0.337
       effect: Fairytwinkle
+      icon: mdi:led-strip-variant
+      friendly_name: Fish Tank Backlights
+      supported_features: 36
       state: 'on'
     select.fish_tank_backlights_playlist_2:
       options: []
@@ -5621,9 +5695,6 @@
       - Wipe Random
       supported_color_modes:
       - rgbw
-      icon: mdi:led-strip-variant
-      friendly_name: Living Room TV Backlights
-      supported_features: 36
       color_mode: rgbw
       brightness: 51
       hs_color:
@@ -5642,6 +5713,9 @@
       - 0.151
       - 0.343
       effect: Fairy
+      icon: mdi:led-strip-variant
+      friendly_name: Living Room TV Backlights
+      supported_features: 36
       state: 'on'
     select.living_room_tv_backlights_playlist:
       options: []
@@ -5653,8 +5727,74 @@
       icon: mdi:playlist-play
       friendly_name: Living Room TV Backlights Preset
       state: unavailable
+    light.christmas_tree:
+      supported_color_modes:
+      - onoff
+      icon: mdi:pine-tree
+      friendly_name: Christmas Tree
+      supported_features: 0
+      color_mode: onoff
+      state: 'on'
+    light.village:
+      supported_color_modes:
+      - onoff
+      icon: mdi:home-city-outline
+      friendly_name: Village
+      supported_features: 0
+      color_mode: onoff
+      state: 'on'
+    light.fiber_optic_decoration:
+      supported_color_modes:
+      - onoff
+      icon: fas:snowman
+      friendly_name: Fiber Optic Decoration
+      supported_features: 0
+      color_mode: onoff
+      state: 'on'
+    light.wreath:
+      supported_color_modes:
+      - onoff
+      icon: mdi:string-lights
+      friendly_name: Wreath
+      supported_features: 0
+      color_mode: onoff
+      state: 'on'
+    light.christmas_tree_lights:
+      min_color_temp_kelvin: 2000
+      max_color_temp_kelvin: 6535
+      min_mireds: 153
+      max_mireds: 500
+      supported_color_modes:
+      - color_temp
+      friendly_name: Christmas Tree Lights
+      supported_features: 40
+      color_mode: color_temp
+      brightness: 255
+      color_temp_kelvin: 6535
+      color_temp: 153
+      hs_color:
+      - 54.768
+      - 1.6
+      rgb_color:
+      - 255
+      - 254
+      - 250
+      xy_color:
+      - 0.326
+      - 0.333
+      state: 'on'
   metadata:
     light.living_room_fan_light:
+      entity_only: true
+    light.christmas_tree:
+      entity_only: true
+    light.village:
+      entity_only: true
+    light.fiber_optic_decoration:
+      entity_only: true
+    light.wreath:
+      entity_only: true
+    light.christmas_tree_lights:
       entity_only: true
   icon: mdi:snowflake
 - id: '1642299813224'
@@ -9131,11 +9271,11 @@
     light.kitchen_leds:
       supported_color_modes:
       - brightness
+      color_mode: brightness
+      brightness: 255
       icon: mdi:led-strip-variant
       friendly_name: Kitchen LEDs
       supported_features: 32
-      color_mode: brightness
-      brightness: 255
       state: 'on'
     light.dining_room_light:
       supported_color_modes:
@@ -9147,9 +9287,6 @@
     light.francis_s_light:
       supported_color_modes:
       - rgb
-      icon: mdi:lightbulb-spot
-      friendly_name: Francis's Light
-      supported_features: 40
       color_mode: rgb
       brightness: 212
       hs_color:
@@ -9162,12 +9299,17 @@
       xy_color:
       - 0.151
       - 0.343
+      icon: mdi:lightbulb-spot
+      friendly_name: Francis's Light
+      supported_features: 40
       state: 'on'
     light.fish_tank_leds:
+      min_color_temp_kelvin: 2000
+      max_color_temp_kelvin: 6535
       min_mireds: 153
       max_mireds: 500
       effect_list:
-      - None
+      - Solid
       - Wake up
       - Cycle up
       - Cycle down
@@ -9175,11 +9317,9 @@
       supported_color_modes:
       - color_temp
       - hs
-      icon: mdi:fishbowl
-      friendly_name: Fish Tank LEDs
-      supported_features: 36
       color_mode: color_temp
       brightness: 255
+      color_temp_kelvin: 3460
       color_temp: 289
       hs_color:
       - 27.214
@@ -9191,7 +9331,10 @@
       xy_color:
       - 0.457
       - 0.375
-      effect: None
+      effect: Solid
+      icon: mdi:fishbowl
+      friendly_name: Fish Tank LEDs
+      supported_features: 36
       state: 'on'
     light.living_room_fan_light:
       supported_color_modes:
@@ -9322,9 +9465,6 @@
       - Wipe Random
       supported_color_modes:
       - rgbw
-      icon: mdi:curtains
-      friendly_name: Curtain LEDs
-      supported_features: 36
       color_mode: rgbw
       brightness: 255
       hs_color:
@@ -9343,6 +9483,9 @@
       - 0.323
       - 0.329
       effect: Solid
+      icon: mdi:curtains
+      friendly_name: Curtain LEDs
+      supported_features: 36
       state: 'on'
     light.couch_leds:
       effect_list:
@@ -9466,9 +9609,6 @@
       - Wipe Random
       supported_color_modes:
       - rgbw
-      icon: si:apachecouchdb
-      friendly_name: Couch LEDs
-      supported_features: 36
       color_mode: rgbw
       brightness: 255
       hs_color:
@@ -9487,6 +9627,9 @@
       - 0.323
       - 0.329
       effect: Twinkleup
+      icon: si:apachecouchdb
+      friendly_name: Couch LEDs
+      supported_features: 36
       state: 'on'
     select.couch_leds_playlist_2:
       options: []
@@ -9620,9 +9763,6 @@
       - Wipe Random
       supported_color_modes:
       - rgbw
-      icon: mdi:led-strip-variant
-      friendly_name: Fish Tank Backlights
-      supported_features: 36
       color_mode: rgbw
       brightness: 255
       hs_color:
@@ -9641,6 +9781,9 @@
       - 0.323
       - 0.329
       effect: Solid
+      icon: mdi:led-strip-variant
+      friendly_name: Fish Tank Backlights
+      supported_features: 36
       state: 'on'
     select.fish_tank_backlights_playlist_2:
       options: []
@@ -9774,9 +9917,6 @@
       - Wipe Random
       supported_color_modes:
       - rgbw
-      icon: mdi:led-strip-variant
-      friendly_name: Living Room TV Backlights
-      supported_features: 36
       color_mode: rgbw
       brightness: 255
       hs_color:
@@ -9795,6 +9935,9 @@
       - 0.323
       - 0.329
       effect: Fairy
+      icon: mdi:led-strip-variant
+      friendly_name: Living Room TV Backlights
+      supported_features: 36
       state: 'on'
     select.living_room_tv_backlights_playlist:
       options: []
@@ -9806,8 +9949,39 @@
       icon: mdi:playlist-play
       friendly_name: Living Room TV Backlights Preset
       state: unavailable
+    light.christmas_tree_lights:
+      min_color_temp_kelvin: 2000
+      max_color_temp_kelvin: 6535
+      min_mireds: 153
+      max_mireds: 500
+      effect_list:
+      - None
+      - Fade Fast
+      - Fade Slow
+      supported_color_modes:
+      - color_temp
+      color_mode: color_temp
+      brightness: 255
+      color_temp_kelvin: 2000
+      color_temp: 500
+      hs_color:
+      - 30.601
+      - 94.547
+      rgb_color:
+      - 255
+      - 136
+      - 13
+      xy_color:
+      - 0.599
+      - 0.382
+      effect: None
+      friendly_name: Christmas Tree Lights
+      supported_features: 44
+      state: 'on'
   metadata:
     light.living_room_fan_light:
+      entity_only: true
+    light.christmas_tree_lights:
       entity_only: true
   icon: mdi:television-ambient-light
 - id: '1658460869945'
@@ -10533,11 +10707,11 @@
     light.kitchen_leds:
       supported_color_modes:
       - brightness
+      color_mode: brightness
+      brightness: 178
       icon: mdi:led-strip-variant
       friendly_name: Kitchen LEDs
       supported_features: 32
-      color_mode: brightness
-      brightness: 178
       state: 'on'
     light.dining_room_light:
       supported_color_modes:
@@ -10549,9 +10723,6 @@
     light.francis_s_light:
       supported_color_modes:
       - rgb
-      icon: mdi:lightbulb-spot
-      friendly_name: Francis's Light
-      supported_features: 40
       color_mode: rgb
       brightness: 212
       hs_color:
@@ -10564,12 +10735,17 @@
       xy_color:
       - 0.151
       - 0.343
+      icon: mdi:lightbulb-spot
+      friendly_name: Francis's Light
+      supported_features: 40
       state: 'on'
     light.fish_tank_leds:
+      min_color_temp_kelvin: 2000
+      max_color_temp_kelvin: 6535
       min_mireds: 153
       max_mireds: 500
       effect_list:
-      - None
+      - Solid
       - Wake up
       - Cycle up
       - Cycle down
@@ -10577,11 +10753,9 @@
       supported_color_modes:
       - color_temp
       - hs
-      icon: mdi:fishbowl
-      friendly_name: Fish Tank LEDs
-      supported_features: 36
       color_mode: color_temp
       brightness: 255
+      color_temp_kelvin: 3460
       color_temp: 289
       hs_color:
       - 27.214
@@ -10593,7 +10767,10 @@
       xy_color:
       - 0.457
       - 0.375
-      effect: None
+      effect: Solid
+      icon: mdi:fishbowl
+      friendly_name: Fish Tank LEDs
+      supported_features: 36
       state: 'on'
     light.curtain_leds:
       effect_list:
@@ -10717,9 +10894,6 @@
       - Wipe Random
       supported_color_modes:
       - rgbw
-      icon: mdi:curtains
-      friendly_name: Curtain LEDs
-      supported_features: 36
       color_mode: rgbw
       brightness: 76
       hs_color:
@@ -10738,6 +10912,9 @@
       - 0.323
       - 0.329
       effect: Twinkleup
+      icon: mdi:curtains
+      friendly_name: Curtain LEDs
+      supported_features: 36
       state: 'on'
     light.couch_leds:
       effect_list:
@@ -10861,9 +11038,6 @@
       - Wipe Random
       supported_color_modes:
       - rgbw
-      icon: si:apachecouchdb
-      friendly_name: Couch LEDs
-      supported_features: 36
       color_mode: rgbw
       brightness: 38
       hs_color:
@@ -10882,6 +11056,9 @@
       - 0.323
       - 0.329
       effect: Twinkleup
+      icon: si:apachecouchdb
+      friendly_name: Couch LEDs
+      supported_features: 36
       state: 'on'
     select.couch_leds_playlist_2:
       options: []
@@ -11022,9 +11199,6 @@
       - Wipe Random
       supported_color_modes:
       - rgbw
-      icon: mdi:led-strip-variant
-      friendly_name: Fish Tank Backlights
-      supported_features: 36
       color_mode: rgbw
       brightness: 38
       hs_color:
@@ -11043,6 +11217,9 @@
       - 0.323
       - 0.329
       effect: Solid
+      icon: mdi:led-strip-variant
+      friendly_name: Fish Tank Backlights
+      supported_features: 36
       state: 'on'
     select.fish_tank_backlights_playlist_2:
       options: []
@@ -11176,9 +11353,6 @@
       - Wipe Random
       supported_color_modes:
       - rgbw
-      icon: mdi:led-strip-variant
-      friendly_name: Living Room TV Backlights
-      supported_features: 36
       color_mode: rgbw
       brightness: 26
       hs_color:
@@ -11197,6 +11371,9 @@
       - 0.323
       - 0.329
       effect: Fairy
+      icon: mdi:led-strip-variant
+      friendly_name: Living Room TV Backlights
+      supported_features: 36
       state: 'on'
     select.living_room_tv_backlights_playlist:
       options: []
@@ -11208,8 +11385,39 @@
       icon: mdi:playlist-play
       friendly_name: Living Room TV Backlights Preset
       state: unavailable
+    light.christmas_tree_lights:
+      min_color_temp_kelvin: 2000
+      max_color_temp_kelvin: 6535
+      min_mireds: 153
+      max_mireds: 500
+      effect_list:
+      - None
+      - Fade Fast
+      - Fade Slow
+      supported_color_modes:
+      - color_temp
+      color_mode: color_temp
+      brightness: 255
+      color_temp_kelvin: 2000
+      color_temp: 500
+      hs_color:
+      - 30.601
+      - 94.547
+      rgb_color:
+      - 255
+      - 136
+      - 13
+      xy_color:
+      - 0.599
+      - 0.382
+      effect: None
+      friendly_name: Christmas Tree Lights
+      supported_features: 44
+      state: 'on'
   metadata:
     light.living_room_fan_light:
+      entity_only: true
+    light.christmas_tree_lights:
       entity_only: true
   icon: mdi:television-ambient-light
 - id: '1658963176249'
