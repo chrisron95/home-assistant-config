@@ -1,16 +1,10 @@
 binary_sensor:
-  - name: Workday Home Day
+  - name: Workday
     platform: workday
     country: US
     province: FL
-    workdays: [mon, thu, fri]
-    excludes: [tue, wed, sat, sun]
-  - name: Workday Office Day
-    platform: workday
-    country: US
-    province: FL
-    workdays: [tue, wed]
-    excludes: [mon, thu, fri, sat, sun]
+    workdays: [mon, tue, wed, thu, fri]
+    excludes: [sat, sun]
   - platform: template
     sensors:
       holiday:
@@ -25,6 +19,13 @@ binary_sensor:
             '11-24',
             '12-26'] %}
           {{ now().isoweekday() in [6, 7] or (now().date()|string)[-5:] in holidays }}
+      friday_the_13th:
+        friendly_name: "Friday the 13th"
+        value_template: "{{ now().weekday() == 4 and now().day == 13 }}"
+  - platform: rest
+    resource: https://mercuryretrogradeapi.com
+    name: Mercury in Retrograde
+    value_template: "{{ value_json.is_retrograde }}"
   - platform: tod
     name: Morning
     after: "06:00"
@@ -66,25 +67,7 @@ automation:
           - alias: Home Day
             conditions:
               - condition: state
-                entity_id: binary_sensor.workday_home_day
-                state: "on"
-              - condition: state
-                entity_id: binary_sensor.holiday
-                state: "off"
-            sequence:
-              - service: input_datetime.set_datetime
-                data:
-                  time: "08:45:00"
-                target:
-                  entity_id: input_datetime.wakeup
-              - service: input_boolean.turn_on
-                data: {}
-                target:
-                  entity_id: input_boolean.wakeup_alarm
-          - alias: Office Day
-            conditions:
-              - condition: state
-                entity_id: binary_sensor.workday_office_day
+                entity_id: binary_sensor.workday
                 state: "on"
               - condition: state
                 entity_id: binary_sensor.holiday
