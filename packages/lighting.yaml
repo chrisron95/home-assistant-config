@@ -260,6 +260,15 @@ group:
       - light.top_pixels
       - light.bottom_pixels
 
+  christmas_decorations_inside:
+    name: X-mas Decor
+    icon: mdi:pine-tree
+    entities:
+      - light.christmas_tree
+      - light.fiber_optic_decoration
+      - light.village
+      - light.wreath
+
 automation:
   # Main rooms
   - id: "bedroom_smart_light_handler"
@@ -829,17 +838,19 @@ automation:
         domain: binary_sensor
     condition:
       - condition: state
-        entity_id: input_boolean.do_not_disturb
-        state: "off"
-      - condition: state
         entity_id: input_boolean.motion_lights_master
         state: "on"
       - condition: state
         entity_id: input_boolean.hallway_smart_lights
         state: "on"
     action:
-      - service: light.turn_on
-        entity_id: light.hallway_light
+      - if:
+          - condition: state
+            entity_id: input_boolean.do_not_disturb
+            state: "off"
+        then:
+          - service: light.turn_on
+            entity_id: light.hallway_light
       - wait_for_trigger:
           - platform: state
             entity_id: binary_sensor.hallway_motion_sensor
@@ -863,9 +874,9 @@ automation:
         entity_id: binary_sensor.front_hall_motion_sensor
         domain: binary_sensor
     condition:
-      - condition: state
-        entity_id: input_boolean.do_not_disturb
-        state: "off"
+      # - condition: state
+      #   entity_id: input_boolean.do_not_disturb
+      #   state: "off"
       - condition: state
         entity_id: input_boolean.motion_lights_master
         state: "on"
