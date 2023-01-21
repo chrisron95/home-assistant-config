@@ -8,11 +8,9 @@ alexa:
       # Lights
       - light.bathroom_light
       - light.bedroom_fan_lights
-      # - light.christmas_tree
       - light.couch_leds
       - light.curtain_leds
       - light.dining_room_light
-      # - light.fiber_optic_decoration
       - light.fish_tank_backlights
       - light.fish_tank_leds
       - light.francis_s_light
@@ -26,8 +24,11 @@ alexa:
       - light.living_room_tv_backlights
       - light.patio_light
       - light.patio_string_lights
-      # - light.village
       - light.western_electric_cabinet_lights
+      - light.christmas_tree
+      - light.fiber_optic_decoration
+      - light.village
+      - light.wreath
       # Switches
       - switch.3d_printer
       - switch.bathroom_fan
@@ -55,6 +56,7 @@ alexa:
       - scene.downstairs_all_off
       # - scene.downstairs_chill
       - scene.downstairs_ambient
+      - scene.downstairs_ambient_bright
       - scene.downstairs_night_light
       # - scene.time_for_bed
       - scene.nightime
