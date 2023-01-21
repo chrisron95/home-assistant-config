@@ -112,7 +112,8 @@ sensor:
             expect a high of {{ state_attr('sensor.current_forecast','high_temp') }}
             {%- if states('sensor.current_forecast') == 'sunny' and is_state('binary_sensor.night','off')%}
               {{ [
-                  'and sunny. ', 
+                  'and sunny skies. ', 
+                  'and clear skies. ', 
                   'with sun. ',
                   'with sunny conditions prevailing. '
                   ] | random }}
@@ -171,7 +172,7 @@ sensor:
                 'with clouds. ', 
                 'with cloudy skies. '
                 ] | random }}
-            {% elif states('sensor.current_forecast') == 'partlycloudy' %}
+            {% elif states('sensor.current_forecast') in ['partlycloudy', 'partly-cloudy'] %}
               {{ [
                   'with some clouds. ', 
                   'with partly cloudy skies. ',
@@ -179,7 +180,7 @@ sensor:
                   ] | random }}
             {%- elif states('sensor.current_forecast') == 'hail' %}
               {{ [
-                'with severve thunderstorms possible. ', 
+                'with a chance of hail, believe it or not. ', 
                 'with hail possible. '
                 ] | random }}
               {{ [
@@ -188,7 +189,7 @@ sensor:
                 ] | random }}
                 near {{ state_attr('sensor.current_forecast','precipitation') }} inches
                 possible.
-            {%- elif states('sensor.current_forecast') == 'lightning' %}
+            {%- elif states('sensor.current_forecast') in ['lightning','lightning-rainy'] %}
               {{ [
                 'with thunderstorms possible. ', 
                 'with the potential of thunderstorms. '
@@ -199,6 +200,11 @@ sensor:
                 ] | random }}
                 near {{ state_attr('sensor.current_forecast','precipitation') }} inches
                 possible.
+            {%- else %}
+              {{ [
+                ". I don't know what the conditions will be, you should add it to my system. My sensors show " + states('sensor.current_forecast') + ". ",
+                ". The forecasted condition is not in my database, but my sensor shows it may be " + states('sensor.current_forecast') + ". "
+                ] | random }}
             {% endif -%}
 
             {{ [
@@ -745,4 +751,3 @@ sensor:
         friendly_name: "Current Inside Humidity"
         unit_of_measurement: "%"
         value_template: "{{ state_attr('climate.my_ecobee','current_humidity') }}"
-
