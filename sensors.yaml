@@ -93,28 +93,4 @@
           {%- endmacro %}
         {{deliveries_sentence()}}
 
-# MQTT Room using Espresense
-- platform: mqtt_room
-  device_id: "apple:watch6-4"
-  name: "Chris's Apple Watch Presence"
-  state_topic: "espresense/devices/apple:watch6-4"
-  # timeout: 60
-  away_timeout: 120
-# - platform: mqtt_room
-#   device_id: "apple:1005:9-24"
-#   name: "Chris's Apple Watch Presence"
-#   state_topic: "espresense/devices/apple:1005:9-24"
-#   # timeout: 60
-#   away_timeout: 120
-- platform: mqtt_room
-  device_id: "apple:iphone13-3"
-  name: "Chris's iPhone 12 Pro Presence"
-  state_topic: "espresense/devices/apple:iphone13-3"
-  # timeout: 60
-  away_timeout: 120
-- platform: mqtt_room
-  device_id: "apple:ipad11-4"
-  name: "Chris's iPad Air 3 Presence"
-  state_topic: "espresense/devices/apple:ipad11-4"
-  # timeout: 60
-  away_timeout: 120
+

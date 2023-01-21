@@ -41,6 +41,7 @@ group:
       - person.mari
       - person.rheena
       - person.danielle
+      - person.daniel
       - person.brian
       - person.rathnam
       - person.nico
@@ -55,6 +56,7 @@ group:
       - person.mari
       - person.rheena
       - person.danielle
+      - person.daniel
       - person.brian
       - person.rathnam
       - person.nico
@@ -153,6 +155,72 @@ sensor:
         value_template: >-
           {{ is_state('person.steven', 'home') }}
 
+  # MQTT Room using Espresense
+  - name: "Chris's Apple Watch Presence"
+    platform: mqtt_room
+    device_id: !secret chris_apple_watch_irk
+    state_topic: "espresense/rooms"
+    timeout: 5
+    away_timeout: 120
+  - name: "Chris's iPhone 12 Pro Presence"
+    platform: mqtt_room
+    device_id: !secret chris_iphone_irk
+    state_topic: "espresense/rooms"
+    timeout: 5
+    away_timeout: 120
+  - name: "Chris's iPad Air 3 Presence"
+    platform: mqtt_room
+    device_id: !secret chris_ipad_irk
+    state_topic: "espresense/rooms"
+    timeout: 5
+    away_timeout: 120
+  - name: "Kaitlyn's iPhone 12 Pro Presence"
+    platform: mqtt_room
+    device_id: !secret kaitlyn_iphone_irk
+    state_topic: "espresense/rooms"
+    timeout: 5
+    away_timeout: 120
+  - name: "Steven's iPhone 12 Presence"
+    platform: mqtt_room
+    device_id: !secret steven_iphone_irk
+    state_topic: "espresense/rooms"
+    timeout: 5
+    away_timeout: 120
+  # - platform: mqtt_room
+  #   device_id: !secret steven_apple_watch_irk
+  #   name: "Steven's Apple Watch Presence"
+  #   state_topic: "espresense/rooms"
+  #   timeout: 5
+  #   away_timeout: 120
+
+  - platform: template
+    sensors:
+      room_presence_chris:
+        friendly_name: "Chris's Room Presence"
+        value_template: >-
+          {% set weight_values = {
+            'sensor.chris_s_iphone_12_pro_presence': 0.8,
+            'sensor.chris_s_apple_watch_presence': 1.0
+          } %}
+          {% set presence = {} %}
+          {% for entity_id, weight in weight_values.items() %}
+            {% if states(entity_id) not in presence %}
+              {% set presence = presence | merge({(states(entity_id)): weight}) %}
+            {% else %}
+              {% set presence = presence | merge({(states(entity_id)): presence[states(entity_id)] + weight}) %}
+            {% endif %}
+          {% endfor %}
+          {% if presence|length > 0 %}
+            {% set highest_presence = presence|max %}
+            {% for room, value in presence.items() %}
+              {% if value == highest_presence %}
+                {{ room }}
+              {% endif %}
+            {% endfor %}
+          {% else %}
+            unknown
+          {% endif %}
+
 automation:
   - id: family_has_arrived
     alias: Family Has arrived
@@ -212,60 +280,60 @@ automation:
     action:
       - service: script.family_is_away
 
-  - id: chris_arrives_work
-    alias: Chris Arrives At Work
-    trigger:
-      - entity_id: person.chris
-        event: enter
-        platform: zone
-        zone: zone.work_chris
-    condition:
-      - condition: state
-        entity_id: binary_sensor.morning
-        state: "on"
-    action:
-      - service: script.text_notify
-        data:
-          who: "steven"
-          message: "Chris has arrived at work"
-    initial_state: true
+  # - id: chris_arrives_work
+  #   alias: Chris Arrives At Work
+  #   trigger:
+  #     - entity_id: person.chris
+  #       event: enter
+  #       platform: zone
+  #       zone: zone.work_chris
+  #   condition:
+  #     - condition: state
+  #       entity_id: binary_sensor.morning
+  #       state: "on"
+  #   action:
+  #     - service: script.text_notify
+  #       data:
+  #         who: "steven"
+  #         message: "Chris has arrived at work"
+  #   initial_state: true
 
-  - id: e1cb15b0-0423-11eb-adc1-0242ac120002
-    alias: Zone Debugger
-    trigger:
-      - platform: state
-        entity_id: person.chris
-    condition:
-      - condition: state
-        entity_id: input_boolean.chris_location_debug
-        state: "on"
-    action:
-      - service: script.chris_location_debug
+  # - id: e1cb15b0-0423-11eb-adc1-0242ac120002
+  #   alias: Zone Debugger
+  #   trigger:
+  #     - platform: state
+  #       entity_id: person.chris
+  #   condition:
+  #     - condition: state
+  #       entity_id: input_boolean.chris_location_debug
+  #       state: "on"
+  #   action:
+  #     - service: script.chris_location_debug
 
-  - id: chris_leaves_work
-    alias: Chris Leaves work
-    initial_state: true
-    trigger:
-      - entity_id: person.chris
-        event: leave
-        platform: zone
-        zone: zone.work_chris
-    condition:
-      - condition: or
-        conditions:
-          - condition: state
-            entity_id: binary_sensor.afternoon
-            state: "on"
-          - condition: state
-            entity_id: binary_sensor.evening
-            state: "on"
-    action:
-      - service: script.text_notify
-        data:
-          who: "steven"
-          message: "Chris just left"
-      - service: input_boolean.turn_off
-        entity_id: input_boolean.chris_traffic_alert_home
+  # - id: chris_leaves_work
+  #   alias: Chris Leaves work
+  #   initial_state: true
+  #   trigger:
+  #     - entity_id: person.chris
+  #       event: leave
+  #       platform: zone
+  #       zone: zone.work_chris
+  #   condition:
+  #     - condition: or
+  #       conditions:
+  #         - condition: state
+  #           entity_id: binary_sensor.afternoon
+  #           state: "on"
+  #         - condition: state
+  #           entity_id: binary_sensor.evening
+  #           state: "on"
+  #   action:
+  #     - service: script.text_notify
+  #       data:
+  #         who: "steven"
+  #         message: "Chris just left"
+  #     - service: input_boolean.turn_off
+  #       entity_id: input_boolean.chris_traffic_alert_home
 
   - id: welcome_home
     alias: Welcome Home
@@ -280,6 +348,7 @@ automation:
           - person.mari
           - person.rheena
           - person.danielle
+          - person.daniel
           - person.brian
           - person.rathnam
           - person.nico
@@ -367,6 +436,7 @@ automation:
           - person.mari
           - person.rheena
           - person.danielle
+          - person.daniel
           - person.brian
           - person.rathnam
           - person.nico
