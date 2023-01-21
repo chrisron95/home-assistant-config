@@ -28,6 +28,11 @@ recorder:
       - sensor.time_online
       - sensor.moon
       - sensor.month_is
+      - sensor.rest980
+      - camera.roomba
+    entity_globs:
+      - sensor.vacuum_*
+      - automation.vacuum_*
 
 logbook:
   include:
