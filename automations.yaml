@@ -102,10 +102,10 @@
   action:
   - service: fan.set_percentage
     data:
-      percentage: "{% if states.fan.lab_fan.state == 'off' %}\n  33\n{% elif states.fan.lab_fan.attributes.percentage\
-        \ == 33 %}\n  66\n{% elif states.fan.lab_fan.attributes.percentage == 66 %}\n\
-        \  100\n{% elif states.fan.lab_fan.attributes.percentage == 100 %}\n  0\n\
-        {% endif %}\n"
+      percentage: "{% if states.fan.lab_fan.state == 'off' %}\n  33\n{% elif states.fan.lab_fan.attributes.percentage
+        == 33 %}\n  66\n{% elif states.fan.lab_fan.attributes.percentage == 66 %}\n
+        \ 100\n{% elif states.fan.lab_fan.attributes.percentage == 100 %}\n  0\n{%
+        endif %}\n"
     target:
       entity_id: fan.lab_fan
   mode: single
@@ -123,10 +123,10 @@
   action:
   - service: fan.set_percentage
     data:
-      percentage: "{% if states.fan.bedroom_fan.state == 'off' %}\n  33\n{% elif states.fan.bedroom_fan.attributes.percentage\
-        \ == 33 %}\n  66\n{% elif states.fan.bedroom_fan.attributes.percentage ==\
-        \ 66 %}\n  100\n{% elif states.fan.bedroom_fan.attributes.percentage == 100\
-        \ %}\n  0\n{% endif %}\n"
+      percentage: "{% if states.fan.bedroom_fan.state == 'off' %}\n  33\n{% elif states.fan.bedroom_fan.attributes.percentage
+        == 33 %}\n  66\n{% elif states.fan.bedroom_fan.attributes.percentage == 66
+        %}\n  100\n{% elif states.fan.bedroom_fan.attributes.percentage == 100 %}\n
+        \ 0\n{% endif %}\n"
     target:
       entity_id: fan.bedroom_fan
   mode: single
@@ -180,11 +180,10 @@
   action:
   - service: fan.set_percentage
     data:
-      percentage: "{% if states.fan.living_room_fan.state == 'off' %}\n  33\n{% elif\
-        \ states.fan.living_room_fan.attributes.percentage == 33 %}\n  66\n{% elif\
-        \ states.fan.living_room_fan.attributes.percentage == 66 %}\n  100\n{% elif\
-        \ states.fan.living_room_fan.attributes.percentage == 100 %}\n  0\n{% endif\
-        \ %}\n"
+      percentage: "{% if states.fan.living_room_fan.state == 'off' %}\n  33\n{% elif
+        states.fan.living_room_fan.attributes.percentage == 33 %}\n  66\n{% elif states.fan.living_room_fan.attributes.percentage
+        == 66 %}\n  100\n{% elif states.fan.living_room_fan.attributes.percentage
+        == 100 %}\n  0\n{% endif %}\n"
     target:
       entity_id: fan.living_room_fan
   mode: single
@@ -331,6 +330,12 @@
     subtype: button_6
     discovery_id: 9C9C1F47AE83_button_6_HOLD
     enabled: false
+  - platform: device
+    domain: tasmota
+    device_id: a2acf2ee7393220e37087061d1b0566c
+    type: button_short_press
+    subtype: button_1
+    discovery_id: 3C71BF316A64_button_1_SINGLE
   condition: []
   action:
   - service: switch.toggle
@@ -1261,6 +1266,13 @@
     subtype: button_2
     discovery_id: 9C9C1F47AE83_button_2_DOUBLE
     id: button
+  - platform: device
+    domain: tasmota
+    device_id: a2acf2ee7393220e37087061d1b0566c
+    type: button_double_press
+    subtype: button_1
+    discovery_id: 3C71BF316A64_button_1_DOUBLE
+    id: button
   - platform: state
     entity_id:
     - switch.western_electric_rectifier
@@ -1356,3 +1368,88 @@
       - service: script.text_notify_chris
         data:
           message: Long
+- id: '1672953123172'
+  alias: NFC Tag Testing
+  description: ''
+  trigger:
+  - platform: event
+    event_type: test_tag_scan
+    event_data:
+      tag_type: chore
+  condition: []
+  action:
+  - service: notify.chris
+    data:
+      message: 'Scanned by {{ trigger.event.data.scanned_by }} | Tag: {{ trigger.event.data.tag_name
+        }}'
+  - choose:
+    - conditions:
+      - condition: template
+        value_template: '{{ trigger.event.data.tag_name == "cleaned_master_bath" }}'
+      sequence: []
+  mode: single
+- id: '1674004743050'
+  alias: Living Room TV Hyperion
+  description: ''
+  trigger:
+  - platform: device
+    device_id: 2cad1a38df4cb7030c6243f70d8af22b
+    domain: media_player
+    entity_id: media_player.living_room_tv
+    type: turned_on
+    id: 'on'
+  - platform: device
+    device_id: 2cad1a38df4cb7030c6243f70d8af22b
+    domain: media_player
+    entity_id: media_player.living_room_tv
+    type: turned_off
+    id: 'off'
+  condition: []
+  action:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id: 'on'
+      sequence:
+      - service: light.turn_on
+        data:
+          effect: USB Capture
+          brightness_pct: 100
+        target:
+          entity_id: light.living_room_tv_hyperion
+    - conditions:
+      - condition: trigger
+        id: 'off'
+      sequence:
+      - service: light.turn_off
+        data: {}
+        target:
+          entity_id: light.living_room_tv_hyperion
+  mode: single
+- id: '1674014681253'
+  alias: Water Leak Handler
+  description: ''
+  trigger:
+  - type: moist
+    platform: device
+    device_id: cde28a301e62e5d305599aed2f12ce67
+    entity_id: binary_sensor.ac_water_leak_sensor
+    domain: binary_sensor
+  - type: moist
+    platform: device
+    device_id: bcae5b2003bfd3ce1b0080e08bcfe679
+    entity_id: binary_sensor.garage_water_leak_sensor
+    domain: binary_sensor
+  - type: moist
+    platform: device
+    device_id: cd2a7a3a6238358363f53e4a88984c4d
+    entity_id: binary_sensor.lumi_lumi_sensor_wleak_aq1_iaszone_2
+    domain: binary_sensor
+  condition: []
+  action:
+  - service: script.text_urgent_alert
+    data:
+      who: chris
+      title: Water Leak!!
+      message: '{{ trigger.to_state.name }} has detected a leak!'
+  mode: single
