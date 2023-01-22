@@ -1451,5 +1451,17 @@
     data:
       who: chris
       title: Water Leak!!
-      message: '{{ trigger.to_state.name }} has detected a leak!'
+      message: '{% set name = trigger.to_state.name %} I have detected a water leak
+        {{- " in the A/C closet. " if "AC" in name -}} {{- " in the Garage. " if "Garage"
+        in name -}} {{- " under the kitchen sink. " if "Kitchen Sink" in name -}}
+
+        '
+  - service: script.alexa_voice
+    data:
+      who: presence
+      message: '{% set name = trigger.to_state.name %} I have detected a water leak
+        {{- " in the A/C closet. " if "AC" in name -}} {{- " in the Garage. " if "Garage"
+        in name -}} {{- " under the kitchen sink. " if "Kitchen Sink" in name -}}
+
+        '
   mode: single
