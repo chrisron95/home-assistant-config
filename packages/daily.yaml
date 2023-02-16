@@ -75,7 +75,7 @@ automation:
             sequence:
               - service: input_datetime.set_datetime
                 data:
-                  time: "08:45:00"
+                  time: "{{ states('input_datetime.workday_wakeup_time') }}"
                 target:
                   entity_id: input_datetime.wakeup
               - service: input_boolean.turn_on

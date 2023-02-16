@@ -12,6 +12,10 @@
 # input_datetime - So the time report automation fires can be set in the UI
 ###############################
 input_datetime:
+  workday_wakeup_time:
+    name: Workday Wakeup Time
+    has_date: false
+    has_time: true
   wakeup:
     name: Wakeup Time
     has_date: false
