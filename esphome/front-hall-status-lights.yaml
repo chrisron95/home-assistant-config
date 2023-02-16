@@ -16,7 +16,7 @@ ota:
   password: "0da2985c26d820305209ce04ed798d99"
 
 wifi:
-  ssid: FlooNetworkDownstairs
+  ssid: !secret wifi_downstairs_ssid
   password: !secret wifi_password
 
   # Enable fallback hotspot (captive portal) in case wifi connection fails
